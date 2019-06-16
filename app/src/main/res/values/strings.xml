@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Punk Brew</string>
+    <string name="home_screen_title">Beer List</string>
+    <string name="home_menu_search">Search</string>
+    <string name="home_menu_favorites">Favourites</string>
+    <string name="search_hint">Search...</string>
+    <string name="favourites_screen_title">Favourites</string>
+    <string name="beer_details">Beer Details</string>
+</resources>
