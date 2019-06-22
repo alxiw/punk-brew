@@ -1,20 +1,17 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
-
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "io.github.alxiw.punkbrew"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -22,31 +19,42 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    buildToolsVersion = '29.0.0'
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
 
-    //noinspection GradleCompatible
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support:design:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    // android support libraries
+    implementation "androidx.appcompat:appcompat:${versions.androidx_appcompat}"
+    implementation "com.google.android.material:material:${versions.androidx_material}"
+    implementation "androidx.constraintlayout:constraintlayout:${versions.androidx_constraintlayout}"
+    implementation "androidx.recyclerview:recyclerview:${versions.androidx_recyclerview}"
+    implementation "androidx.legacy:legacy-support-v4:${versions.androidx_legacy}"
 
-    implementation 'com.android.support:recyclerview-v7:28.0.0'
-    implementation 'com.android.support:support-v4:28.0.0'
+    // reactive extensions
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.kotlinx_coroutines}"
+    implementation "io.reactivex.rxjava2:rxjava:2.2.10"
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
-    implementation 'com.squareup.picasso:picasso:2.71828'
+    // dependency injection
+    implementation "com.google.dagger:dagger:${versions.dagger}"
+    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
 
-    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+    // network requests
+    implementation "com.squareup.retrofit2:retrofit:${versions.retrofit}"
+    implementation "com.squareup.retrofit2:converter-gson:${versions.retrofit}"
+    implementation "com.squareup.okhttp3:logging-interceptor:${versions.okhttp}"
+    implementation "com.squareup.picasso:picasso:${versions.picasso}"
 
-    implementation "android.arch.persistence.room:runtime:1.1.1"
-    kapt 'android.arch.persistence.room:compiler:1.1.1'
+    // database
+    implementation "androidx.room:room-runtime:${versions.room}"
+    kapt "androidx.room:room-compiler:${versions.room}"
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-M1")
-
+    // tests
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
 }
