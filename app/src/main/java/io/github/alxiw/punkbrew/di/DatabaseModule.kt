@@ -2,30 +2,25 @@ package io.github.alxiw.punkbrew.di
 
 import android.content.Context
 import androidx.room.Room
-import dagger.Module
-import dagger.Provides
-import io.github.alxiw.punkbrew.db.BrewDao
-import io.github.alxiw.punkbrew.db.BrewDatabase
-import io.github.alxiw.punkbrew.db.BrewCache
-import javax.inject.Singleton
+import io.github.alxiw.punkbrew.data.db.PunkDao
+import io.github.alxiw.punkbrew.data.db.PunkDatabase
+import io.github.alxiw.punkbrew.data.source.PunkLocalSource
+import org.koin.dsl.module
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 
-@Module
-class DatabaseModule {
+private const val DB_NAME = "punkbrew.db"
 
-    @Singleton
-    @Provides
-    fun providesRoomDatabase(app: Context): BrewDatabase {
-        return Room.databaseBuilder(app, BrewDatabase::class.java, "PUNKBREW.DB").build()
+val databaseModule = module {
+
+    factory { Executors.newSingleThreadExecutor() as Executor }
+    factory { (get() as PunkDatabase).punkDao() as PunkDao }
+    factory {
+        Room.databaseBuilder(
+            (get() as Context),
+            PunkDatabase::class.java,
+            DB_NAME
+        ).build() as PunkDatabase
     }
-
-    @Singleton
-    @Provides
-    fun providesBrewDao(demoDatabase: BrewDatabase): BrewDao {
-        return demoDatabase.getBrewDao()
-    }
-
-    @Provides
-    @Singleton
-    fun provideBrewCache(dao: BrewDao): BrewCache = BrewCache(dao)
-
+    factory { PunkLocalSource(get(), get()) as PunkLocalSource }
 }

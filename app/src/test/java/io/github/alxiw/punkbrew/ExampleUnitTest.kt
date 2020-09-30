@@ -1,7 +1,6 @@
 package io.github.alxiw.punkbrew
 
 import org.junit.Test
-
 import org.junit.Assert.*
 
 /**

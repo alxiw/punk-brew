@@ -1,0 +1,41 @@
+package io.github.alxiw.punkbrew.ui.beers
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.ViewModel
+import androidx.paging.PagedList
+import io.github.alxiw.punkbrew.data.PunkRepository
+import io.github.alxiw.punkbrew.data.SearchResult
+import io.github.alxiw.punkbrew.data.db.BeerEntity
+import timber.log.Timber
+
+class BeersViewModel(private val repository: PunkRepository) : ViewModel() {
+
+    var currentQuery: String? = null
+
+    private val queryLiveData = MutableLiveData<String?>()
+
+    private val beersResult : LiveData<SearchResult> = Transformations.map(queryLiveData) {
+        repository.search(it)
+    }
+
+    val beers: LiveData<PagedList<BeerEntity>> = Transformations.switchMap(beersResult) {
+        it.data
+    }
+    val networkErrors: LiveData<String> = Transformations.switchMap(beersResult) {
+        it.networkErrors
+    }
+
+    fun searchBeers(queryString: String?) {
+        currentQuery = queryString
+        queryLiveData.postValue(queryString)
+    }
+
+    fun updateBeer(beer: BeerEntity, updateFinished: () -> Unit) {
+        repository.update(beer) {
+            Timber.d("Beer update from beers fragment")
+            updateFinished()
+        }
+    }
+}
