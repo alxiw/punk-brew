@@ -1,20 +1,10 @@
 <resources>
     <string name="app_name">Punk Brew</string>
-
-    <string name="home_screen_title">Beer List</string>
-    <string name="detail_screen_title">Beer Details</string>
-    <string name="favourites_screen_title">Favourites</string>
-
-    <string name="home_menu_search">Search</string>
-    <string name="home_menu_favorites">Favourites</string>
-
-    <string name="search_hint">Search beers...</string>
-    <string name="beer_photo_description">Beer Bottle Photo</string>
-    <string name="search_no_results">No results were found</string>
-    <string name="like">Like</string>
-    <string name="dislike">Dislike</string>
-    <string name="no_internet_connection">No internet connection</string>
-
-    <string name="message_splash_error">Something went wrong…</string>
-    <string name="message_home_error">Error while loading…</string>
+    <string name="details_label">Details</string>
+    <string name="favorites_label">Favorites</string>
+    <string name="search_label">Search</string>
+    <string name="search_hint">Search for beers</string>
+    <string name="no_results">No results 😓</string>
+    <string name="abv_name">ABV</string>
+    <string name="ibu_name">IBU</string>
 </resources>
