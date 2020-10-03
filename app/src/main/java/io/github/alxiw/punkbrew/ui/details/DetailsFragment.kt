@@ -72,7 +72,7 @@ class DetailsFragment : Fragment() {
                                 beer_details_abv_value.text = String.format("%s%%", beer.abv)
                                 beer_details_ibu_value.text = String.format("%s", beer.ibu)
                                 beer_details_date.text =
-                                    DateFormatter.formatDate(beer.firstBrewed, true)
+                                    DateFormatter.formatDate(beer.firstBrewed, false)
                                 beer_details_description.text = beer.description
 
                                 Picasso.get()
