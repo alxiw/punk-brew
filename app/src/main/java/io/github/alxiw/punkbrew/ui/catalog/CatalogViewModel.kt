@@ -1,21 +1,19 @@
-package io.github.alxiw.punkbrew.ui.beers
+package io.github.alxiw.punkbrew.ui.catalog
 
-import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
 import io.github.alxiw.punkbrew.data.PunkRepository
 import io.github.alxiw.punkbrew.data.SearchResult
 import io.github.alxiw.punkbrew.data.db.BeerEntity
-import timber.log.Timber
+import io.github.alxiw.punkbrew.ui.list.BeersViewModel
 
-class BeersViewModel(
-    private val repository: PunkRepository,
-    private val imm: InputMethodManager
-) : ViewModel() {
+class CatalogViewModel(
+    repository: PunkRepository,
+    imm: InputMethodManager
+) : BeersViewModel(repository, imm) {
 
     var currentQuery: String? = null
 
@@ -25,7 +23,7 @@ class BeersViewModel(
         repository.search(it)
     }
 
-    val beers: LiveData<PagedList<BeerEntity>> = Transformations.switchMap(beersResult) {
+    override val beers: LiveData<PagedList<BeerEntity>> = Transformations.switchMap(beersResult) {
         it.data
     }
     val networkErrors: LiveData<String> = Transformations.switchMap(beersResult) {
@@ -35,18 +33,5 @@ class BeersViewModel(
     fun searchBeers(queryString: String?) {
         currentQuery = queryString
         queryLiveData.postValue(queryString)
-    }
-
-    fun updateBeer(beer: BeerEntity, updateFinished: () -> Unit) {
-        repository.update(beer) {
-            Timber.d("Beer update from beers fragment")
-            updateFinished()
-        }
-    }
-
-    fun hideKeyboard(input: View?) {
-        input?.let {
-            imm.hideSoftInputFromWindow(it.windowToken, 0)
-        }
     }
 }

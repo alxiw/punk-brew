@@ -19,10 +19,10 @@ class PunkRepository(
         .setInitialLoadSizeHint(DATABASE_PAGE_INITIAL_SIZE)
         .build()
 
-    fun search(searchName: String?): SearchResult {
-        Timber.d("Search beers by name: $searchName")
-        val dataSourceFactory = localSource.getBeers(searchName)
-        val boundaryCallback = PunkBoundaryCallback(searchName, remoteSource, localSource)
+    fun search(query: String?): SearchResult {
+        Timber.d("Search beers by query: $query")
+        val dataSourceFactory = localSource.getBeers(query)
+        val boundaryCallback = PunkBoundaryCallback(query, remoteSource, localSource)
         val networkErrors = boundaryCallback.networkErrors
         val data = LivePagedListBuilder(dataSourceFactory, pageConfig)
             .setBoundaryCallback(boundaryCallback)

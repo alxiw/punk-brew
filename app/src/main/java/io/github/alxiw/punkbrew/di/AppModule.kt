@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.view.inputmethod.InputMethodManager
 import io.github.alxiw.punkbrew.data.PunkRepository
-import io.github.alxiw.punkbrew.ui.beers.BeersViewModel
+import io.github.alxiw.punkbrew.ui.catalog.CatalogViewModel
 import io.github.alxiw.punkbrew.ui.details.DetailsViewModel
 import io.github.alxiw.punkbrew.ui.favorites.FavoritesViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -26,7 +26,7 @@ val appModule = module {
         ) as InputMethodManager
     }
     factory { PunkRepository(get(), get()) }
-    viewModel { BeersViewModel(get(), get()) }
-    viewModel { FavoritesViewModel(get()) }
+    viewModel { CatalogViewModel(get(), get()) }
+    viewModel { FavoritesViewModel(get(), get()) }
     viewModel { DetailsViewModel(get()) }
 }

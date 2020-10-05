@@ -3,13 +3,15 @@ package io.github.alxiw.punkbrew.ui.details
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
 import io.github.alxiw.punkbrew.data.PunkRepository
 import io.github.alxiw.punkbrew.data.db.BeerEntity
+import io.github.alxiw.punkbrew.ui.base.BaseViewModel
 import io.reactivex.Single
 import timber.log.Timber
 
-class DetailsViewModel(private val repository: PunkRepository) : ViewModel() {
+class DetailsViewModel(
+    private val repository: PunkRepository
+) : BaseViewModel() {
 
     private var currentBeerId: Int = -1
 
@@ -26,7 +28,7 @@ class DetailsViewModel(private val repository: PunkRepository) : ViewModel() {
 
     fun updateBeer(beer: BeerEntity, updateFinished: () -> Unit) {
         repository.update(beer) {
-            Timber.d("Beer updated from details fragment")
+            Timber.d("Beer #%d updated from %s", beer.id, javaClass.name)
             updateFinished()
         }
     }

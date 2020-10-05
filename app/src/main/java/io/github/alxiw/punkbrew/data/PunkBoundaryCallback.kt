@@ -36,20 +36,28 @@ class PunkBoundaryCallback(
     }
 
     private fun requestAndSaveData(query: String?) {
-        Timber.d("BOUNDARY CALLBACK")
         if (isRequestInProgress) return
 
         isRequestInProgress = true
-        remoteSource.searchBeers(query, lastRequestedPage, NETWORK_PAGE_SIZE, { beers ->
-            localSource.insertAll(beers) {
-                Timber.d("INSERT CACHE")
-                lastRequestedPage++
+        Timber.d("Request new page of beers")
+        remoteSource.searchBeers(
+            query,
+            lastRequestedPage,
+            NETWORK_PAGE_SIZE,
+            { beers ->
+                localSource.insertAll(beers) {
+                    Timber.d("Insert %d beers into cache", beers.size)
+                    _networkErrors.postValue(null)
+                    lastRequestedPage++
+                    isRequestInProgress = false
+                }
+            },
+            { error ->
+                Timber.d("No beers inserted into cache")
+                _networkErrors.postValue(error)
                 isRequestInProgress = false
             }
-        }, { error ->
-            _networkErrors.postValue(error)
-            isRequestInProgress = false
-        })
+        )
     }
 
     companion object {
