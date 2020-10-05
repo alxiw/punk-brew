@@ -1,4 +1,4 @@
-package io.github.alxiw.punkbrew.ui.beers
+package io.github.alxiw.punkbrew.ui.list
 
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +17,11 @@ class BeersAdapter : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(
     private var onItemClickListener: OnItemClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BeersViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_beer, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(
+            R.layout.item_beer,
+            parent,
+            false
+        )
         return BeersViewHolder(view)
     }
 
@@ -40,7 +44,7 @@ class BeersAdapter : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(
 
     class BeersViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
 
-        fun bind(beer : BeerEntity){
+        fun bind(beer : BeerEntity) {
             itemView.item_id.text = String.format("%s", beer.id)
             itemView.item_name.text = beer.name
             itemView.item_tagline.text = beer.tagline
@@ -71,14 +75,15 @@ class BeersAdapter : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(
     }
 
     companion object {
-        private val BEER_COMPARATOR = object : DiffUtil.ItemCallback<BeerEntity>() {
-            override fun areItemsTheSame(oldItem: BeerEntity, newItem: BeerEntity): Boolean {
-                return oldItem == newItem && oldItem.favorite == newItem.favorite
-            }
+        private val BEER_COMPARATOR =
+            object : DiffUtil.ItemCallback<BeerEntity>() {
+                override fun areItemsTheSame(oldItem: BeerEntity, newItem: BeerEntity): Boolean {
+                    return oldItem == newItem && oldItem.favorite == newItem.favorite
+                }
 
-            override fun areContentsTheSame(oldItem: BeerEntity, newItem: BeerEntity): Boolean {
-                return oldItem.name == newItem.name && oldItem.favorite == newItem.favorite
+                override fun areContentsTheSame(oldItem: BeerEntity, newItem: BeerEntity): Boolean {
+                    return oldItem.name == newItem.name && oldItem.favorite == newItem.favorite
+                }
             }
-        }
     }
 }

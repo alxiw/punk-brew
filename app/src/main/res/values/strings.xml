@@ -5,6 +5,7 @@
     <string name="search_label">Search</string>
     <string name="search_hint">Search for beers</string>
     <string name="no_results">No results 😓</string>
+    <string name="error">"⚠️ %s"</string>
     <string name="abv_name">ABV</string>
     <string name="ibu_name">IBU</string>
 </resources>

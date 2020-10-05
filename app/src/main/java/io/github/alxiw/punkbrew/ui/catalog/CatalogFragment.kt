@@ -1,4 +1,4 @@
-package io.github.alxiw.punkbrew.ui.beers
+package io.github.alxiw.punkbrew.ui.catalog
 
 import android.app.SearchManager
 import android.content.Context
@@ -8,30 +8,25 @@ import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.alxiw.punkbrew.R
 import io.github.alxiw.punkbrew.data.db.BeerEntity
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_DETAILS_TAG
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_FAVORITES_TAG
-import io.github.alxiw.punkbrew.ui.RefreshBeerListener
 import io.github.alxiw.punkbrew.ui.details.DetailsFragment
 import io.github.alxiw.punkbrew.ui.favorites.FavoritesFragment
+import io.github.alxiw.punkbrew.ui.list.BeersFragment
 import io.github.alxiw.punkbrew.util.getFormattedBeerName
-import io.github.alxiw.punkbrew.util.hide
-import io.github.alxiw.punkbrew.util.show
 import kotlinx.android.synthetic.main.fragment_beers.*
 import kotlinx.android.synthetic.main.item_beer.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
-class BeersFragment : Fragment(), RefreshBeerListener {
+class CatalogFragment : BeersFragment() {
 
-    private val viewModel: BeersViewModel by viewModel()
+    override val viewModel: CatalogViewModel by viewModel()
 
     private var searchView: SearchView? = null
-    private var adapter: BeersAdapter = BeersAdapter()
 
     private var hasSearchFocus = false
 
@@ -86,66 +81,41 @@ class BeersFragment : Fragment(), RefreshBeerListener {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_beers, container, false)
-
-        adapter.setOnItemClickListener(object : BeersAdapter.OnItemClickListener {
-            override fun onItemClick(beer: BeerEntity) {
-                onBeerClicked(beer)
-            }
-
-            override fun onItemFavoriteBadgeClick(beer: BeerEntity, itemView: View) {
-                onBeerFavoriteBadgeClicked(beer, itemView)
-            }
-        })
-
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupToolbar()
-
-        beers_recycler_view.also {
-            it.layoutManager = LinearLayoutManager(context)
-            it.adapter = adapter
-        }
-
-        viewModel.beers.observe(this, Observer {
-            Timber.d("Received list of beers with size of: ${it.size}")
-            if (it.size > 0) {
-                showRecyclerView()
-            } else {
-                showEmptyList()
-            }
-            adapter.submitList(it)
-        })
-
-        viewModel.networkErrors.observe(this, Observer {
-            Timber.d("Network error: $it")
-            showNetworkError(it)
-        })
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean(SEARCH_FOCUS_KEY, searchView?.hasFocus() ?: false)
     }
 
-    override fun onDestroyView() {
-        searchView = null
-        beers_recycler_view.adapter = null
-        super.onDestroyView()
-    }
-
-    private fun setupToolbar() {
+    override fun setupToolbar() {
         beers_toolbar.also {
             it.setLogo(R.mipmap.ic_launcher)
             (activity as AppCompatActivity).setSupportActionBar(it)
         }
+    }
+
+    override fun initView() {
+        super.initView()
+        viewModel.beers.observe(this, Observer {
+            Timber.d("Received list of beers with size of: ${it.size}")
+            if (it.size > 0) {
+                onContentReceived()
+            } else {
+                onEmptyContent()
+            }
+            adapter.submitList(it)
+        })
+
+        viewModel.networkErrors.observe(this, Observer {
+            Timber.d("Network error: %s", it ?: "...")
+            it?.let {
+                showNetworkError(it)
+            }
+        })
+    }
+
+    override fun onDestroyView() {
+        searchView = null
+        super.onDestroyView()
     }
 
     private fun restoreSavedInstanceState(savedInstanceState: Bundle?) {
@@ -160,42 +130,14 @@ class BeersFragment : Fragment(), RefreshBeerListener {
         adapter.submitList(null)
     }
 
-    private fun showProgressBar() {
-        beers_progress_bar.show()
-        beers_recycler_view.hide()
-        beers_empty_list.hide()
+    private fun showNetworkError(text: String?) {
+        val message = requireContext().applicationContext.getString(R.string.error, text)
+        Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
     }
 
-    private fun showEmptyList() {
-        beers_empty_list.show()
-        beers_recycler_view.hide()
-        beers_progress_bar.hide()
-    }
-
-    private fun showRecyclerView() {
-        beers_recycler_view.show()
-        beers_progress_bar.hide()
-        beers_empty_list.hide()
-    }
-
-    private fun showNetworkError(text: String) {
-        Toast.makeText(activity, "⚠️ $text", Toast.LENGTH_LONG).show()
-    }
-
-    private fun onFavoritesClicked() {
+    override fun onBeerClicked(beer: BeerEntity) {
         viewModel.hideKeyboard(searchView)
-        requireFragmentManager().beginTransaction()
-            .replace(
-                R.id.root_container,
-                FavoritesFragment.newInstance(),
-                BACK_STACK_FAVORITES_TAG
-            )
-            .addToBackStack(null)
-            .commit()
-    }
-
-    private fun onBeerClicked(beer: BeerEntity) {
-        viewModel.hideKeyboard(searchView)
+        searchView?.clearFocus()
         requireFragmentManager().beginTransaction()
             .replace(
                 R.id.root_container,
@@ -206,7 +148,7 @@ class BeersFragment : Fragment(), RefreshBeerListener {
             .commit()
     }
 
-    private fun onBeerFavoriteBadgeClicked(beer: BeerEntity, itemView: View) {
+    override fun onFavoriteBadgeClicked(beer: BeerEntity, itemView: View) {
         beer.favorite = !beer.favorite
         viewModel.updateBeer(beer) {
             val mainHandler = Handler(requireContext().mainLooper)
@@ -223,18 +165,24 @@ class BeersFragment : Fragment(), RefreshBeerListener {
         }
     }
 
-    override fun refreshBeersAdapter() {
-        viewModel.beers.value?.dataSource?.addInvalidatedCallback {
-            adapter.notifyDataSetChanged()
-        }
-        viewModel.beers.value?.dataSource?.invalidate()
+    private fun onFavoritesClicked() {
+        viewModel.hideKeyboard(searchView)
+        searchView?.clearFocus()
+        requireFragmentManager().beginTransaction()
+            .replace(
+                R.id.root_container,
+                FavoritesFragment.newInstance(),
+                BACK_STACK_FAVORITES_TAG
+            )
+            .addToBackStack(null)
+            .commit()
     }
 
     companion object {
         private const val SEARCH_FOCUS_KEY = "search_focus"
 
-        fun newInstance(): BeersFragment {
-            return BeersFragment()
+        fun newInstance(): CatalogFragment {
+            return CatalogFragment()
         }
     }
 }

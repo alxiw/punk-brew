@@ -7,6 +7,7 @@ import io.github.alxiw.punkbrew.data.map.BeerMapper.fromResponse
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 
 class PunkRemoteSource(private val service: PunkService) {
 
@@ -26,14 +27,17 @@ class PunkRemoteSource(private val service: PunkService) {
             } else {
                 service.getBeers(page, perPage, query)
             }
+        Timber.d("Request page of beers from server")
         disposables.add(
             single.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { response: List<BeerResponse> ->
+                        Timber.d("Received beers from server")
                         onSuccess(fromResponse(response))
                     },
                     { e: Throwable ->
+                        Timber.d("Error occurred while requesting beers from server")
                         onError(e.message ?: "Unknown error")
                     }
                 )
