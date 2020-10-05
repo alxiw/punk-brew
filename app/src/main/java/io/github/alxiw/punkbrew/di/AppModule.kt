@@ -2,6 +2,7 @@ package io.github.alxiw.punkbrew.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.view.inputmethod.InputMethodManager
 import io.github.alxiw.punkbrew.data.PunkRepository
 import io.github.alxiw.punkbrew.ui.beers.BeersViewModel
 import io.github.alxiw.punkbrew.ui.details.DetailsViewModel
@@ -19,8 +20,13 @@ val appModule = module {
             Context.MODE_PRIVATE
         ) as SharedPreferences
     }
+    single {
+        (get() as Context).applicationContext.getSystemService(
+            Context.INPUT_METHOD_SERVICE
+        ) as InputMethodManager
+    }
     factory { PunkRepository(get(), get()) }
-    viewModel { BeersViewModel(get()) }
+    viewModel { BeersViewModel(get(), get()) }
     viewModel { FavoritesViewModel(get()) }
     viewModel { DetailsViewModel(get()) }
 }

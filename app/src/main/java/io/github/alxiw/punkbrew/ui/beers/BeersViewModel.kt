@@ -1,5 +1,7 @@
 package io.github.alxiw.punkbrew.ui.beers
 
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -10,7 +12,10 @@ import io.github.alxiw.punkbrew.data.SearchResult
 import io.github.alxiw.punkbrew.data.db.BeerEntity
 import timber.log.Timber
 
-class BeersViewModel(private val repository: PunkRepository) : ViewModel() {
+class BeersViewModel(
+    private val repository: PunkRepository,
+    private val imm: InputMethodManager
+) : ViewModel() {
 
     var currentQuery: String? = null
 
@@ -36,6 +41,12 @@ class BeersViewModel(private val repository: PunkRepository) : ViewModel() {
         repository.update(beer) {
             Timber.d("Beer update from beers fragment")
             updateFinished()
+        }
+    }
+
+    fun hideKeyboard(input: View?) {
+        input?.let {
+            imm.hideSoftInputFromWindow(it.windowToken, 0)
         }
     }
 }

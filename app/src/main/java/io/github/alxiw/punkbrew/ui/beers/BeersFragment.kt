@@ -183,6 +183,7 @@ class BeersFragment : Fragment(), RefreshBeerListener {
     }
 
     private fun onFavoritesClicked() {
+        viewModel.hideKeyboard(searchView)
         requireFragmentManager().beginTransaction()
             .replace(
                 R.id.root_container,
@@ -194,6 +195,7 @@ class BeersFragment : Fragment(), RefreshBeerListener {
     }
 
     private fun onBeerClicked(beer: BeerEntity) {
+        viewModel.hideKeyboard(searchView)
         requireFragmentManager().beginTransaction()
             .replace(
                 R.id.root_container,
