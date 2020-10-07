@@ -100,11 +100,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:textSize="24sp"
-            android:drawableStart="@drawable/prefix_number"
+            android:textColor="@color/colorNumber"
             app:layout_constraintStart_toEndOf="@+id/beer_details_image"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            tools:text="300"/>
+            tools:text="300"
+            app:drawableStartCompat="@drawable/prefix_number" />
 
         <TextView
             android:id="@+id/beer_details_date"

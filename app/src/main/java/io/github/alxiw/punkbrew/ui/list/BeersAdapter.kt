@@ -45,7 +45,7 @@ class BeersAdapter : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(
     class BeersViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
 
         fun bind(beer : BeerEntity) {
-            itemView.item_id.text = String.format("%s", beer.id)
+            itemView.item_id.text = String.format("#%s", beer.id)
             itemView.item_name.text = beer.name
             itemView.item_tagline.text = beer.tagline
             itemView.item_abv.text = String.format("%s%%", beer.abv)
