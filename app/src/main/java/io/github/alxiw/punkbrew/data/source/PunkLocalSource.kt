@@ -12,18 +12,42 @@ class PunkLocalSource (
     private val ioExecutor: Executor
 ) {
 
-    fun insert(beer: BeerEntity, insertFinished: () -> Unit) {
-        Timber.d("Insert beer into cache")
+    fun insertAll(beers: List<BeerEntity>, insertFinished: () -> Unit) {
+        Timber.d("Insert beers into cache")
         ioExecutor.execute {
-            punkDao.insert(beer)
+            for (beer in beers) {
+                punkDao.insert(
+                    beer.id,
+                    beer.name,
+                    beer.tagline,
+                    beer.firstBrewed,
+                    beer.description,
+                    beer.imageUrl,
+                    beer.abv,
+                    beer.ibu,
+                    beer.targetFg,
+                    beer.targetOg,
+                    beer.ebc,
+                    beer.srm,
+                    beer.ph,
+                    beer.attenuationLevel,
+                    beer.volumeJson,
+                    beer.boilVolumeJson,
+                    beer.methodJson,
+                    beer.ingredientsJson,
+                    beer.foodPairingJson,
+                    beer.brewersTips,
+                    beer.contributedBy
+                )
+            }
             insertFinished()
         }
     }
 
-    fun insertAll(beers: List<BeerEntity>, insertFinished: () -> Unit) {
-        Timber.d("Insert beers into cache")
+    fun update(beer: BeerEntity, insertFinished: () -> Unit) {
+        Timber.d("Update beer in cache")
         ioExecutor.execute {
-            punkDao.insertAll(beers)
+            punkDao.update(beer.id, beer.favorite)
             insertFinished()
         }
     }

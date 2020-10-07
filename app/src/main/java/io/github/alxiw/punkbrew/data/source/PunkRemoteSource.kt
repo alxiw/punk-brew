@@ -1,5 +1,6 @@
 package io.github.alxiw.punkbrew.data.source
 
+import com.google.gson.Gson
 import io.github.alxiw.punkbrew.data.api.BeerResponse
 import io.github.alxiw.punkbrew.data.api.PunkService
 import io.github.alxiw.punkbrew.data.db.BeerEntity
@@ -9,7 +10,10 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
-class PunkRemoteSource(private val service: PunkService) {
+class PunkRemoteSource(
+    private val service: PunkService,
+    private val gson: Gson
+) {
 
     private val disposables = ArrayList<Disposable>()
 
@@ -34,7 +38,7 @@ class PunkRemoteSource(private val service: PunkService) {
                 .subscribe(
                     { response: List<BeerResponse> ->
                         Timber.d("Received beers from server")
-                        onSuccess(fromResponse(response))
+                        onSuccess(fromResponse(response, gson))
                     },
                     { e: Throwable ->
                         Timber.d("Error occurred while requesting beers from server")

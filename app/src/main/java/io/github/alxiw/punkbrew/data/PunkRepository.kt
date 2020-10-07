@@ -41,7 +41,7 @@ class PunkRepository(
     }
 
     fun update(beer: BeerEntity, insertFinished: () -> Unit) {
-        localSource.insert(beer) {
+        localSource.update(beer) {
             insertFinished()
         }
     }
