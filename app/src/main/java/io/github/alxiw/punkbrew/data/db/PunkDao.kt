@@ -8,7 +8,7 @@ import io.reactivex.Single
 @Dao
 interface PunkDao {
 
-    @Query("INSERT OR REPLACE INTO beers (id, name, tagline, first_brewed, description, image_url, abv, ibu, target_fg, target_og, ebc, srm, ph, attenuation_level, volume_json, boil_volume_json, method_json, ingredients_json, food_pairing_json, brewers_tips, contributed_by, favorite) VALUES ( :id, :name, :tagline, :firstBrewed, :description, :imageUrl, :abv, :ibu, :targetFg, :targetOg, :ebc, :srm, :ph, :attenuationLevel, :volumeJson, :boilVolumeJson, :methodJson, :ingredientsJson, :foodPairingJson, :brewersTips, :contributedBy, (SELECT favorite FROM beers WHERE id = :id))")
+    @Query("INSERT OR REPLACE INTO beers (id, name, tagline, first_brewed, description, image_url, abv, ibu, target_fg, target_og, ebc, srm, ph, attenuation_level, volume_json, boil_volume_json, method_json, ingredients_json, food_pairing_json, brewers_tips, contributed_by, favorite) VALUES ( :id, :name, :tagline, :firstBrewed, :description, :imageUrl, :abv, :ibu, :targetFg, :targetOg, :ebc, :srm, :ph, :attenuationLevel, :volumeJson, :boilVolumeJson, :methodJson, :ingredientsJson, :foodPairingJson, :brewersTips, :contributedBy, COALESCE((SELECT favorite FROM beers WHERE id = :id), 0))")
     fun insert(
         id: Int,
         name: String,
