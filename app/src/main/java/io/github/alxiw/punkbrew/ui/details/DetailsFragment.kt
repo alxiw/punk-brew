@@ -5,6 +5,7 @@ import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 import io.github.alxiw.punkbrew.R
 import io.github.alxiw.punkbrew.data.db.BeerEntity
@@ -19,6 +20,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.content_details.*
 import kotlinx.android.synthetic.main.fragment_details.*
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
@@ -26,6 +28,8 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
 
     override val viewModel: DetailsViewModel by viewModel()
     override val layoutId: Int = R.layout.fragment_details
+
+    private val gson: Gson by inject()
 
     private var beerId = -1
 
