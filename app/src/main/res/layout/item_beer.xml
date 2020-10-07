@@ -87,10 +87,10 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/item_guideline_left"
             app:layout_constraintTop_toBottomOf="@+id/item_tagline"
-            android:drawableStart="@drawable/prefix_abv"
             android:scaleX="0.9"
             android:scaleY="0.9"
-            tools:text="10.43%" />
+            tools:text="10.43%"
+            app:drawableStartCompat="@drawable/prefix_abv" />
 
         <TextView
             android:id="@+id/item_date"
@@ -105,10 +105,10 @@
             app:layout_constraintEnd_toStartOf="@+id/item_guideline_right"
             app:layout_constraintTop_toBottomOf="@id/item_tagline"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:drawableStart="@drawable/prefix_date"
             android:scaleX="0.9"
             android:scaleY="0.9"
-            tools:text="MAY 2019"/>
+            tools:text="MAY 2019"
+            app:drawableStartCompat="@drawable/prefix_date" />
 
         <TextView
             android:id="@+id/item_id"
@@ -118,6 +118,7 @@
             android:layout_marginBottom="1dp"
             android:minWidth="40dp"
             android:textSize="20sp"
+            android:textColor="@color/colorNumber"
             android:textAlignment="center"
             android:layout_gravity="center"
             android:maxLines="1"
@@ -126,10 +127,9 @@
             app:layout_constraintStart_toEndOf="@+id/item_guideline_right"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/item_tagline"
-            android:drawableStart="@drawable/prefix_number"
             android:scaleX="0.9"
             android:scaleY="0.9"
-            tools:text="300"/>
+            tools:text="#300" />
 
         <ImageView
             android:id="@+id/item_favorite"
