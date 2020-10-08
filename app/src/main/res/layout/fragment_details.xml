@@ -16,7 +16,7 @@
             android:id="@+id/details_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:layout_scrollFlags="enterAlways"
+            app:layout_scrollFlags="scroll|enterAlways"
             app:theme="@style/AppTheme.ToolbarStyle"
             app:title="@string/details_label"
             android:layout_weight="1" />
@@ -25,12 +25,14 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <include
             android:id="@+id/details_content"
             layout="@layout/content_details"
-            android:layout_marginTop="?attr/actionBarSize"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:visibility="gone" />
@@ -51,19 +53,10 @@
             android:id="@+id/details_progress_bar"
             android:layout_width="@dimen/pb_size"
             android:layout_height="@dimen/pb_size"
+            android:layout_marginBottom="?attr/actionBarSize"
             android:visibility="visible"
             android:layout_gravity="center" />
 
     </FrameLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/details_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|end"
-        android:layout_marginTop="70dp"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:visibility="gone"
-        app:srcCompat="@drawable/badge_favorite_false_white" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

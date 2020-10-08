@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<androidx.core.widget.NestedScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -12,19 +12,30 @@
         android:layout_height="wrap_content"
         tools:context=".ui.detail.BeerDetailActivity">
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/details_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="@dimen/details_margin"
+            android:visibility="gone"
+            app:srcCompat="@drawable/badge_favorite_false_white"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/start_guideline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="16dp" />
+            app:layout_constraintGuide_begin="@dimen/details_margin" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/end_guideline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_end="16dp" />
+            app:layout_constraintGuide_end="@dimen/details_margin" />
 
         <View
             android:id="@+id/top_background"
@@ -39,7 +50,7 @@
             android:layout_width="200dp"
             android:layout_height="0dp"
             android:contentDescription="@null"
-            android:paddingTop="16dp"
+            android:layout_marginTop="@dimen/details_margin"
             app:layout_constraintBottom_toBottomOf="@+id/top_background"
             app:layout_constraintStart_toStartOf="@id/top_background"
             app:layout_constraintTop_toBottomOf="@id/top_background"
@@ -98,7 +109,7 @@
             android:id="@+id/beer_details_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/details_margin"
             android:textSize="24sp"
             android:textColor="@color/colorNumber"
             app:layout_constraintStart_toEndOf="@+id/beer_details_image"
@@ -121,7 +132,7 @@
             android:id="@+id/beer_details_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/details_margin"
             android:textSize="40sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="@id/end_guideline"
@@ -144,7 +155,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
-            android:paddingBottom="16dp"
+            android:paddingBottom="@dimen/details_margin"
             android:textSize="22sp"
             app:layout_constraintEnd_toEndOf="@id/end_guideline"
             app:layout_constraintStart_toStartOf="@id/start_guideline"
@@ -153,4 +164,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</ScrollView>
+</androidx.core.widget.NestedScrollView>
