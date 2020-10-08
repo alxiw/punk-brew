@@ -20,7 +20,7 @@ val appModule = module {
             Context.MODE_PRIVATE
         ) as SharedPreferences
     }
-    single {
+    factory {
         (get() as Context).applicationContext.getSystemService(
             Context.INPUT_METHOD_SERVICE
         ) as InputMethodManager

@@ -20,6 +20,7 @@
             android:layout_height="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways"
             app:theme="@style/AppTheme.ToolbarStyle"
+            app:title="@string/app_name"
             android:layout_weight="1" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -51,7 +52,7 @@
             android:id="@+id/beers_progress_bar"
             android:layout_width="@dimen/pb_size"
             android:layout_height="@dimen/pb_size"
-            android:layout_marginBottom="56dp"
+            android:layout_marginBottom="?attr/actionBarSize"
             android:visibility="visible"
             android:layout_gravity="center" />
 

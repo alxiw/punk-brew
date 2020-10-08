@@ -57,7 +57,6 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
             (activity as AppCompatActivity).setSupportActionBar(it)
             it.setNavigationIcon(R.drawable.ic_back)
             it.setNavigationOnClickListener { finish() }
-            it.title = getString(R.string.details_label)
         }
     }
 
