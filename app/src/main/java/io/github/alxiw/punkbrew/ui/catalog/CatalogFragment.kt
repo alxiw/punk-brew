@@ -26,9 +26,8 @@ class CatalogFragment : BeersFragment() {
 
     override val viewModel: CatalogViewModel by viewModel()
 
-    private var searchView: SearchView? = null
-
     private var hasSearchFocus = false
+    private var searchView: SearchView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -148,12 +147,12 @@ class CatalogFragment : BeersFragment() {
     }
 
     private fun showNetworkError(text: String?) {
-        val message = requireContext().applicationContext.getString(R.string.error, text)
+        val message = requireContext().applicationContext.getString(R.string.format_error, text)
         Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
     }
 
     override fun onBeerClicked(beer: BeerEntity) {
-        viewModel.hideKeyboard(searchView)
+        viewModel.hideKeyboard(requireContext().applicationContext, searchView)
         searchView?.clearFocus()
         requireFragmentManager().beginTransaction()
             .replace(
@@ -183,7 +182,7 @@ class CatalogFragment : BeersFragment() {
     }
 
     private fun onFavoritesClicked() {
-        viewModel.hideKeyboard(searchView)
+        viewModel.hideKeyboard(requireContext().applicationContext, searchView)
         searchView?.clearFocus()
         requireFragmentManager().beginTransaction()
             .replace(

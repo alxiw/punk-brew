@@ -1,6 +1,5 @@
 package io.github.alxiw.punkbrew.ui.catalog
 
-import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -11,9 +10,8 @@ import io.github.alxiw.punkbrew.data.db.BeerEntity
 import io.github.alxiw.punkbrew.ui.list.BeersViewModel
 
 class CatalogViewModel(
-    repository: PunkRepository,
-    imm: InputMethodManager
-) : BeersViewModel(repository, imm) {
+    repository: PunkRepository
+) : BeersViewModel(repository) {
 
     internal var filterEnabled = false
 

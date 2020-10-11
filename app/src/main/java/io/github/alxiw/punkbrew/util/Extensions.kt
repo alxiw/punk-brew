@@ -4,6 +4,8 @@ import android.text.TextUtils
 import android.view.View
 import java.util.*
 
+const val EMPTY_PLACEHOLDER = "∅"
+
 fun View.show() {
     visibility = View.VISIBLE
 }

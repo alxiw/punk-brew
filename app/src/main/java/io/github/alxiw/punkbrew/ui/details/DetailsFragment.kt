@@ -7,17 +7,25 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.Section
+import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import io.github.alxiw.punkbrew.R
 import io.github.alxiw.punkbrew.data.api.BeerResponse
 import io.github.alxiw.punkbrew.data.db.BeerEntity
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_CATALOG_TAG
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_FAVORITES_TAG
 import io.github.alxiw.punkbrew.ui.base.BaseFragment
+import io.github.alxiw.punkbrew.ui.details.items.HeaderItem
+import io.github.alxiw.punkbrew.ui.details.items.TextItem
 import io.github.alxiw.punkbrew.ui.list.BeersView
 import io.github.alxiw.punkbrew.util.DateFormatter
+import io.github.alxiw.punkbrew.util.EMPTY_PLACEHOLDER
 import io.github.alxiw.punkbrew.util.hide
 import io.github.alxiw.punkbrew.util.show
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -29,17 +37,17 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
+
 class DetailsFragment : BaseFragment<DetailsViewModel>() {
 
     override val viewModel: DetailsViewModel by viewModel()
     override val layoutId: Int = R.layout.fragment_details
 
     private val gson: Gson by inject()
+    private val groupAdapter = GroupAdapter<GroupieViewHolder>()
 
     private var beerId = -1
-
     private var favoriteItem: MenuItem? = null
-
     private val disposables = ArrayList<Disposable>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,6 +85,11 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
     }
 
     override fun initView() {
+        beer_details_recycler_view.apply {
+            layoutManager = LinearLayoutManager(context)
+            isNestedScrollingEnabled = false
+            adapter = groupAdapter
+        }
         val beerId = arguments?.getInt(BEER_ID_KEY) ?: -1
         if (beerId != -1) {
             viewModel.beer.observe(this, Observer { single ->
@@ -158,6 +171,15 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
         beer_details_id.text = String.format("#%s", beer.id)
         beer_details_date.text = DateFormatter.formatDate(beer.firstBrewed, false)
 
+        updateBasicsView(beer)
+        beer_details_name.text = beer.name
+        beer_details_tagline.text = beer.tagline
+
+        updateRecyclerView(beer)
+        beer_details_copyright.text = String.format("Contributed by %s", beer.contributedBy)
+    }
+
+    private fun updateBasicsView(beer: BeerEntity) {
         beer_details_abv_value.text = String.format("%s%%", beer.abv)
         beer_details_ibu_value.text = String.format("%s", beer.ibu)
         beer_details_target_og_value.text = String.format("%s", beer.targetOg)
@@ -183,13 +205,37 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
             "%s${if (boilVolume.unit.equals("litres", ignoreCase = true)) "L" else ""}",
             boilVolume.value
         )
+    }
 
-        beer_details_name.text = beer.name
-        beer_details_tagline.text = beer.tagline
+    private fun updateRecyclerView(beer: BeerEntity) {
+        val descriptionSection = Section().apply {
+            setHeader(HeaderItem(getString(R.string.header_description)))
+            add(TextItem(beer.description ?: EMPTY_PLACEHOLDER))
+        }
 
-        //beer_details_description.text = beer.description
-        //beer_details_tips.text = beer.brewersTips
-        beer_details_copyright.text = String.format("Contributed by %s", beer.contributedBy)
+        val foodPairing: List<String> = gson.fromJson(
+            beer.foodPairingJson,
+            object : TypeToken<List<String>>() {}.type
+        )
+        val foodPairingSection = Section().apply {
+            setHeader(HeaderItem(getString(R.string.header_food_pairing)))
+            addAll(foodPairing.map {
+                TextItem(
+                    String.format(requireContext().getString(R.string.format_item_text_bullet), it)
+                )
+            })
+        }
+
+        val brewersTipsSection = Section().apply {
+            setHeader(HeaderItem(getString(R.string.header_brewers_tips)))
+            add(TextItem(beer.brewersTips))
+        }
+
+        groupAdapter.apply {
+            add(descriptionSection)
+            add(foodPairingSection)
+            add(brewersTipsSection)
+        }
     }
 
     override fun onDestroyView() {
