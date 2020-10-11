@@ -1,7 +1,11 @@
 package io.github.alxiw.punkbrew.ui.favorites
 
+import android.os.Bundle
 import android.os.Handler
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import io.github.alxiw.punkbrew.R
@@ -19,6 +23,23 @@ import timber.log.Timber
 class FavoritesFragment : BeersFragment() {
 
     override val viewModel: FavoritesViewModel by viewModel()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_favorites, menu)
+
+        val informationItem = menu.findItem(R.id.favorites_menu_information)
+        informationItem?.setOnMenuItemClickListener {
+            Toast.makeText(context, context?.getString(R.string.menu_information_title), Toast.LENGTH_SHORT).show()
+            true
+        }
+
+        super.onCreateOptionsMenu(menu, inflater)
+    }
 
     override fun setupToolbar() {
         beers_toolbar.also {

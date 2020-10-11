@@ -41,55 +41,67 @@ class CatalogFragment : BeersFragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.beers_menu, menu)
+        inflater.inflate(R.menu.menu_catalog, menu)
 
-        val favoritesItem = menu.findItem(R.id.beers_menu_favorites)
-        favoritesItem?.setOnMenuItemClickListener {
-            onFavoritesClicked()
+        val filterItem = menu.findItem(R.id.catalog_menu_filter)
+        filterItem.let {
+            if (viewModel.filterEnabled) {
+                it.setIcon(R.drawable.ic_menu_filter_true)
+            }
+        }
+        filterItem.setOnMenuItemClickListener {
+            viewModel.filterEnabled = !viewModel.filterEnabled
+            if (viewModel.filterEnabled) {
+                it.setTitle(R.string.menu_filter_true_title)
+                it.setIcon(R.drawable.ic_menu_filter_true)
+                Toast.makeText(context, context?.getString(R.string.toast_filter_enabled), Toast.LENGTH_SHORT).show()
+            } else {
+                it.setTitle(R.string.menu_filter_false_title)
+                it.setIcon(R.drawable.ic_menu_filter_false)
+                Toast.makeText(context, context?.getString(R.string.toast_filter_disabled), Toast.LENGTH_SHORT).show()
+            }
             true
         }
 
-        val searchItem = menu.findItem(R.id.beers_menu_search)
-        searchItem?.let {
+        val searchItem = menu.findItem(R.id.catalog_menu_search)
+        searchItem.let { item ->
             val searchManager
                     = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
-            searchView = searchItem.actionView as SearchView
-            searchView?.setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
-            searchView?.isIconified = true
-            viewModel.currentQuery?.let {
-                searchItem.expandActionView()
-                searchView?.setQuery(it, false)
-                if (!hasSearchFocus) {
-                    searchView?.clearFocus()
+            searchView = item.actionView as SearchView
+            searchView?.let { view ->
+                view.setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
+                view.isIconified = true
+                viewModel.currentQuery?.let { query ->
+                    item.expandActionView()
+                    view.setQuery(query, false)
+                    if (!hasSearchFocus) {
+                        view.clearFocus()
+                    }
                 }
-            }
-            searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(s: String): Boolean {
-                    searchView?.clearFocus()
-                    hasSearchFocus = false
-                    searchByName(s)
-                    return true
-                }
+                view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                        override fun onQueryTextSubmit(s: String): Boolean {
+                            view.clearFocus()
+                            hasSearchFocus = false
+                            searchByName(s)
+                            return true
+                        }
 
-                override fun onQueryTextChange(s: String): Boolean {
-                    hasSearchFocus = true
-                    searchByName(s)
-                    return true
-                }
-            })
+                        override fun onQueryTextChange(s: String): Boolean {
+                            hasSearchFocus = true
+                            searchByName(s)
+                            return true
+                        }
+                    })
+            }
         }
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putBoolean(SEARCH_FOCUS_KEY, searchView?.hasFocus() ?: false)
-    }
-
     override fun setupToolbar() {
         beers_toolbar.also {
-            it.setLogo(R.mipmap.ic_launcher)
             (activity as AppCompatActivity).setSupportActionBar(it)
+            it.setNavigationIcon(R.drawable.ic_favorites)
+            it.setNavigationOnClickListener { onFavoritesClicked() }
         }
     }
 
@@ -111,6 +123,11 @@ class CatalogFragment : BeersFragment() {
                 showNetworkError(it)
             }
         })
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(SEARCH_FOCUS_KEY, searchView?.hasFocus() ?: false)
     }
 
     override fun onDestroyView() {

@@ -12,7 +12,7 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar"
+    android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
     app:cardElevation="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout

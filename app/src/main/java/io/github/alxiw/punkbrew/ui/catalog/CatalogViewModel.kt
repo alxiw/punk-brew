@@ -15,6 +15,8 @@ class CatalogViewModel(
     imm: InputMethodManager
 ) : BeersViewModel(repository, imm) {
 
+    internal var filterEnabled = false
+
     var currentQuery: String? = null
 
     private val queryLiveData = MutableLiveData<String?>()

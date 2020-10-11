@@ -4,4 +4,13 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="colorNumber">#00AFDB</color>
+    <color name="colorNumberLight">#62E1FF</color>
+    <color name="colorNumberDark">#007FA9</color>
+    <color name="colorImageBackground">#21ECDE</color>
+    <color name="colorImageBackgroundDark">#34D19F</color>
+    <color name="colorTextImageBackground">#FF083863</color>
+    <color name="colorGradientImageMiddle">#FFEBEE</color>
+    <color name="colorSeparator">#6E89A1</color>
+    <color name="colorBrightPrimary">#EB5947</color>
+    <color name="colorBrightSecond">#F07E16</color>
 </resources>
