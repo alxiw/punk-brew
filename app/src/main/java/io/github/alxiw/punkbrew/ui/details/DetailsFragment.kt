@@ -187,8 +187,8 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
         beer_details_name.text = beer.name
         beer_details_tagline.text = beer.tagline
 
-        beer_details_description.text = beer.description
-        beer_details_tips.text = beer.brewersTips
+        //beer_details_description.text = beer.description
+        //beer_details_tips.text = beer.brewersTips
         beer_details_copyright.text = String.format("Contributed by %s", beer.contributedBy)
     }
 
