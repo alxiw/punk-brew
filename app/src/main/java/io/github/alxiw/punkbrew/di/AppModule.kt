@@ -20,13 +20,8 @@ val appModule = module {
             Context.MODE_PRIVATE
         ) as SharedPreferences
     }
-    factory {
-        (get() as Context).applicationContext.getSystemService(
-            Context.INPUT_METHOD_SERVICE
-        ) as InputMethodManager
-    }
     factory { PunkRepository(get(), get()) }
-    viewModel { CatalogViewModel(get(), get()) }
-    viewModel { FavoritesViewModel(get(), get()) }
+    viewModel { CatalogViewModel(get()) }
+    viewModel { FavoritesViewModel(get()) }
     viewModel { DetailsViewModel(get()) }
 }
