@@ -3,16 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/beers_menu_search"
-        android:icon="@drawable/ic_search"
-        android:title="@string/search_label"
+        android:id="@+id/catalog_menu_search"
+        android:icon="@drawable/ic_menu_search"
+        android:title="@string/menu_search_title"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always|collapseActionView"/>
 
     <item
-        android:id="@+id/beers_menu_favorites"
-        android:title="@string/favorites_label"
-        android:icon="@drawable/ic_favorites"
+        android:id="@+id/catalog_menu_filter"
+        android:title="@string/menu_filter_false_title"
+        android:icon="@drawable/ic_menu_filter_false"
         app:showAsAction="always"/>
 
 </menu>

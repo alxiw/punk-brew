@@ -13,7 +13,7 @@ class DetailsViewModel(
     private val repository: PunkRepository
 ) : BaseViewModel() {
 
-    private var currentBeerId: Int = -1
+    internal var currentBeer: BeerEntity? = null
 
     private val idLiveData = MutableLiveData<Int>()
 
@@ -22,7 +22,6 @@ class DetailsViewModel(
     }
 
     fun findBeer(beerId: Int) {
-        currentBeerId = beerId
         idLiveData.postValue(beerId)
     }
 

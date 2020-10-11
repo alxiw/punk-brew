@@ -1,6 +1,6 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -17,4 +17,15 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="item_separator" parent="@style/group_separator">
+        <item name="android:background">@color/colorSeparator</item>
+    </style>
+
+    <style name="group_separator">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/separator_thickness</item>
+        <item name="android:background">?colorAccent</item>
+    </style>
+
+    <dimen name="separator_thickness">1dp</dimen>
 </resources>
