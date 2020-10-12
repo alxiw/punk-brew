@@ -8,6 +8,7 @@ import io.github.alxiw.punkbrew.data.PunkRepository
 import io.github.alxiw.punkbrew.data.SearchResult
 import io.github.alxiw.punkbrew.data.db.BeerEntity
 import io.github.alxiw.punkbrew.ui.list.BeersViewModel
+import io.github.alxiw.punkbrew.util.getFormattedBeerName
 
 class CatalogViewModel(
     repository: PunkRepository
@@ -32,6 +33,6 @@ class CatalogViewModel(
 
     fun searchBeers(queryString: String?) {
         currentQuery = queryString
-        queryLiveData.postValue(queryString)
+        queryLiveData.postValue(getFormattedBeerName(queryString))
     }
 }
