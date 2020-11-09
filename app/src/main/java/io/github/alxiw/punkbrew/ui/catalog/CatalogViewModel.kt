@@ -4,14 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.paging.PagedList
-import io.github.alxiw.punkbrew.data.PunkRepository
+import io.github.alxiw.punkbrew.data.BeersRepository
 import io.github.alxiw.punkbrew.data.SearchResult
 import io.github.alxiw.punkbrew.data.db.BeerEntity
 import io.github.alxiw.punkbrew.ui.list.BeersViewModel
-import io.github.alxiw.punkbrew.util.getFormattedBeerName
 
 class CatalogViewModel(
-    repository: PunkRepository
+    repository: BeersRepository
 ) : BeersViewModel(repository) {
 
     internal var filterEnabled = false
@@ -33,6 +32,6 @@ class CatalogViewModel(
 
     fun searchBeers(queryString: String?) {
         currentQuery = queryString
-        queryLiveData.postValue(getFormattedBeerName(queryString))
+        queryLiveData.postValue(queryString)
     }
 }

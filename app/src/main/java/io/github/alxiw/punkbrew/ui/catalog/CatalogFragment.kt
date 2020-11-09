@@ -16,6 +16,7 @@ import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_FAVORITES_T
 import io.github.alxiw.punkbrew.ui.details.DetailsFragment
 import io.github.alxiw.punkbrew.ui.favorites.FavoritesFragment
 import io.github.alxiw.punkbrew.ui.list.BeersFragment
+import io.github.alxiw.punkbrew.util.getFormattedBeerName
 import kotlinx.android.synthetic.main.fragment_beers.*
 import kotlinx.android.synthetic.main.item_beer.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -141,7 +142,7 @@ class CatalogFragment : BeersFragment() {
 
     private fun searchByName(query: String) {
         beers_recycler_view.scrollToPosition(0)
-        viewModel.searchBeers(query)
+        viewModel.searchBeers(getFormattedBeerName(query))
         adapter.submitList(null)
     }
 

@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import io.github.alxiw.punkbrew.data.db.PunkDao
+import io.github.alxiw.punkbrew.data.db.BeersDao
 import io.github.alxiw.punkbrew.data.db.PunkDatabase
-import io.github.alxiw.punkbrew.data.source.PunkLocalSource
+import io.github.alxiw.punkbrew.data.source.BeersLocalSource
 import org.koin.dsl.module
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -16,14 +16,14 @@ private const val DB_NAME = "punkbrew.db"
 val databaseModule = module {
 
     factory { Executors.newSingleThreadExecutor() as Executor }
-    factory { (get() as PunkDatabase).punkDao() as PunkDao }
+    factory { (get() as PunkDatabase).beersDao() as BeersDao }
     factory {
         Room.databaseBuilder((get() as Context), PunkDatabase::class.java, DB_NAME)
             .addMigrations(MIGRATION_1_2)
             .addMigrations(MIGRATION_2_3)
             .build() as PunkDatabase
     }
-    factory { PunkLocalSource(get(), get()) as PunkLocalSource }
+    factory { BeersLocalSource(get(), get()) as BeersLocalSource }
 }
 
 val MIGRATION_1_2: Migration = object : Migration(1, 2) {

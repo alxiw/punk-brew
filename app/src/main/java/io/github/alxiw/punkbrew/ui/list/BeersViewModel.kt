@@ -5,13 +5,13 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
-import io.github.alxiw.punkbrew.data.PunkRepository
+import io.github.alxiw.punkbrew.data.BeersRepository
 import io.github.alxiw.punkbrew.data.db.BeerEntity
 import io.github.alxiw.punkbrew.ui.base.BaseViewModel
 import timber.log.Timber
 
 abstract class BeersViewModel(
-    private val repository: PunkRepository
+    private val repository: BeersRepository
 ) : BaseViewModel()  {
 
     abstract val beers: LiveData<PagedList<BeerEntity>>

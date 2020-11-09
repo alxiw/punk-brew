@@ -10,5 +10,5 @@ import androidx.room.RoomDatabase
 )
 abstract class PunkDatabase : RoomDatabase()  {
 
-    abstract fun punkDao(): PunkDao
+    abstract fun beersDao(): BeersDao
 }

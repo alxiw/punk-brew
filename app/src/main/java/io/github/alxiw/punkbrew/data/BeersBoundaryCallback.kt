@@ -4,14 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import io.github.alxiw.punkbrew.data.db.BeerEntity
-import io.github.alxiw.punkbrew.data.source.PunkLocalSource
-import io.github.alxiw.punkbrew.data.source.PunkRemoteSource
+import io.github.alxiw.punkbrew.data.source.BeersLocalSource
+import io.github.alxiw.punkbrew.data.source.BeersRemoteSource
 import timber.log.Timber
 
-class PunkBoundaryCallback(
+class BeersBoundaryCallback(
     private val query: String?,
-    private val remoteSource: PunkRemoteSource,
-    private val localSource: PunkLocalSource
+    private val remoteSource: BeersRemoteSource,
+    private val localSource: BeersLocalSource
 ): PagedList.BoundaryCallback<BeerEntity>() {
 
     // keep the last requested page. When the request is successful, increment the page number.
@@ -64,6 +64,6 @@ class PunkBoundaryCallback(
     }
 
     companion object {
-        private const val NETWORK_PAGE_SIZE = 50
+        private const val NETWORK_PAGE_SIZE = 30
     }
 }

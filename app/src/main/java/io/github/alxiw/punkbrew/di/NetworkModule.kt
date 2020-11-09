@@ -5,7 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.github.alxiw.punkbrew.BuildConfig
 import io.github.alxiw.punkbrew.data.api.PunkService
-import io.github.alxiw.punkbrew.data.source.PunkRemoteSource
+import io.github.alxiw.punkbrew.data.source.BeersRemoteSource
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -51,5 +51,5 @@ val networkModule = module {
             build()
         }.create(PunkService::class.java) as PunkService
     }
-    factory { PunkRemoteSource(get(), get()) as PunkRemoteSource }
+    factory { BeersRemoteSource(get(), get()) as BeersRemoteSource }
 }

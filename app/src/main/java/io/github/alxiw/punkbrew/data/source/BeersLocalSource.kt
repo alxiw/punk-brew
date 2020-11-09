@@ -2,13 +2,13 @@ package io.github.alxiw.punkbrew.data.source
 
 import androidx.paging.DataSource
 import io.github.alxiw.punkbrew.data.db.BeerEntity
-import io.github.alxiw.punkbrew.data.db.PunkDao
+import io.github.alxiw.punkbrew.data.db.BeersDao
 import io.reactivex.Single
 import timber.log.Timber
 import java.util.concurrent.Executor
 
-class PunkLocalSource (
-    private val punkDao: PunkDao,
+class BeersLocalSource (
+    private val beersDao: BeersDao,
     private val ioExecutor: Executor
 ) {
 
@@ -16,7 +16,7 @@ class PunkLocalSource (
         Timber.d("Insert beers into cache")
         ioExecutor.execute {
             for (beer in beers) {
-                punkDao.insert(
+                beersDao.insert(
                     beer.id,
                     beer.name,
                     beer.tagline,
@@ -47,31 +47,31 @@ class PunkLocalSource (
     fun update(beer: BeerEntity, insertFinished: () -> Unit) {
         Timber.d("Update beer in cache")
         ioExecutor.execute {
-            punkDao.update(beer.id, beer.favorite)
+            beersDao.update(beer.id, beer.favorite)
             insertFinished()
         }
     }
 
     fun getBeer(id: Int): Single<BeerEntity> {
         Timber.d("Request beer from cache")
-        return punkDao.beer(id)
+        return beersDao.beer(id)
     }
 
     fun getBeers(query: String?): DataSource.Factory<Int, BeerEntity> {
         Timber.d("Request data source of all beers from cache")
         if (query.isNullOrEmpty()) {
-            return punkDao.beers()
+            return beersDao.beers()
         }
         val number = query.toIntOrNull()
         if (number != null && number > 0) {
-            return punkDao.beersById(number)
+            return beersDao.beersById(number)
         }
         val name = "%${query.replace(' ', '%')}%"
-        return punkDao.beersByName(name)
+        return beersDao.beersByName(name)
     }
 
     fun getFavorites(): DataSource.Factory<Int, BeerEntity> {
         Timber.d("Request data source of favorite beers from cache")
-        return punkDao.favorites()
+        return beersDao.favorites()
     }
 }
