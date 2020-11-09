@@ -10,7 +10,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
-class PunkRemoteSource(
+class BeersRemoteSource(
     private val service: PunkService,
     private val gson: Gson
 ) {

@@ -3,14 +3,14 @@ package io.github.alxiw.punkbrew.ui.details
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import io.github.alxiw.punkbrew.data.PunkRepository
+import io.github.alxiw.punkbrew.data.BeersRepository
 import io.github.alxiw.punkbrew.data.db.BeerEntity
 import io.github.alxiw.punkbrew.ui.base.BaseViewModel
 import io.reactivex.Single
 import timber.log.Timber
 
 class DetailsViewModel(
-    private val repository: PunkRepository
+    private val repository: BeersRepository
 ) : BaseViewModel() {
 
     internal var currentBeer: BeerEntity? = null
