@@ -37,6 +37,7 @@ class FavoritesFragment : BeersFragment() {
             Toast.makeText(context, context?.getString(R.string.menu_information_title), Toast.LENGTH_SHORT).show()
             true
         }
+        informationItem.isVisible = false
 
         super.onCreateOptionsMenu(menu, inflater)
     }
