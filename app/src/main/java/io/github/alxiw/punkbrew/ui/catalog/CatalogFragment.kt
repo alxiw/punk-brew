@@ -61,6 +61,7 @@ class CatalogFragment : BeersFragment() {
             }
             true
         }
+        filterItem.isVisible = false
 
         val searchItem = menu.findItem(R.id.catalog_menu_search)
         searchItem.let { item ->
