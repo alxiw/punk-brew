@@ -2,7 +2,7 @@ package io.github.alxiw.punkbrew.ui.details
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import io.github.alxiw.punkbrew.data.BeersRepository
 import io.github.alxiw.punkbrew.data.db.BeerEntity
 import io.github.alxiw.punkbrew.ui.base.BaseViewModel
@@ -17,7 +17,7 @@ class DetailsViewModel(
 
     private val idLiveData = MutableLiveData<Int>()
 
-    val beer : LiveData<Single<BeerEntity>> = Transformations.map(idLiveData) {
+    val beer : LiveData<Single<BeerEntity>> = idLiveData.map {
         repository.beer(it)
     }
 

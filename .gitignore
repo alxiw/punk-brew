@@ -1,8 +1,10 @@
 *.iml
 .gradle
+.gitconfig
 /local.properties
 .idea
 .DS_Store
 /build
 /captures
 .externalNativeBuild
+.kotlin

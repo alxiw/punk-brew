@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.alxiw.punkbrew.R
 import io.github.alxiw.punkbrew.data.db.BeerEntity
+import io.github.alxiw.punkbrew.databinding.FragmentBeersBinding
 import io.github.alxiw.punkbrew.ui.base.BaseFragment
 import io.github.alxiw.punkbrew.util.hide
 import io.github.alxiw.punkbrew.util.show
-import kotlinx.android.synthetic.main.fragment_beers.*
 
 abstract class BeersFragment : BaseFragment<BeersViewModel>(), BeersView<BeersViewModel> {
 
@@ -18,6 +18,8 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(), BeersView<BeersVi
 
     protected val adapter = BeersAdapter()
     override val layoutId: Int = R.layout.fragment_beers
+
+    protected lateinit var binding: FragmentBeersBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,15 +40,16 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(), BeersView<BeersVi
         return view
     }
 
-    override fun initView() {
-        beers_recycler_view.also {
+    override fun initView(view: View) {
+        binding = FragmentBeersBinding.bind(view)
+        binding.beersRecyclerView.also {
             it.layoutManager = LinearLayoutManager(context)
             it.adapter = adapter
         }
     }
 
     override fun onDestroyView() {
-        beers_recycler_view.adapter = null
+        binding.beersRecyclerView.adapter = null
         super.onDestroyView()
     }
 
@@ -58,20 +61,20 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(), BeersView<BeersVi
     }
 
     override fun onLoading() {
-        beers_progress_bar.show()
-        beers_recycler_view.hide()
-        beers_empty_list.hide()
+        binding.beersProgressBar.show()
+        binding.beersRecyclerView.hide()
+        binding.beersEmptyList.hide()
     }
 
     override fun onContentReceived() {
-        beers_recycler_view.show()
-        beers_progress_bar.hide()
-        beers_empty_list.hide()
+        binding.beersRecyclerView.show()
+        binding.beersProgressBar.hide()
+        binding.beersEmptyList.hide()
     }
 
     override fun onEmptyContent() {
-        beers_empty_list.show()
-        beers_recycler_view.hide()
-        beers_progress_bar.hide()
+        binding.beersEmptyList.show()
+        binding.beersRecyclerView.hide()
+        binding.beersProgressBar.hide()
     }
 }

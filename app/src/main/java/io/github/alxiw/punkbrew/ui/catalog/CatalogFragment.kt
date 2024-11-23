@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.view.*
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -17,8 +18,6 @@ import io.github.alxiw.punkbrew.ui.details.DetailsFragment
 import io.github.alxiw.punkbrew.ui.favorites.FavoritesFragment
 import io.github.alxiw.punkbrew.ui.list.BeersFragment
 import io.github.alxiw.punkbrew.util.getFormattedBeerName
-import kotlinx.android.synthetic.main.fragment_beers.*
-import kotlinx.android.synthetic.main.item_beer.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
@@ -98,15 +97,15 @@ class CatalogFragment : BeersFragment() {
     }
 
     override fun setupToolbar() {
-        beers_toolbar.also {
+        binding.beersToolbar.also {
             (activity as AppCompatActivity).setSupportActionBar(it)
             it.setNavigationIcon(R.drawable.ic_favorites)
             it.setNavigationOnClickListener { onFavoritesClicked() }
         }
     }
 
-    override fun initView() {
-        super.initView()
+    override fun initView(view: View) {
+        super.initView(view)
         viewModel.beers.observe(this, Observer {
             Timber.d("Received list of beers with size of: ${it.size}")
             if (it.size > 0) {
@@ -142,7 +141,7 @@ class CatalogFragment : BeersFragment() {
     }
 
     private fun searchByName(query: String) {
-        beers_recycler_view.scrollToPosition(0)
+        binding.beersRecyclerView.scrollToPosition(0)
         viewModel.searchBeers(getFormattedBeerName(query))
         adapter.submitList(null)
     }
@@ -170,7 +169,7 @@ class CatalogFragment : BeersFragment() {
         viewModel.updateBeer(beer) {
             val mainHandler = Handler(requireContext().mainLooper)
             val runnable = Runnable {
-                itemView.item_favorite.setImageResource(
+                itemView.findViewById<ImageView>(R.id.item_favorite).setImageResource(
                     if (beer.favorite) {
                         R.drawable.badge_favorite_true
                     } else {

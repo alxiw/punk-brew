@@ -17,11 +17,11 @@ abstract class BaseFragment<VM : BaseViewModel> : Fragment(), BaseView<BaseViewM
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initView(view)
         setupToolbar()
-        initView()
     }
 
     abstract fun setupToolbar()
 
-    abstract fun initView()
+    abstract fun initView(view: View)
 }

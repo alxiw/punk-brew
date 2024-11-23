@@ -5,6 +5,7 @@ import android.os.Handler
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,11 +14,12 @@ import com.google.gson.reflect.TypeToken
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Section
-import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import io.github.alxiw.punkbrew.R
 import io.github.alxiw.punkbrew.data.api.BeerResponse
 import io.github.alxiw.punkbrew.data.db.BeerEntity
+import io.github.alxiw.punkbrew.databinding.FragmentDetailsBinding
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_CATALOG_TAG
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_FAVORITES_TAG
 import io.github.alxiw.punkbrew.ui.base.BaseFragment
@@ -31,8 +33,6 @@ import io.github.alxiw.punkbrew.util.show
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.content_details.*
-import kotlinx.android.synthetic.main.fragment_details.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -49,6 +49,8 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
     private var beerId = -1
     private var favoriteItem: MenuItem? = null
     private val disposables = ArrayList<Disposable>()
+
+    private lateinit var binding: FragmentDetailsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,15 +79,16 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
     }
 
     override fun setupToolbar() {
-        details_toolbar.also {
+        binding.detailsToolbar.also {
             (activity as AppCompatActivity).setSupportActionBar(it)
             it.setNavigationIcon(R.drawable.ic_back)
             it.setNavigationOnClickListener { finish() }
         }
     }
 
-    override fun initView() {
-        beer_details_recycler_view.apply {
+    override fun initView(view: View) {
+        binding = FragmentDetailsBinding.bind(view)
+        binding.detailsContent.beerDetailsRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             isNestedScrollingEnabled = false
             adapter = groupAdapter
@@ -139,22 +142,22 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
     }
 
     private fun initViews(beer: BeerEntity) {
-        details_toolbar.title = beer.name
+        binding.detailsToolbar.title = beer.name
         initFavoriteItem(beer)
 
         if (beer.imageUrl.isNullOrEmpty()) {
-            beer_details_image.setImageResource(R.drawable.bottle)
+            binding.detailsContent.beerDetailsImage.setImageResource(R.drawable.bottle)
         } else {
             Picasso.get()
-                .load(beer.imageUrl)
+                .load(fixImageUrl(beer.imageUrl))
                 .error(R.drawable.bottle)
                 .fit().centerInside()
                 .into(
-                    beer_details_image,
+                    binding.detailsContent.beerDetailsImage,
                     object : Callback {
                         override fun onSuccess() {
-                            beer_details_image.alpha = 0f
-                            beer_details_image.animate().setDuration(500).alpha(1f).start()
+                            binding.detailsContent.beerDetailsImage.alpha = 0f
+                            binding.detailsContent.beerDetailsImage.animate().setDuration(500).alpha(1f).start()
                         }
 
                         override fun onError(e: Exception?) {
@@ -168,26 +171,26 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
                 )
         }
 
-        beer_details_id.text = String.format("#%s", beer.id)
-        beer_details_date.text = DateFormatter.formatDate(beer.firstBrewed, false)
+        binding.detailsContent.beerDetailsId.text = String.format("#%s", beer.id)
+        binding.detailsContent.beerDetailsDate.text = DateFormatter.formatDate(beer.firstBrewed, false)
 
         updateBasicsView(beer)
-        beer_details_name.text = beer.name
-        beer_details_tagline.text = beer.tagline
+        binding.detailsContent.beerDetailsName.text = beer.name
+        binding.detailsContent.beerDetailsTagline.text = beer.tagline
 
         updateRecyclerView(beer)
-        beer_details_copyright.text = String.format("Contributed by %s", beer.contributedBy)
+        binding.detailsContent.beerDetailsCopyright.text = String.format("Contributed by %s", beer.contributedBy)
     }
 
     private fun updateBasicsView(beer: BeerEntity) {
-        beer_details_abv_value.text = String.format("%s%%", beer.abv)
-        beer_details_ibu_value.text = String.format("%s", beer.ibu)
-        beer_details_target_og_value.text = String.format("%s", beer.targetOg)
-        beer_details_target_fg_value.text = String.format("%s", beer.targetFg)
-        beer_details_ebc_value.text = String.format("%s", beer.ebc)
-        beer_details_srm_value.text = String.format("%s", beer.srm)
-        beer_details_ph_value.text = String.format("%s", beer.ph)
-        beer_details_attenuation_value.text = String.format("%s%%", beer.attenuationLevel)
+        binding.detailsContent.beerDetailsAbvValue.text = String.format("%s%%", beer.abv)
+        binding.detailsContent.beerDetailsIbuValue.text = String.format("%s", beer.ibu)
+        binding.detailsContent.beerDetailsTargetOgValue.text = String.format("%s", beer.targetOg)
+        binding.detailsContent.beerDetailsTargetFgValue.text = String.format("%s", beer.targetFg)
+        binding.detailsContent.beerDetailsEbcValue.text = String.format("%s", beer.ebc)
+        binding.detailsContent.beerDetailsSrmValue.text = String.format("%s", beer.srm)
+        binding.detailsContent.beerDetailsPhValue.text = String.format("%s", beer.ph)
+        binding.detailsContent.beerDetailsAttenuationValue.text = String.format("%s%%", beer.attenuationLevel)
 
         val volume: BeerResponse.Value = gson.fromJson(
             beer.volumeJson,
@@ -197,11 +200,11 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
             beer.boilVolumeJson,
             BeerResponse.Value::class.java
         )
-        beer_details_volume_value.text = String.format(
+        binding.detailsContent.beerDetailsVolumeValue.text = String.format(
             "%s${if (volume.unit.equals("litres", ignoreCase = true)) "L" else ""}",
             volume.value
         )
-        beer_details_boil_volume_value.text = String.format(
+        binding.detailsContent.beerDetailsBoilVolumeValue.text = String.format(
             "%s${if (boilVolume.unit.equals("litres", ignoreCase = true)) "L" else ""}",
             boilVolume.value
         )
@@ -244,21 +247,21 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
     }
 
     override fun onLoading() {
-        details_progress_bar.show()
-        details_content.hide()
-        details_error.hide()
+        binding.detailsProgressBar.show()
+        binding.detailsContent.root.hide()
+        binding.detailsError.hide()
     }
 
     override fun onContentReceived() {
-        details_content.show()
-        details_error.hide()
-        details_progress_bar.hide()
+        binding.detailsContent.root.show()
+        binding.detailsError.hide()
+        binding.detailsProgressBar.hide()
     }
 
     override fun onEmptyContent() {
-        details_error.show()
-        details_content.hide()
-        details_progress_bar.hide()
+        binding.detailsError.show()
+        binding.detailsContent.root.hide()
+        binding.detailsProgressBar.hide()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -303,6 +306,14 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
     }
 
     companion object {
+
+        private fun fixImageUrl(imageUrl: String?): String? {
+            // local image server: http://localhost:3000/images/v2/202.png
+            // default image server: https://images.punkapi.com/v2/132.png
+            if (imageUrl.isNullOrEmpty()) return imageUrl
+
+            return imageUrl.replace("https://images.punkapi.com/", "http://localhost:3000/images/")
+        }
 
         private const val BEER_ID_KEY = "beer_id"
 

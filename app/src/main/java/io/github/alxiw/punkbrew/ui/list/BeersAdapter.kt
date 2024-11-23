@@ -9,20 +9,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import io.github.alxiw.punkbrew.R
 import io.github.alxiw.punkbrew.data.db.BeerEntity
+import io.github.alxiw.punkbrew.databinding.ItemBeerBinding
 import io.github.alxiw.punkbrew.util.DateFormatter.formatDate
-import kotlinx.android.synthetic.main.item_beer.view.*
 
 class BeersAdapter : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(BEER_COMPARATOR) {
 
     private var onItemClickListener: OnItemClickListener? = null
 
+    private lateinit var binding: ItemBeerBinding
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BeersViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(
-            R.layout.item_beer,
-            parent,
-            false
-        )
-        return BeersViewHolder(view)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_beer, parent, false)
+        binding = ItemBeerBinding.bind(view)
+        return BeersViewHolder(view, binding)
     }
 
     override fun onBindViewHolder(holder: BeersViewHolder, position: Int) {
@@ -32,7 +31,7 @@ class BeersAdapter : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(
             itemView.setOnClickListener {
                 onItemClickListener?.onItemClick(beer)
             }
-            itemView.item_favorite.setOnClickListener {
+            binding.itemFavorite.setOnClickListener {
                 onItemClickListener?.onItemFavoriteBadgeClick(beer, itemView)
             }
         }
@@ -42,23 +41,23 @@ class BeersAdapter : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(
         this.onItemClickListener = listener
     }
 
-    class BeersViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
+    class BeersViewHolder(itemView : View, private val binding: ItemBeerBinding) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(beer : BeerEntity) {
-            itemView.item_id.text = String.format("#%s", beer.id)
-            itemView.item_name.text = beer.name
-            itemView.item_tagline.text = beer.tagline
-            itemView.item_abv.text = String.format("%s%%", beer.abv)
-            itemView.item_date.text = formatDate(beer.firstBrewed, true)
+            binding.itemId.text = String.format("#%s", beer.id)
+            binding.itemName.text = beer.name
+            binding.itemTagline.text = beer.tagline
+            binding.itemAbv.text = String.format("%s%%", beer.abv)
+            binding.itemDate.text = formatDate(beer.firstBrewed, true)
 
             Picasso.get()
-                .load(beer.imageUrl)
+                .load(fixImageUrl(beer.imageUrl))
                 .placeholder(R.drawable.bottle)
                 .error(R.drawable.bottle)
                 .fit().centerInside()
-                .into(itemView.item_image)
+                .into(binding.itemImage)
 
-            itemView.item_favorite.setImageResource(
+            binding.itemFavorite.setImageResource(
                 if (beer.favorite) {
                     R.drawable.badge_favorite_true
                 } else {
@@ -75,6 +74,14 @@ class BeersAdapter : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(
     }
 
     companion object {
+        private fun fixImageUrl(imageUrl: String?): String? {
+            // local image server: http://localhost:3000/images/v2/202.png
+            // default image server: https://images.punkapi.com/v2/132.png
+            if (imageUrl.isNullOrEmpty()) return imageUrl
+
+            return imageUrl.replace("https://images.punkapi.com/", "http://localhost:3000/images/")
+        }
+
         private val BEER_COMPARATOR =
             object : DiffUtil.ItemCallback<BeerEntity>() {
                 override fun areItemsTheSame(oldItem: BeerEntity, newItem: BeerEntity): Boolean {

@@ -5,6 +5,7 @@ import android.os.Handler
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -15,8 +16,6 @@ import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_DETAILS_TAG
 import io.github.alxiw.punkbrew.ui.list.BeersView
 import io.github.alxiw.punkbrew.ui.details.DetailsFragment
 import io.github.alxiw.punkbrew.ui.list.BeersFragment
-import kotlinx.android.synthetic.main.fragment_beers.*
-import kotlinx.android.synthetic.main.item_beer.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
@@ -43,7 +42,7 @@ class FavoritesFragment : BeersFragment() {
     }
 
     override fun setupToolbar() {
-        beers_toolbar.also {
+        binding.beersToolbar.also {
             (activity as AppCompatActivity).setSupportActionBar(it)
             it.setNavigationIcon(R.drawable.ic_back)
             it.setNavigationOnClickListener { finish() }
@@ -51,11 +50,11 @@ class FavoritesFragment : BeersFragment() {
         }
     }
 
-    override fun initView() {
-        super.initView()
+    override fun initView(view: View) {
+        super.initView(view)
         viewModel.beers.observe(this, Observer {
             Timber.d("Received list of favorites with size of: ${it.size}")
-            if (it.size > 0) {
+            if (it.isNotEmpty()) {
                 onContentReceived()
             } else {
                 onEmptyContent()
@@ -81,7 +80,7 @@ class FavoritesFragment : BeersFragment() {
             val mainHandler = Handler(requireContext().mainLooper)
             val runnable = Runnable {
                 if (!beer.favorite) {
-                    itemView.item_favorite.setImageResource(R.drawable.badge_favorite_false)
+                    itemView.findViewById<ImageView>(R.id.item_favorite).setImageResource(R.drawable.badge_favorite_false)
                     onBeerUpdated()
                     updateFragment(BACK_STACK_CATALOG_TAG)
                 }
