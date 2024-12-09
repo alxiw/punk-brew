@@ -7,7 +7,7 @@ import io.reactivex.Single
 import timber.log.Timber
 import java.util.concurrent.Executor
 
-class BeersLocalSource (
+class BeersLocalSource(
     private val beersDao: BeersDao,
     private val ioExecutor: Executor
 ) {
@@ -22,7 +22,7 @@ class BeersLocalSource (
                     beer.tagline,
                     beer.firstBrewed,
                     beer.description,
-                    beer.imageUrl,
+                    beer.image,
                     beer.abv,
                     beer.ibu,
                     beer.targetFg,

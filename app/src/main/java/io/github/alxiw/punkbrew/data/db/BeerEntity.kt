@@ -14,11 +14,11 @@ data class BeerEntity(
     @ColumnInfo(name = "tagline")
     val tagline: String,
     @ColumnInfo(name = "first_brewed")
-    val firstBrewed: String?,
+    val firstBrewed: String,
     @ColumnInfo(name = "description")
-    val description: String?,
+    val description: String,
     @ColumnInfo(name = "image_url")
-    val imageUrl: String?,
+    val image: String,
     @ColumnInfo(name = "abv")
     val abv: Double,
     @ColumnInfo(name = "ibu")

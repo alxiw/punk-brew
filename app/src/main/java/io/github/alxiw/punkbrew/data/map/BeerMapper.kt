@@ -14,7 +14,7 @@ object BeerMapper {
                 it.tagline,
                 it.firstBrewed,
                 it.description,
-                it.imageUrl,
+                it.image,
                 it.abv,
                 it.ibu,
                 it.targetFg,

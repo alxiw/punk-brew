@@ -11,6 +11,7 @@ import io.github.alxiw.punkbrew.R
 import io.github.alxiw.punkbrew.data.db.BeerEntity
 import io.github.alxiw.punkbrew.databinding.ItemBeerBinding
 import io.github.alxiw.punkbrew.util.DateFormatter.formatDate
+import io.github.alxiw.punkbrew.util.makeImageUrl
 
 class BeersAdapter : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(BEER_COMPARATOR) {
 
@@ -51,7 +52,7 @@ class BeersAdapter : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(
             binding.itemDate.text = formatDate(beer.firstBrewed, true)
 
             Picasso.get()
-                .load(fixImageUrl(beer.imageUrl))
+                .load(makeImageUrl(beer.image))
                 .placeholder(R.drawable.bottle)
                 .error(R.drawable.bottle)
                 .fit().centerInside()
@@ -74,13 +75,6 @@ class BeersAdapter : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(
     }
 
     companion object {
-        private fun fixImageUrl(imageUrl: String?): String? {
-            // local image server: http://localhost:3000/images/v2/202.png
-            // default image server: https://images.punkapi.com/v2/132.png
-            if (imageUrl.isNullOrEmpty()) return imageUrl
-
-            return imageUrl.replace("https://images.punkapi.com/", "http://localhost:3000/images/")
-        }
 
         private val BEER_COMPARATOR =
             object : DiffUtil.ItemCallback<BeerEntity>() {

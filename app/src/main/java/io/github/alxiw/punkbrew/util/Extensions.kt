@@ -13,6 +13,12 @@ fun View.hide() {
     visibility = View.GONE
 }
 
-fun getFormattedBeerName(name : String?) : String?{
+fun getFormattedBeerName(name : String?) : String? {
     return if (TextUtils.isEmpty(name)) null else name
+}
+
+fun makeImageUrl(imageUrl: String?): String? {
+    if (imageUrl.isNullOrEmpty()) return imageUrl
+
+    return "https://punkapi.ru/v3/images/$imageUrl"
 }

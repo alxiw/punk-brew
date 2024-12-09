@@ -29,6 +29,7 @@ import io.github.alxiw.punkbrew.ui.list.BeersView
 import io.github.alxiw.punkbrew.util.DateFormatter
 import io.github.alxiw.punkbrew.util.EMPTY_PLACEHOLDER
 import io.github.alxiw.punkbrew.util.hide
+import io.github.alxiw.punkbrew.util.makeImageUrl
 import io.github.alxiw.punkbrew.util.show
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -145,11 +146,11 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
         binding.detailsToolbar.title = beer.name
         initFavoriteItem(beer)
 
-        if (beer.imageUrl.isNullOrEmpty()) {
+        if (beer.image.isNullOrEmpty()) {
             binding.detailsContent.beerDetailsImage.setImageResource(R.drawable.bottle)
         } else {
             Picasso.get()
-                .load(fixImageUrl(beer.imageUrl))
+                .load(makeImageUrl(beer.image))
                 .error(R.drawable.bottle)
                 .fit().centerInside()
                 .into(
@@ -306,14 +307,6 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
     }
 
     companion object {
-
-        private fun fixImageUrl(imageUrl: String?): String? {
-            // local image server: http://localhost:3000/images/v2/202.png
-            // default image server: https://images.punkapi.com/v2/132.png
-            if (imageUrl.isNullOrEmpty()) return imageUrl
-
-            return imageUrl.replace("https://images.punkapi.com/", "http://localhost:3000/images/")
-        }
 
         private const val BEER_ID_KEY = "beer_id"
 

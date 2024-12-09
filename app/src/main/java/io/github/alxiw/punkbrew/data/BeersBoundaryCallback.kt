@@ -30,6 +30,7 @@ class BeersBoundaryCallback(
     override fun onZeroItemsLoaded() {
         requestAndSaveData(query)
     }
+
     override fun onItemAtFrontLoaded(itemAtFront: BeerEntity) {
         requestAndSaveData(query)
     }

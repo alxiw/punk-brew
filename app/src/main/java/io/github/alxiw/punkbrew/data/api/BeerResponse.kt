@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 /**
  * {
- *     "id": 192,
+ *     "id": 1,
  *     "name": "Punk IPA 2007 - 2010",
  *     "tagline": "Post Modern Classic. Spiky. Tropical. Hoppy.",
  *     "first_brewed": "04/2007",
@@ -12,7 +12,7 @@ import com.google.gson.annotations.SerializedName
  *         James and Martin's original take on an American IPA, subverted with punchy New Zealand
  *         hops. Layered with new world hops to create an all-out riot of grapefruit, pineapple
  *         and lychee before a spiky, mouth-puckering bitter finish.",
- *     "image_url": "https://images.punkapi.com/v2/192.png",
+ *     "image": "001.png",
  *     "abv": 6.0,
  *     "ibu": 60.0,
  *     "target_fg": 1010.0,
@@ -103,8 +103,8 @@ data class BeerResponse(
     val firstBrewed: String,
     @SerializedName("description")
     val description: String,
-    @SerializedName("image_url")
-    val imageUrl: String?,
+    @SerializedName("image")
+    val image: String,
     @SerializedName("abv")
     val abv: Double,
     @SerializedName("ibu")
