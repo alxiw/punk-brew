@@ -14,7 +14,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-private const val BASE_URL = "https://punkapi.ru/v3/"
+private const val BASE_URL = "https://punkapi-alxiw.amvera.io/v3/"
 
 val networkModule = module {
 

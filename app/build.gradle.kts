@@ -71,7 +71,6 @@ dependencies {
     implementation(libs.adapter.rxjava2)
     implementation(libs.picasso)
 
-
     // db
     implementation(libs.androidx.room.rxjava2)
     implementation(libs.arch.rxjava)
@@ -79,10 +78,8 @@ dependencies {
     ksp(libs.androidx.room.compiler)
 
     // util
-    implementation(libs.stetho.okhttp3)
-    implementation(libs.timber)
-
     implementation(libs.threetenbp)
+    implementation(libs.stetho.okhttp3)
 
     // log
     implementation(libs.logging.interceptor)

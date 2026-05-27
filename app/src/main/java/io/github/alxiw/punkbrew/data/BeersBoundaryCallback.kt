@@ -1,12 +1,12 @@
 package io.github.alxiw.punkbrew.data
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import io.github.alxiw.punkbrew.data.db.BeerEntity
 import io.github.alxiw.punkbrew.data.source.BeersLocalSource
 import io.github.alxiw.punkbrew.data.source.BeersRemoteSource
-import timber.log.Timber
 
 class BeersBoundaryCallback(
     private val query: String?,
@@ -43,21 +43,21 @@ class BeersBoundaryCallback(
         if (isRequestInProgress) return
 
         isRequestInProgress = true
-        Timber.d("Request new page of beers")
+        Log.d("HELLO", "Request new page of beers")
         remoteSource.searchBeers(
             query,
             lastRequestedPage,
             NETWORK_PAGE_SIZE,
             { beers ->
                 localSource.insertAll(beers) {
-                    Timber.d("Insert %d beers into cache", beers.size)
+                    Log.d("HELLO", "Insert ${beers.size} beers into cache")
                     _networkErrors.postValue(null)
                     lastRequestedPage++
                     isRequestInProgress = false
                 }
             },
             { error ->
-                Timber.d("No beers inserted into cache")
+                Log.d("HELLO", "No beers inserted into cache")
                 _networkErrors.postValue(error)
                 isRequestInProgress = false
             }

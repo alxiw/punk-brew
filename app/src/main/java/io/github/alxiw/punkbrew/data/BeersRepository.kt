@@ -1,5 +1,6 @@
 package io.github.alxiw.punkbrew.data
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
@@ -7,7 +8,6 @@ import io.github.alxiw.punkbrew.data.db.BeerEntity
 import io.github.alxiw.punkbrew.data.source.BeersLocalSource
 import io.github.alxiw.punkbrew.data.source.BeersRemoteSource
 import io.reactivex.Single
-import timber.log.Timber
 
 class BeersRepository(
     private val remoteSource: BeersRemoteSource,
@@ -19,7 +19,7 @@ class BeersRepository(
         .build()
 
     fun search(query: String?): SearchResult {
-        Timber.d("Search beers by query: $query")
+        Log.d("HELLO", "Search beers by query: $query")
         val dataSourceFactory = localSource.getBeers(query)
         val boundaryCallback = BeersBoundaryCallback(query, remoteSource, localSource)
         val networkErrors = boundaryCallback.networkErrors

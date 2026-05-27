@@ -9,6 +9,8 @@ interface BeersView<VM : BeersViewModel> : BaseView<BaseViewModel> {
 
     fun onBeerClicked(beer: BeerEntity)
 
+    fun onBeerLongClicked(beer: BeerEntity)
+
     fun onFavoriteBadgeClicked(beer: BeerEntity, itemView: View)
 
     fun onBeerUpdated()

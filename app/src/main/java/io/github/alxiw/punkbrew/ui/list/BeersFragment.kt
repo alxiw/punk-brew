@@ -1,14 +1,17 @@
 package io.github.alxiw.punkbrew.ui.list
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.alxiw.punkbrew.R
 import io.github.alxiw.punkbrew.data.db.BeerEntity
 import io.github.alxiw.punkbrew.databinding.FragmentBeersBinding
 import io.github.alxiw.punkbrew.ui.base.BaseFragment
+import io.github.alxiw.punkbrew.ui.dialog.BeerDialogFragment
 import io.github.alxiw.punkbrew.util.hide
 import io.github.alxiw.punkbrew.util.show
 
@@ -30,6 +33,10 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(), BeersView<BeersVi
         adapter.setOnItemClickListener(object : BeersAdapter.OnItemClickListener {
             override fun onItemClick(beer: BeerEntity) {
                 onBeerClicked(beer)
+            }
+
+            override fun onItemLongClick(beer: BeerEntity) {
+                onBeerLongClicked(beer)
             }
 
             override fun onItemFavoriteBadgeClick(beer: BeerEntity, itemView: View) {
@@ -76,5 +83,21 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(), BeersView<BeersVi
         binding.beersEmptyList.show()
         binding.beersRecyclerView.hide()
         binding.beersProgressBar.hide()
+    }
+
+    override fun onBeerLongClicked(beer: BeerEntity) {
+        val fm: FragmentManager = childFragmentManager
+        val beerDialog = BeerDialogFragment.newInstance(
+            beer.id,
+            beer.name,
+            beer.tagline,
+            beer.description,
+            beer.abv,
+            beer.firstBrewed,
+            beer.image
+        )
+        beerDialog.show(fm, "fragment_beer")
+
+        Log.d("HELLO", "Beer ${beer.id} long clicked")
     }
 }

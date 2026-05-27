@@ -2,6 +2,7 @@ package io.github.alxiw.punkbrew.ui.details
 
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -36,8 +37,6 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
-
 
 class DetailsFragment : BaseFragment<DetailsViewModel>() {
 
@@ -103,7 +102,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                             { beer ->
-                                Timber.d("Received beer: $beer")
+                                Log.d("HELLO", "Received beer: $beer")
                                 viewModel.currentBeer = beer
                                 run {
                                     initViews(beer)
@@ -111,11 +110,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
                                 }
                             },
                             { e: Throwable ->
-                                Timber.d(
-                                    "Error occurred while receiving a beer with number %d, %s",
-                                    beerId,
-                                    e.message
-                                )
+                                Log.d("HELLO", "Error occurred while receiving a beer with number ${beerId}, ${e.message}")
                                 onEmptyContent()
                             }
                         )
@@ -162,11 +157,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
                         }
 
                         override fun onError(e: Exception?) {
-                            Timber.d(
-                                "Error occurred while loading image of beer with number %d, %s",
-                                beerId,
-                                e?.message ?: "Unknown error"
-                            )
+                            Log.d("HELLO", "Error occurred while loading image of beer with number ${beerId}, ${e?.message ?: "Unknown error"}")
                         }
                     }
                 )

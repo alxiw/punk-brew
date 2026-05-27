@@ -17,24 +17,14 @@ class BeersAdapter : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(
 
     private var onItemClickListener: OnItemClickListener? = null
 
-    private lateinit var binding: ItemBeerBinding
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BeersViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_beer, parent, false)
-        binding = ItemBeerBinding.bind(view)
-        return BeersViewHolder(view, binding)
+        val binding = ItemBeerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return BeersViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: BeersViewHolder, position: Int) {
         getItem(position)?.let { beer ->
-            holder.bind(beer)
-            val itemView = holder.itemView
-            itemView.setOnClickListener {
-                onItemClickListener?.onItemClick(beer)
-            }
-            binding.itemFavorite.setOnClickListener {
-                onItemClickListener?.onItemFavoriteBadgeClick(beer, itemView)
-            }
+            holder.bind(beer, onItemClickListener)
         }
     }
 
@@ -42,9 +32,9 @@ class BeersAdapter : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(
         this.onItemClickListener = listener
     }
 
-    class BeersViewHolder(itemView : View, private val binding: ItemBeerBinding) : RecyclerView.ViewHolder(itemView) {
+    class BeersViewHolder(private val binding: ItemBeerBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(beer : BeerEntity) {
+        fun bind(beer : BeerEntity, listener: OnItemClickListener?) {
             binding.itemId.text = String.format("#%s", beer.id)
             binding.itemName.text = beer.name
             binding.itemTagline.text = beer.tagline
@@ -65,11 +55,26 @@ class BeersAdapter : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(
                     R.drawable.badge_favorite_false
                 }
             )
+
+            itemView.setOnClickListener {
+                listener?.onItemClick(beer)
+            }
+
+            itemView.setOnLongClickListener {
+                listener?.onItemLongClick(beer)
+                true
+            }
+
+            binding.itemFavorite.setOnClickListener {
+                listener?.onItemFavoriteBadgeClick(beer, itemView)
+            }
         }
     }
 
     interface OnItemClickListener {
         fun onItemClick(beer: BeerEntity)
+
+        fun onItemLongClick(beer: BeerEntity)
 
         fun onItemFavoriteBadgeClick(beer: BeerEntity, itemView: View)
     }
@@ -79,11 +84,11 @@ class BeersAdapter : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(
         private val BEER_COMPARATOR =
             object : DiffUtil.ItemCallback<BeerEntity>() {
                 override fun areItemsTheSame(oldItem: BeerEntity, newItem: BeerEntity): Boolean {
-                    return oldItem == newItem && oldItem.favorite == newItem.favorite
+                    return oldItem.id == newItem.id
                 }
 
                 override fun areContentsTheSame(oldItem: BeerEntity, newItem: BeerEntity): Boolean {
-                    return oldItem.name == newItem.name && oldItem.favorite == newItem.favorite
+                    return oldItem == newItem
                 }
             }
     }

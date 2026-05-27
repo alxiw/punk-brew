@@ -4,6 +4,7 @@ import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.Toast
@@ -19,7 +20,6 @@ import io.github.alxiw.punkbrew.ui.favorites.FavoritesFragment
 import io.github.alxiw.punkbrew.ui.list.BeersFragment
 import io.github.alxiw.punkbrew.util.getFormattedBeerName
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
 class CatalogFragment : BeersFragment() {
 
@@ -107,7 +107,7 @@ class CatalogFragment : BeersFragment() {
     override fun initView(view: View) {
         super.initView(view)
         viewModel.beers.observe(this, Observer {
-            Timber.d("Received list of beers with size of: ${it.size}")
+            Log.d("HELLO", "Received list of beers with size of: ${it.size}")
             if (it.size > 0) {
                 onContentReceived()
             } else {
@@ -117,7 +117,7 @@ class CatalogFragment : BeersFragment() {
         })
 
         viewModel.networkErrors.observe(this, Observer {
-            Timber.d("Network error: %s", it ?: "...")
+            Log.d("HELLO", "Network error: ${it ?: "..."}")
             it?.let {
                 showNetworkError(it)
             }

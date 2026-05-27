@@ -2,6 +2,7 @@ package io.github.alxiw.punkbrew.ui.favorites
 
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
@@ -17,7 +18,6 @@ import io.github.alxiw.punkbrew.ui.list.BeersView
 import io.github.alxiw.punkbrew.ui.details.DetailsFragment
 import io.github.alxiw.punkbrew.ui.list.BeersFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
 class FavoritesFragment : BeersFragment() {
 
@@ -53,7 +53,7 @@ class FavoritesFragment : BeersFragment() {
     override fun initView(view: View) {
         super.initView(view)
         viewModel.beers.observe(this, Observer {
-            Timber.d("Received list of favorites with size of: ${it.size}")
+            Log.d("HELLO", "Received list of favorites with size of: ${it.size}")
             if (it.isNotEmpty()) {
                 onContentReceived()
             } else {

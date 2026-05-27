@@ -19,7 +19,6 @@ picasso = "2.71828"
 arch = "1.1.1"
 stetho = "1.6.0"
 threetenbp = "1.7.0"
-timber = "5.0.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -49,7 +48,6 @@ picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 arch-rxjava = { module = "android.arch.persistence.room:rxjava2", version.ref = "arch" }
 stetho-okhttp3 = { module = "com.facebook.stetho:stetho-okhttp3", version.ref = "stetho" }
 threetenbp = { module = "org.threeten:threetenbp", version.ref = "threetenbp" }
-timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 junit = { module = "junit:junit", version.ref = "junit" }
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
 androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }

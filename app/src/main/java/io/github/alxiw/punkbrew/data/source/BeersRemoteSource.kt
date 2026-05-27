@@ -1,5 +1,6 @@
 package io.github.alxiw.punkbrew.data.source
 
+import android.util.Log
 import com.google.gson.Gson
 import io.github.alxiw.punkbrew.data.api.BeerResponse
 import io.github.alxiw.punkbrew.data.api.PunkService
@@ -8,7 +9,6 @@ import io.github.alxiw.punkbrew.data.map.BeerMapper.fromResponse
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
 
 class BeersRemoteSource(
     private val service: PunkService,
@@ -31,17 +31,17 @@ class BeersRemoteSource(
             } else {
                 service.getBeers(page, perPage, query)
             }
-        Timber.d("Request page of beers from server")
+        Log.d("HELLO", "Request page of beers from server")
         disposables.add(
             single.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { response: List<BeerResponse> ->
-                        Timber.d("Received beers from server")
+                        Log.d("HELLO", "Received beers from server")
                         onSuccess(fromResponse(response, gson))
                     },
                     { e: Throwable ->
-                        Timber.d("Error occurred while requesting beers from server")
+                        Log.d("HELLO", "Error occurred while requesting beers from server")
                         onError(e.message ?: "Unknown error")
                     }
                 )

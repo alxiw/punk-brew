@@ -1,10 +1,10 @@
 package io.github.alxiw.punkbrew.data.source
 
+import android.util.Log
 import androidx.paging.DataSource
 import io.github.alxiw.punkbrew.data.db.BeerEntity
 import io.github.alxiw.punkbrew.data.db.BeersDao
 import io.reactivex.Single
-import timber.log.Timber
 import java.util.concurrent.Executor
 
 class BeersLocalSource(
@@ -13,7 +13,7 @@ class BeersLocalSource(
 ) {
 
     fun insertAll(beers: List<BeerEntity>, insertFinished: () -> Unit) {
-        Timber.d("Insert beers into cache")
+        Log.d("HELLO", "Insert beers into cache")
         ioExecutor.execute {
             for (beer in beers) {
                 beersDao.insert(
@@ -45,7 +45,7 @@ class BeersLocalSource(
     }
 
     fun update(beer: BeerEntity, insertFinished: () -> Unit) {
-        Timber.d("Update beer in cache")
+        Log.d("HELLO", "Update beer in cache")
         ioExecutor.execute {
             beersDao.update(beer.id, beer.favorite)
             insertFinished()
@@ -53,12 +53,12 @@ class BeersLocalSource(
     }
 
     fun getBeer(id: Int): Single<BeerEntity> {
-        Timber.d("Request beer from cache")
+        Log.d("HELLO", "Request beer from cache")
         return beersDao.beer(id)
     }
 
     fun getBeers(query: String?): DataSource.Factory<Int, BeerEntity> {
-        Timber.d("Request data source of all beers from cache")
+        Log.d("HELLO", "Request data source of all beers from cache")
         if (query.isNullOrEmpty()) {
             return beersDao.beers()
         }
@@ -71,7 +71,7 @@ class BeersLocalSource(
     }
 
     fun getFavorites(): DataSource.Factory<Int, BeerEntity> {
-        Timber.d("Request data source of favorite beers from cache")
+        Log.d("HELLO", "Request data source of favorite beers from cache")
         return beersDao.favorites()
     }
 }
