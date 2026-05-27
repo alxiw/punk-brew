@@ -7,27 +7,33 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import dev.androidbroadcast.vbpd.viewBinding
 import io.github.alxiw.punkbrew.R
 import io.github.alxiw.punkbrew.data.db.BeerEntity
+import io.github.alxiw.punkbrew.data.loader.ImageLoader
 import io.github.alxiw.punkbrew.databinding.FragmentBeersBinding
 import io.github.alxiw.punkbrew.ui.base.BaseFragment
 import io.github.alxiw.punkbrew.ui.dialog.BeerDialogFragment
 import io.github.alxiw.punkbrew.util.hide
 import io.github.alxiw.punkbrew.util.show
+import org.koin.android.ext.android.inject
+import kotlin.getValue
 
 abstract class BeersFragment : BaseFragment<BeersViewModel>(), BeersView<BeersViewModel> {
 
     abstract override val viewModel: BeersViewModel
 
-    protected val adapter = BeersAdapter()
+    private val imageLoader: ImageLoader by inject()
+
+    protected val adapter = BeersAdapter(imageLoader)
     override val layoutId: Int = R.layout.fragment_beers
 
-    protected lateinit var binding: FragmentBeersBinding
+    protected val binding by viewBinding(FragmentBeersBinding::bind)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val view = super.onCreateView(inflater, container, savedInstanceState)
 
         adapter.setOnItemClickListener(object : BeersAdapter.OnItemClickListener {
@@ -48,7 +54,6 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(), BeersView<BeersVi
     }
 
     override fun initView(view: View) {
-        binding = FragmentBeersBinding.bind(view)
         binding.beersRecyclerView.also {
             it.layoutManager = LinearLayoutManager(context)
             it.adapter = adapter

@@ -9,6 +9,8 @@ import java.util.*
 
 object DateFormatter {
 
+    private const val EMPTY_PLACEHOLDER = "∅"
+
     private val MONTH_YEAR_FORMATTER = DateTimeFormatter.ofPattern("MM/yyyy")
     private val YEAR_FORMATTER = DateTimeFormatter.ofPattern("yyyy")
 

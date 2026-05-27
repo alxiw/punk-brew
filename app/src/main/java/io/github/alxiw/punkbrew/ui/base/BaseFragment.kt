@@ -9,9 +9,10 @@ import androidx.fragment.app.Fragment
 abstract class BaseFragment<VM : BaseViewModel> : Fragment(), BaseView<BaseViewModel> {
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return inflater.inflate(layoutId, container, false)
     }
 

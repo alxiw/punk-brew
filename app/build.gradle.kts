@@ -37,8 +37,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     buildFeatures {
@@ -49,7 +49,7 @@ android {
 
 kotlin {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_1_8)
+        jvmTarget.set(JvmTarget.JVM_11)
     }
 }
 
@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.recyclerview)
+    implementation(libs.viewbindingdelegate)
 
     implementation(libs.androidx.paging.rxjava2.ktx)
     implementation(libs.androidx.paging.runtime.ktx)

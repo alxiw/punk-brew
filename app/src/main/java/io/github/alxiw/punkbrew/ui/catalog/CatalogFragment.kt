@@ -108,7 +108,7 @@ class CatalogFragment : BeersFragment() {
         super.initView(view)
         viewModel.beers.observe(this, Observer {
             Log.d("HELLO", "Received list of beers with size of: ${it.size}")
-            if (it.size > 0) {
+            if (it.isNotEmpty()) {
                 onContentReceived()
             } else {
                 onEmptyContent()

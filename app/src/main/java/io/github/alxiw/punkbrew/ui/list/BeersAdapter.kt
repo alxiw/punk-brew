@@ -6,20 +6,22 @@ import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Picasso
 import io.github.alxiw.punkbrew.R
 import io.github.alxiw.punkbrew.data.db.BeerEntity
+import io.github.alxiw.punkbrew.data.loader.ImageLoader
 import io.github.alxiw.punkbrew.databinding.ItemBeerBinding
 import io.github.alxiw.punkbrew.util.DateFormatter.formatDate
-import io.github.alxiw.punkbrew.util.makeImageUrl
+import io.github.alxiw.punkbrew.util.load
 
-class BeersAdapter : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(BEER_COMPARATOR) {
+class BeersAdapter(
+    private val imageLoader: ImageLoader
+) : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(BEER_COMPARATOR) {
 
     private var onItemClickListener: OnItemClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BeersViewHolder {
         val binding = ItemBeerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return BeersViewHolder(binding)
+        return BeersViewHolder(binding, imageLoader)
     }
 
     override fun onBindViewHolder(holder: BeersViewHolder, position: Int) {
@@ -32,7 +34,10 @@ class BeersAdapter : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(
         this.onItemClickListener = listener
     }
 
-    class BeersViewHolder(private val binding: ItemBeerBinding) : RecyclerView.ViewHolder(binding.root) {
+    class BeersViewHolder(
+        private val binding: ItemBeerBinding,
+        private val imageLoader: ImageLoader
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(beer : BeerEntity, listener: OnItemClickListener?) {
             binding.itemId.text = String.format("#%s", beer.id)
@@ -41,12 +46,7 @@ class BeersAdapter : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(
             binding.itemAbv.text = String.format("%s%%", beer.abv)
             binding.itemDate.text = formatDate(beer.firstBrewed, true)
 
-            Picasso.get()
-                .load(makeImageUrl(beer.image))
-                .placeholder(R.drawable.bottle)
-                .error(R.drawable.bottle)
-                .fit().centerInside()
-                .into(binding.itemImage)
+            binding.itemImage.load(imageLoader, beer.image)
 
             binding.itemFavorite.setImageResource(
                 if (beer.favorite) {

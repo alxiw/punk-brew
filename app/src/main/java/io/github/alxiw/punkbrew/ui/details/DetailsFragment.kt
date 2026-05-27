@@ -12,14 +12,14 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Section
+import dev.androidbroadcast.vbpd.viewBinding
 import io.github.alxiw.punkbrew.R
 import io.github.alxiw.punkbrew.data.api.BeerResponse
 import io.github.alxiw.punkbrew.data.db.BeerEntity
+import io.github.alxiw.punkbrew.data.loader.ImageLoader
 import io.github.alxiw.punkbrew.databinding.FragmentDetailsBinding
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_CATALOG_TAG
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_FAVORITES_TAG
@@ -28,9 +28,8 @@ import io.github.alxiw.punkbrew.ui.details.items.HeaderItem
 import io.github.alxiw.punkbrew.ui.details.items.TextItem
 import io.github.alxiw.punkbrew.ui.list.BeersView
 import io.github.alxiw.punkbrew.util.DateFormatter
-import io.github.alxiw.punkbrew.util.EMPTY_PLACEHOLDER
 import io.github.alxiw.punkbrew.util.hide
-import io.github.alxiw.punkbrew.util.makeImageUrl
+import io.github.alxiw.punkbrew.util.load
 import io.github.alxiw.punkbrew.util.show
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -43,6 +42,8 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
     override val viewModel: DetailsViewModel by viewModel()
     override val layoutId: Int = R.layout.fragment_details
 
+    private val imageLoader: ImageLoader by inject()
+
     private val gson: Gson by inject()
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
 
@@ -50,7 +51,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
     private var favoriteItem: MenuItem? = null
     private val disposables = ArrayList<Disposable>()
 
-    private lateinit var binding: FragmentDetailsBinding
+    private val binding by viewBinding(FragmentDetailsBinding::bind)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,7 +88,6 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
     }
 
     override fun initView(view: View) {
-        binding = FragmentDetailsBinding.bind(view)
         binding.detailsContent.beerDetailsRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             isNestedScrollingEnabled = false
@@ -141,26 +141,9 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
         binding.detailsToolbar.title = beer.name
         initFavoriteItem(beer)
 
-        if (beer.image.isNullOrEmpty()) {
-            binding.detailsContent.beerDetailsImage.setImageResource(R.drawable.bottle)
-        } else {
-            Picasso.get()
-                .load(makeImageUrl(beer.image))
-                .error(R.drawable.bottle)
-                .fit().centerInside()
-                .into(
-                    binding.detailsContent.beerDetailsImage,
-                    object : Callback {
-                        override fun onSuccess() {
-                            binding.detailsContent.beerDetailsImage.alpha = 0f
-                            binding.detailsContent.beerDetailsImage.animate().setDuration(500).alpha(1f).start()
-                        }
-
-                        override fun onError(e: Exception?) {
-                            Log.d("HELLO", "Error occurred while loading image of beer with number ${beerId}, ${e?.message ?: "Unknown error"}")
-                        }
-                    }
-                )
+        binding.detailsContent.beerDetailsImage.load(imageLoader, beer.image) {
+            binding.detailsContent.beerDetailsImage.alpha = 0f
+            binding.detailsContent.beerDetailsImage.animate().setDuration(500).alpha(1f).start()
         }
 
         binding.detailsContent.beerDetailsId.text = String.format("#%s", beer.id)
@@ -205,7 +188,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>() {
     private fun updateRecyclerView(beer: BeerEntity) {
         val descriptionSection = Section().apply {
             setHeader(HeaderItem(getString(R.string.header_description)))
-            add(TextItem(beer.description ?: EMPTY_PLACEHOLDER))
+            add(TextItem(beer.description))
         }
 
         val foodPairing: List<String> = gson.fromJson(

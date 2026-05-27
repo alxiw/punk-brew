@@ -2,6 +2,7 @@
 agp = "9.2.1"
 kotlin = "2.3.21"
 ksp = "2.3.8"
+viewbindingdelegate = "2.0.4"
 koin = "3.5.6"
 appcompat = "1.7.0"
 coreKtx = "1.15.0"
@@ -51,6 +52,7 @@ threetenbp = { module = "org.threeten:threetenbp", version.ref = "threetenbp" }
 junit = { module = "junit:junit", version.ref = "junit" }
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
 androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
+viewbindingdelegate = { group = "dev.androidbroadcast.vbpd", name = "vbpd", version.ref = "viewbindingdelegate" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
