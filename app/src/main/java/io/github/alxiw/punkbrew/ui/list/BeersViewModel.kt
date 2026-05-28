@@ -4,11 +4,13 @@ import android.content.Context
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
 import io.github.alxiw.punkbrew.data.BeersRepository
 import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 import io.github.alxiw.punkbrew.ui.base.BaseViewModel
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 
 abstract class BeersViewModel(
@@ -18,7 +20,8 @@ abstract class BeersViewModel(
     abstract val beers: StateFlow<PagedList<BeerEntity>?>
 
     fun updateBeer(beer: BeerEntity, updateFinished: () -> Unit) {
-        repository.update(beer) {
+        viewModelScope.launch {
+            repository.update(beer)
             Log.d("HELLO", "Beer #${beer.id} has updated from ${javaClass.name}")
             updateFinished()
         }

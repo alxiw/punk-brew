@@ -1,7 +1,6 @@
 package io.github.alxiw.punkbrew.ui.details
 
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
@@ -219,19 +218,15 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(), MenuProvider {
     private fun onFavoriteBadgeClicked(beer: BeerEntity, menuItem: MenuItem) {
         val updatedBeer = beer.copy(favorite = !beer.favorite)
         viewModel.updateBeer(updatedBeer) {
-            val mainHandler = Handler(requireContext().mainLooper)
-            val runnable = Runnable {
-                if (updatedBeer.favorite) {
-                    menuItem.setTitle(R.string.menu_favorite_true_title)
-                    menuItem.setIcon(R.drawable.ic_menu_favorite_true)
-                } else {
-                    menuItem.setTitle(R.string.menu_favorite_false_title)
-                    menuItem.setIcon(R.drawable.ic_menu_favorite_false)
-                }
-                updateList(BACK_STACK_CATALOG_TAG)
-                updateList(BACK_STACK_FAVORITES_TAG)
+            if (updatedBeer.favorite) {
+                menuItem.setTitle(R.string.menu_favorite_true_title)
+                menuItem.setIcon(R.drawable.ic_menu_favorite_true)
+            } else {
+                menuItem.setTitle(R.string.menu_favorite_false_title)
+                menuItem.setIcon(R.drawable.ic_menu_favorite_false)
             }
-            mainHandler.post(runnable)
+            updateList(BACK_STACK_CATALOG_TAG)
+            updateList(BACK_STACK_FAVORITES_TAG)
         }
     }
 

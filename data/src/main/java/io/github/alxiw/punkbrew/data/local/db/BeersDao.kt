@@ -4,9 +4,10 @@ import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Query
 import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
-import io.reactivex.Single
+import kotlin.jvm.JvmSuppressWildcards
 
 @Dao
+@JvmSuppressWildcards
 interface BeersDao {
 
     @Query("INSERT OR REPLACE INTO beers (id, name, tagline, first_brewed, description, image_url, abv, ibu, target_fg, target_og, ebc, srm, ph, attenuation_level, volume_json, boil_volume_json, method_json, ingredients_json, food_pairing_json, brewers_tips, contributed_by, favorite) VALUES ( :id, :name, :tagline, :firstBrewed, :description, :image, :abv, :ibu, :targetFg, :targetOg, :ebc, :srm, :ph, :attenuationLevel, :volumeJson, :boilVolumeJson, :methodJson, :ingredientsJson, :foodPairingJson, :brewersTips, :contributedBy, COALESCE((SELECT favorite FROM beers WHERE id = :id), 0))")
@@ -44,7 +45,7 @@ interface BeersDao {
     fun deleteAll()
 
     @Query("SELECT * FROM beers WHERE id=:id LIMIT 1")
-    fun beer(id: Int): Single<BeerEntity>
+    suspend fun beer(id: Int): BeerEntity
 
     @Query("SELECT * FROM beers")
     fun beers(): DataSource.Factory<Int, BeerEntity>

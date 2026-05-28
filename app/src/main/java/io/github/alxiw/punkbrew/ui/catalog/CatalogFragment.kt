@@ -1,6 +1,5 @@
 package io.github.alxiw.punkbrew.ui.catalog
 
-import android.os.Handler
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
@@ -243,17 +242,13 @@ class CatalogFragment : BeersFragment(), MenuProvider {
     override fun onFavoriteBadgeClicked(beer: BeerEntity, itemView: View) {
         val updatedBeer = beer.copy(favorite = !beer.favorite)
         viewModel.updateBeer(updatedBeer) {
-            val mainHandler = Handler(requireContext().mainLooper)
-            val runnable = Runnable {
-                itemView.findViewById<ImageView>(R.id.item_favorite).setImageResource(
-                    if (updatedBeer.favorite) {
-                        R.drawable.badge_favorite_true
-                    } else {
-                        R.drawable.badge_favorite_false
-                    }
-                )
-            }
-            mainHandler.post(runnable)
+            itemView.findViewById<ImageView>(R.id.item_favorite).setImageResource(
+                if (updatedBeer.favorite) {
+                    R.drawable.badge_favorite_true
+                } else {
+                    R.drawable.badge_favorite_false
+                }
+            )
         }
     }
 

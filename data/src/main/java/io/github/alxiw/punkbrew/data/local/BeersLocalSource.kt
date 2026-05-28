@@ -4,55 +4,48 @@ import android.util.Log
 import androidx.paging.DataSource
 import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 import io.github.alxiw.punkbrew.data.local.db.BeersDao
-import io.reactivex.Single
-import java.util.concurrent.Executor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class BeersLocalSource(
-    private val beersDao: BeersDao,
-    private val ioExecutor: Executor
+    private val beersDao: BeersDao
 ) {
 
-    fun insertAll(beers: List<BeerEntity>, insertFinished: () -> Unit) {
+    suspend fun insertAll(beers: List<BeerEntity>) = withContext(Dispatchers.IO) {
         Log.d("HELLO", "Insert beers into cache")
-        ioExecutor.execute {
-            for (beer in beers) {
-                beersDao.insert(
-                    beer.id,
-                    beer.name,
-                    beer.tagline,
-                    beer.firstBrewed,
-                    beer.description,
-                    beer.image,
-                    beer.abv,
-                    beer.ibu,
-                    beer.targetFg,
-                    beer.targetOg,
-                    beer.ebc,
-                    beer.srm,
-                    beer.ph,
-                    beer.attenuationLevel,
-                    beer.volumeJson,
-                    beer.boilVolumeJson,
-                    beer.methodJson,
-                    beer.ingredientsJson,
-                    beer.foodPairingJson,
-                    beer.brewersTips,
-                    beer.contributedBy
-                )
-            }
-            insertFinished()
+        for (beer in beers) {
+            beersDao.insert(
+                beer.id,
+                beer.name,
+                beer.tagline,
+                beer.firstBrewed,
+                beer.description,
+                beer.image,
+                beer.abv,
+                beer.ibu,
+                beer.targetFg,
+                beer.targetOg,
+                beer.ebc,
+                beer.srm,
+                beer.ph,
+                beer.attenuationLevel,
+                beer.volumeJson,
+                beer.boilVolumeJson,
+                beer.methodJson,
+                beer.ingredientsJson,
+                beer.foodPairingJson,
+                beer.brewersTips,
+                beer.contributedBy
+            )
         }
     }
 
-    fun update(beer: BeerEntity, insertFinished: () -> Unit) {
+    suspend fun update(beer: BeerEntity) = withContext(Dispatchers.IO) {
         Log.d("HELLO", "Update beer in cache")
-        ioExecutor.execute {
-            beersDao.update(beer.id, beer.favorite)
-            insertFinished()
-        }
+        beersDao.update(beer.id, beer.favorite)
     }
 
-    fun getBeer(id: Int): Single<BeerEntity> {
+    suspend fun getBeer(id: Int): BeerEntity {
         Log.d("HELLO", "Request beer from cache")
         return beersDao.beer(id)
     }

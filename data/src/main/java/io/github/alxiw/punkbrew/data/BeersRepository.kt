@@ -9,12 +9,13 @@ import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 import io.github.alxiw.punkbrew.data.mediator.BeersBoundaryCallback
 import io.github.alxiw.punkbrew.data.model.SearchResult
 import io.github.alxiw.punkbrew.data.remote.BeersRemoteSource
-import io.reactivex.Single
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 
 class BeersRepository(
     private val remoteSource: BeersRemoteSource,
-    private val localSource: BeersLocalSource
+    private val localSource: BeersLocalSource,
+    private val scope: CoroutineScope
 ) {
 
     private val pageConfig = PagedList.Config.Builder()
@@ -24,7 +25,7 @@ class BeersRepository(
     fun search(query: String?): SearchResult {
         Log.d("HELLO", "Search beers by query: $query")
         val dataSourceFactory = localSource.getBeers(query)
-        val boundaryCallback = BeersBoundaryCallback(query, remoteSource, localSource)
+        val boundaryCallback = BeersBoundaryCallback(query, remoteSource, localSource, scope)
         val networkErrors = boundaryCallback.networkErrors
         val data = LivePagedListBuilder(dataSourceFactory, pageConfig)
             .setBoundaryCallback(boundaryCallback)
@@ -40,14 +41,12 @@ class BeersRepository(
             .asFlow()
     }
 
-    fun beer(id: Int): Single<BeerEntity> {
+    suspend fun beer(id: Int): BeerEntity {
         return localSource.getBeer(id)
     }
 
-    fun update(beer: BeerEntity, insertFinished: () -> Unit) {
-        localSource.update(beer) {
-            insertFinished()
-        }
+    suspend fun update(beer: BeerEntity) {
+        localSource.update(beer)
     }
 
     companion object {

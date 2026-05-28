@@ -5,14 +5,17 @@ import androidx.paging.PagedList
 import io.github.alxiw.punkbrew.data.local.BeersLocalSource
 import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 import io.github.alxiw.punkbrew.data.remote.BeersRemoteSource
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class BeersBoundaryCallback(
     private val query: String?,
     private val remoteSource: BeersRemoteSource,
-    private val localSource: BeersLocalSource
+    private val localSource: BeersLocalSource,
+    private val scope: CoroutineScope
 ): PagedList.BoundaryCallback<BeerEntity>() {
 
     // keep the last requested page. When the request is successful, increment the page number.
@@ -50,7 +53,8 @@ class BeersBoundaryCallback(
             lastRequestedPage,
             NETWORK_PAGE_SIZE,
             { beers ->
-                localSource.insertAll(beers) {
+                scope.launch {
+                    localSource.insertAll(beers)
                     Log.d("HELLO", "Insert ${beers.size} beers into cache")
                     _networkErrors.value = null
                     lastRequestedPage++

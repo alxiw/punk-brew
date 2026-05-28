@@ -1,6 +1,5 @@
 package io.github.alxiw.punkbrew.ui.favorites
 
-import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
@@ -84,15 +83,11 @@ class FavoritesFragment : BeersFragment(), MenuProvider {
     override fun onFavoriteBadgeClicked(beer: BeerEntity, itemView: View) {
         val updatedBeer = beer.copy(favorite = !beer.favorite)
         viewModel.updateBeer(updatedBeer) {
-            val mainHandler = Handler(requireContext().mainLooper)
-            val runnable = Runnable {
-                if (!updatedBeer.favorite) {
-                    itemView.findViewById<ImageView>(R.id.item_favorite).setImageResource(R.drawable.badge_favorite_false)
-                    onBeerUpdated()
-                    updateFragment(BACK_STACK_CATALOG_TAG)
-                }
+            if (!updatedBeer.favorite) {
+                itemView.findViewById<ImageView>(R.id.item_favorite).setImageResource(R.drawable.badge_favorite_false)
+                onBeerUpdated()
+                updateFragment(BACK_STACK_CATALOG_TAG)
             }
-            mainHandler.post(runnable)
         }
     }
 

@@ -6,15 +6,19 @@ import io.github.alxiw.punkbrew.data.remote.api.PunkService
 import io.github.alxiw.punkbrew.data.remote.BeersRemoteSource
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import org.koin.dsl.module
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 internal const val BASE_URL = "https://punkapi-alxiw.amvera.io/v3/"
 
 val networkModule = module {
+
+    single { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
 
     factory { GsonBuilder().setLenient().create() as Gson }
     factory {
@@ -32,9 +36,8 @@ val networkModule = module {
             baseUrl(BASE_URL)
             client(get())
             addConverterFactory(GsonConverterFactory.create(get()))
-            addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             build()
         }.create(PunkService::class.java) as PunkService
     }
-    factory { BeersRemoteSource(get(), get()) as BeersRemoteSource }
+    factory { BeersRemoteSource(get(), get(), get()) as BeersRemoteSource }
 }

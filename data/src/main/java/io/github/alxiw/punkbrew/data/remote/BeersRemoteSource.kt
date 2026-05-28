@@ -2,20 +2,19 @@ package io.github.alxiw.punkbrew.data.remote
 
 import android.util.Log
 import com.google.gson.Gson
-import io.github.alxiw.punkbrew.data.remote.api.model.BeerResponse
 import io.github.alxiw.punkbrew.data.remote.api.PunkService
 import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 import io.github.alxiw.punkbrew.data.mapper.BeerMapper
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class BeersRemoteSource(
     private val service: PunkService,
-    private val gson: Gson
+    private val gson: Gson,
+    private val scope: CoroutineScope
 ) {
-
-    private val disposables = ArrayList<Disposable>()
 
     fun searchBeers(
         query: String?,
@@ -25,25 +24,24 @@ class BeersRemoteSource(
         onError: (error: String) -> Unit
     ) {
         val number = query?.toIntOrNull()
-        val single = if (number != null && number > 0) {
-            service.getBeersById(page, perPage, number)
-        } else {
-            service.getBeers(page, perPage, query)
-        }
         Log.d("HELLO", "Request page of beers from server")
-        disposables.add(
-            single.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { response: List<BeerResponse> ->
-                        Log.d("HELLO", "Received beers from server")
-                        onSuccess(BeerMapper.fromResponse(response, gson))
-                    },
-                    { e: Throwable ->
-                        Log.d("HELLO", "Error occurred while requesting beers from server")
-                        onError(e.message ?: "Unknown error")
+        scope.launch {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    if (number != null && number > 0) {
+                        service.getBeersById(page, perPage, number)
+                    } else {
+                        service.getBeers(page, perPage, query)
                     }
-                )
-        )
+                }
+                Log.d("HELLO", "Received beers from server")
+
+                onSuccess(BeerMapper.fromResponse(response, gson))
+            } catch (e: Exception) {
+                Log.d("HELLO", "Error occurred while requesting beers from server: ${e.message}")
+
+                onError(e.message ?: "Unknown error")
+            }
+        }
     }
 }

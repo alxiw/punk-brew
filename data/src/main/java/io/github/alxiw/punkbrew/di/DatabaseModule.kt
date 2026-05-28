@@ -8,14 +8,11 @@ import io.github.alxiw.punkbrew.data.local.db.BeersDao
 import io.github.alxiw.punkbrew.data.local.db.PunkDatabase
 import io.github.alxiw.punkbrew.data.local.BeersLocalSource
 import org.koin.dsl.module
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
 
 private const val DB_NAME = "punkbrew.db"
 
 val databaseModule = module {
 
-    factory { Executors.newSingleThreadExecutor() as Executor }
     factory { (get() as PunkDatabase).beersDao() as BeersDao }
     factory {
         Room.databaseBuilder((get() as Context), PunkDatabase::class.java, DB_NAME)
@@ -24,7 +21,7 @@ val databaseModule = module {
             .fallbackToDestructiveMigration()
             .build() as PunkDatabase
     }
-    factory { BeersLocalSource(get(), get()) as BeersLocalSource }
+    factory { BeersLocalSource(get()) as BeersLocalSource }
 }
 
 val MIGRATION_1_2: Migration = object : Migration(1, 2) {

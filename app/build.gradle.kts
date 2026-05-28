@@ -81,10 +81,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
 
-    // rx
-    implementation(libs.rxjava)
-    implementation(libs.rxandroid)
-
     // unit tests
     testImplementation(libs.junit)
 

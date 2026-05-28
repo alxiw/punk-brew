@@ -45,24 +45,17 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     // paging
-    implementation(libs.androidx.paging.rxjava2.ktx)
     api(libs.androidx.paging.runtime.ktx)
 
     // db
-    implementation(libs.androidx.room.rxjava2)
-    implementation(libs.arch.rxjava)
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 
     // net
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
-    implementation(libs.adapter.rxjava2)
     implementation(libs.picasso)
-
-    // rx
-    implementation(libs.rxjava)
-    implementation(libs.rxandroid)
 
     // util
     implementation(libs.threetenbp)
