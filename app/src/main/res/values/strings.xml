@@ -6,6 +6,7 @@
     <string name="favorites_label">Favorites</string>
 
     <string name="menu_search_title">Search</string>
+    <string name="menu_favourites_title">Favorites</string>
     <string name="menu_filter_false_title">Filter</string>
     <string name="menu_filter_true_title">Reset filter</string>
     <string name="menu_information_title">Information</string>

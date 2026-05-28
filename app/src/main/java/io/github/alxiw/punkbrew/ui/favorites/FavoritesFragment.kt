@@ -42,7 +42,9 @@ class FavoritesFragment : BeersFragment() {
     }
 
     override fun setupToolbar() {
-        binding.beersToolbar.also {
+        (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
+
+        binding.toolbar.also {
             (activity as AppCompatActivity).setSupportActionBar(it)
             it.setNavigationIcon(R.drawable.ic_back)
             it.setNavigationOnClickListener { finish() }

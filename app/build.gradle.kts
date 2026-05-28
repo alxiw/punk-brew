@@ -57,6 +57,8 @@ dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(libs.kotlin.stdlib.jdk8)
 
+    implementation(project(":simplesearchview"))
+
     // support
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
