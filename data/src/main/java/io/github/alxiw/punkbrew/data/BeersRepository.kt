@@ -1,7 +1,7 @@
 package io.github.alxiw.punkbrew.data
 
 import android.util.Log
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.asFlow
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import io.github.alxiw.punkbrew.data.local.BeersLocalSource
@@ -10,6 +10,7 @@ import io.github.alxiw.punkbrew.data.mediator.BeersBoundaryCallback
 import io.github.alxiw.punkbrew.data.model.SearchResult
 import io.github.alxiw.punkbrew.data.remote.BeersRemoteSource
 import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 
 class BeersRepository(
     private val remoteSource: BeersRemoteSource,
@@ -28,12 +29,15 @@ class BeersRepository(
         val data = LivePagedListBuilder(dataSourceFactory, pageConfig)
             .setBoundaryCallback(boundaryCallback)
             .build()
+            .asFlow()
         return SearchResult(data, networkErrors)
     }
 
-    fun favorites(): LiveData<PagedList<BeerEntity>> {
+    fun favorites(): Flow<PagedList<BeerEntity>> {
         val dataSourceFactory = localSource.getFavorites()
-        return LivePagedListBuilder(dataSourceFactory, pageConfig).build()
+        return LivePagedListBuilder(dataSourceFactory, pageConfig)
+            .build()
+            .asFlow()
     }
 
     fun beer(id: Int): Single<BeerEntity> {

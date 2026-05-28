@@ -10,7 +10,8 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
@@ -31,6 +32,7 @@ import io.github.alxiw.punkbrew.util.DateFormatter
 import io.github.alxiw.punkbrew.util.hide
 import io.github.alxiw.punkbrew.util.load
 import io.github.alxiw.punkbrew.util.show
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -91,10 +93,16 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(), MenuProvider {
             isNestedScrollingEnabled = false
             adapter = groupAdapter
         }
-        viewModel.beer.observe(viewLifecycleOwner, Observer { beer ->
-            Log.d("HELLO", "Received beer ${beer.id} to show details")
-            initViews(beer)
-        })
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.beer.collect { beer ->
+                    beer?.let {
+                        Log.d("HELLO", "Received beer ${it.id} to show details")
+                        initViews(it)
+                    }
+                }
+            }
+        }
 
         if (viewModel.currentBeer == null) {
             viewModel.findBeer()

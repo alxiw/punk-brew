@@ -11,13 +11,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import io.github.alxiw.punkbrew.R
 import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_CATALOG_TAG
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_DETAILS_TAG
 import io.github.alxiw.punkbrew.ui.details.DetailsFragment
 import io.github.alxiw.punkbrew.ui.list.BeersFragment
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavoritesFragment : BeersFragment(), MenuProvider {
@@ -56,15 +58,16 @@ class FavoritesFragment : BeersFragment(), MenuProvider {
 
     override fun initView(view: View) {
         super.initView(view)
-        viewModel.beers.observe(this, Observer { list ->
-            Log.d("HELLO", "Received list of favorites with size of: ${list.size}")
-            if (list.size > 0) {
-                onContentReceived()
-            } else {
-                onEmptyContent()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.beers.collect { list ->
+                    list?.let {
+                        Log.d("HELLO", "Received list of favorites with size of: ${it.size}")
+                        adapter.submitList(it)
+                    }
+                }
             }
-            adapter.submitList(list)
-        })
+        }
     }
 
     override fun onBeerClicked(beer: BeerEntity) {

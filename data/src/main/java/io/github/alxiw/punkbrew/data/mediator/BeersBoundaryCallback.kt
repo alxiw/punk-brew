@@ -1,12 +1,13 @@
 package io.github.alxiw.punkbrew.data.mediator
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import io.github.alxiw.punkbrew.data.local.BeersLocalSource
 import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 import io.github.alxiw.punkbrew.data.remote.BeersRemoteSource
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class BeersBoundaryCallback(
     private val query: String?,
@@ -17,12 +18,12 @@ class BeersBoundaryCallback(
     // keep the last requested page. When the request is successful, increment the page number.
     private var lastRequestedPage = 1
 
-    // LiveData of network errors.
-    private val _networkErrors = MutableLiveData<String?>()
+    // StateFlow of network errors.
+    private val _networkErrors = MutableStateFlow<String?>(null)
 
-    // LiveData of network errors.
-    val networkErrors: LiveData<String?>
-        get() = _networkErrors
+    // StateFlow of network errors.
+    val networkErrors: StateFlow<String?>
+        get() = _networkErrors.asStateFlow()
 
     // avoid triggering multiple requests in the same time
     private var isRequestInProgress = false
@@ -51,14 +52,14 @@ class BeersBoundaryCallback(
             { beers ->
                 localSource.insertAll(beers) {
                     Log.d("HELLO", "Insert ${beers.size} beers into cache")
-                    _networkErrors.postValue(null)
+                    _networkErrors.value = null
                     lastRequestedPage++
                     isRequestInProgress = false
                 }
             },
             { error ->
                 Log.d("HELLO", "No beers inserted into cache")
-                _networkErrors.postValue(error)
+                _networkErrors.value = error
                 isRequestInProgress = false
             }
         )

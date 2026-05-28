@@ -63,6 +63,8 @@ dependencies {
     // support
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.recyclerview)
     implementation(libs.viewbindingdelegate)
@@ -74,6 +76,10 @@ dependencies {
 
     // di
     implementation(libs.koin.android)
+
+    // coroutines
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
 
     // rx
     implementation(libs.rxjava)

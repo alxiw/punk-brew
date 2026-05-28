@@ -9,7 +9,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import io.github.alxiw.punkbrew.R
 import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_DETAILS_TAG
@@ -19,6 +20,7 @@ import io.github.alxiw.punkbrew.ui.favorites.FavoritesFragment
 import io.github.alxiw.punkbrew.ui.list.BeersFragment
 import io.github.alxiw.punkbrew.util.getFormattedBeerName
 import io.github.alxiw.simplesearchview.SimpleSearchView
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CatalogFragment : BeersFragment(), MenuProvider {
@@ -167,20 +169,25 @@ class CatalogFragment : BeersFragment(), MenuProvider {
             override fun onSearchViewClosedAnimation() = Unit
         })
 
-        viewModel.beers.observe(this, Observer {
-            Log.d("HELLO", "Received list of beers with size of: ${it.size}")
-            if (it.size > 0) {
-                onContentReceived()
-            } else {
-                onEmptyContent()
-            }
-            adapter.submitList(it)
-        })
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.beers.collect {
+                        it?.let { list ->
+                            Log.d("HELLO", "Received list of beers with size of: ${list.size}")
+                            adapter.submitList(list)
+                        }
+                    }
+                }
 
-        viewModel.networkErrors.observe(this, Observer { error ->
-            Log.d("HELLO", "Network error: ${error ?: "..."}")
-            error?.let { text -> showNetworkError(text) }
-        })
+                launch {
+                    viewModel.networkErrors.collect { error ->
+                        Log.d("HELLO", "Network error: ${error ?: "..."}")
+                        error?.let { text -> showNetworkError(text) }
+                    }
+                }
+            }
+        }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
             object : OnBackPressedCallback(true) {

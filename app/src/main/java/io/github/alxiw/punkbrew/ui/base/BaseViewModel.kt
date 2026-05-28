@@ -1,11 +1,12 @@
 package io.github.alxiw.punkbrew.ui.base
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 abstract class BaseViewModel : ViewModel() {
 
-    protected val _uiState = MutableLiveData<UiState>()
-    val uiState: LiveData<UiState> = _uiState
+    protected val _uiState = MutableStateFlow<UiState>(UiState.Loading)
+    val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 }

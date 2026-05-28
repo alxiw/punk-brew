@@ -1,8 +1,6 @@
 package io.github.alxiw.punkbrew.ui.details
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import io.github.alxiw.punkbrew.data.BeersRepository
 import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 import io.github.alxiw.punkbrew.ui.base.BaseViewModel
@@ -10,6 +8,9 @@ import io.github.alxiw.punkbrew.ui.base.UiState
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class DetailsViewModel(
     private val repository: BeersRepository
@@ -17,8 +18,8 @@ class DetailsViewModel(
 
     private val disposables = CompositeDisposable()
 
-    private val _beer = MutableLiveData<BeerEntity>()
-    val beer: LiveData<BeerEntity> = _beer
+    private val _beer = MutableStateFlow<BeerEntity?>(null)
+    val beer: StateFlow<BeerEntity?> = _beer.asStateFlow()
 
     var beerId: Int? = null
 

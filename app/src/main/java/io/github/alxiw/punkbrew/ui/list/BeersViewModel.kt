@@ -4,18 +4,18 @@ import android.content.Context
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
 import io.github.alxiw.punkbrew.data.BeersRepository
 import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 import io.github.alxiw.punkbrew.ui.base.BaseViewModel
+import kotlinx.coroutines.flow.StateFlow
 
 
 abstract class BeersViewModel(
     private val repository: BeersRepository
 ) : BaseViewModel()  {
 
-    abstract val beers: LiveData<PagedList<BeerEntity>>
+    abstract val beers: StateFlow<PagedList<BeerEntity>?>
 
     fun updateBeer(beer: BeerEntity, updateFinished: () -> Unit) {
         repository.update(beer) {

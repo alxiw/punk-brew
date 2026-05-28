@@ -5,7 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.launch
 
 abstract class BaseFragment<VM : BaseViewModel> : Fragment() {
 
@@ -29,14 +32,18 @@ abstract class BaseFragment<VM : BaseViewModel> : Fragment() {
     }
 
     private fun observeUiState() {
-        viewModel.uiState.observe(viewLifecycleOwner, Observer { state ->
-            when (state) {
-                is UiState.Loading -> onLoading()
-                is UiState.Content -> onContentReceived()
-                is UiState.Empty -> onEmptyContent()
-                is UiState.Error -> onError(state.message)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    when (state) {
+                        is UiState.Loading -> onLoading()
+                        is UiState.Content -> onContentReceived()
+                        is UiState.Empty -> onEmptyContent()
+                        is UiState.Error -> onError(state.message)
+                    }
+                }
             }
-        })
+        }
     }
 
     abstract fun setupToolbar()
