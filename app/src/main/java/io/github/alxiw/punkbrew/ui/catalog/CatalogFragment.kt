@@ -202,16 +202,17 @@ class CatalogFragment : BeersFragment(), MenuProvider {
             }
         })
 
-        (activity as AppCompatActivity).onBackPressedDispatcher.addCallback(
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     if (binding.beersSearch.onBackPressed()) {
                         onBackAction()
-
-                        return
+                    } else {
+                        // Если поиск не открыт, отключаем callback и пробрасываем событие дальше (в Activity)
+                        isEnabled = false
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
+                        isEnabled = true
                     }
-
-                    (activity as AppCompatActivity).finish()
                 }
             }
         )
