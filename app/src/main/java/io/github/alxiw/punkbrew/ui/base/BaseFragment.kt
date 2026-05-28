@@ -5,8 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 
-abstract class BaseFragment<VM : BaseViewModel> : Fragment(), BaseView<BaseViewModel> {
+abstract class BaseFragment<VM : BaseViewModel> : Fragment() {
+
+    abstract val viewModel: VM
+
+    abstract val layoutId: Int
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -20,9 +25,29 @@ abstract class BaseFragment<VM : BaseViewModel> : Fragment(), BaseView<BaseViewM
         super.onViewCreated(view, savedInstanceState)
         initView(view)
         setupToolbar()
+        observeUiState()
+    }
+
+    private fun observeUiState() {
+        viewModel.uiState.observe(viewLifecycleOwner, Observer { state ->
+            when (state) {
+                is UiState.Loading -> onLoading()
+                is UiState.Content -> onContentReceived()
+                is UiState.Empty -> onEmptyContent()
+                is UiState.Error -> onError(state.message)
+            }
+        })
     }
 
     abstract fun setupToolbar()
 
     abstract fun initView(view: View)
+
+    abstract fun onLoading()
+
+    abstract fun onContentReceived()
+
+    abstract fun onEmptyContent()
+
+    open fun onError(message: String?) {}
 }

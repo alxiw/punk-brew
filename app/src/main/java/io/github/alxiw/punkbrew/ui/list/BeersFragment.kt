@@ -19,7 +19,7 @@ import io.github.alxiw.punkbrew.util.show
 import org.koin.android.ext.android.inject
 import kotlin.getValue
 
-abstract class BeersFragment : BaseFragment<BeersViewModel>(), BeersView<BeersViewModel> {
+abstract class BeersFragment : BaseFragment<BeersViewModel>() {
 
     abstract override val viewModel: BeersViewModel
 
@@ -65,12 +65,21 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(), BeersView<BeersVi
         super.onDestroyView()
     }
 
-    override fun onBeerUpdated() {
+    override fun onResume() {
+        super.onResume()
+        onBeerUpdated()
+    }
+
+    open fun onBeerUpdated() {
         viewModel.beers.value?.dataSource?.addInvalidatedCallback {
             adapter.notifyDataSetChanged()
         }
         viewModel.beers.value?.dataSource?.invalidate()
     }
+
+    abstract fun onBeerClicked(beer: BeerEntity)
+
+    abstract fun onFavoriteBadgeClicked(beer: BeerEntity, itemView: View)
 
     override fun onLoading() {
         binding.beersProgressBar.show()
@@ -90,7 +99,7 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(), BeersView<BeersVi
         binding.beersProgressBar.hide()
     }
 
-    override fun onBeerLongClicked(beer: BeerEntity) {
+    protected fun onBeerLongClicked(beer: BeerEntity) {
         val fm: FragmentManager = childFragmentManager
         val beerDialog = BeerDialogFragment.newInstance(
             beer.id,

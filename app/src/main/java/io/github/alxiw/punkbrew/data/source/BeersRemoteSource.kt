@@ -25,12 +25,11 @@ class BeersRemoteSource(
         onError: (error: String) -> Unit
     ) {
         val number = query?.toIntOrNull()
-        val single =
-            if (number != null && number > 0) {
-                service.getBeersById(page, perPage, number)
-            } else {
-                service.getBeers(page, perPage, query)
-            }
+        val single = if (number != null && number > 0) {
+            service.getBeersById(page, perPage, number)
+        } else {
+            service.getBeers(page, perPage, query)
+        }
         Log.d("HELLO", "Request page of beers from server")
         disposables.add(
             single.subscribeOn(Schedulers.io())

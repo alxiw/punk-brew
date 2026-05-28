@@ -49,7 +49,6 @@ data class BeerEntity(
     val brewersTips: String,
     @ColumnInfo(name = "contributed_by")
     val contributedBy: String,
-) {
     @ColumnInfo(name = "favorite")
-    var favorite: Boolean = false
-}
+    val favorite: Boolean = false
+)

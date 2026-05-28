@@ -1,6 +1,5 @@
 package io.github.alxiw.punkbrew.ui.catalog
 
-import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.*
@@ -8,7 +7,6 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
@@ -26,19 +24,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class CatalogFragment : BeersFragment(), MenuProvider {
 
     override val viewModel: CatalogViewModel by viewModel()
-
-    private var hasSearchFocus = false
-    private var searchView: SearchView? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-        restoreSavedInstanceState(savedInstanceState)
-
-        if (savedInstanceState == null) {
-            viewModel.searchBeers(viewModel.currentQuery)
-        }
-    }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
         menuInflater.inflate(R.menu.menu, menu)
@@ -134,7 +119,6 @@ class CatalogFragment : BeersFragment(), MenuProvider {
                 }*/
 
                 view.clearFocus()
-                hasSearchFocus = false
                 searchByName(query)
 
                 return true
@@ -155,7 +139,6 @@ class CatalogFragment : BeersFragment(), MenuProvider {
                 } else {
                     job?.cancel()
                 }*/
-                hasSearchFocus = true
                 searchByName(query)
 
                 return true
@@ -171,7 +154,6 @@ class CatalogFragment : BeersFragment(), MenuProvider {
                     onQueryChanged(UiAction.Search(query = ""))
                 }*/
                 view.clearFocus()
-                hasSearchFocus = false
                 searchByName("")
 
                 return true
@@ -195,11 +177,9 @@ class CatalogFragment : BeersFragment(), MenuProvider {
             adapter.submitList(it)
         })
 
-        viewModel.networkErrors.observe(this, Observer {
-            Log.d("HELLO", "Network error: ${it ?: "..."}")
-            it?.let {
-                showNetworkError(it)
-            }
+        viewModel.networkErrors.observe(this, Observer { error ->
+            Log.d("HELLO", "Network error: ${error ?: "..."}")
+            error?.let { text -> showNetworkError(text) }
         })
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
@@ -216,6 +196,8 @@ class CatalogFragment : BeersFragment(), MenuProvider {
                 }
             }
         )
+
+        viewModel.searchBeers(viewModel.currentQuery)
     }
 
     private fun onBackAction() {
@@ -223,26 +205,15 @@ class CatalogFragment : BeersFragment(), MenuProvider {
         binding.beersRecyclerView.scrollToPosition(0)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putBoolean(SEARCH_FOCUS_KEY, searchView?.hasFocus() ?: false)
-    }
-
     override fun onDestroyView() {
-        searchView = null
         super.onDestroyView()
     }
 
-    private fun restoreSavedInstanceState(savedInstanceState: Bundle?) {
-        if (savedInstanceState != null) {
-            hasSearchFocus = savedInstanceState.getBoolean(SEARCH_FOCUS_KEY, false)
-        }
-    }
-
     private fun searchByName(query: String) {
-        binding.beersRecyclerView.scrollToPosition(0)
-        viewModel.searchBeers(getFormattedBeerName(query))
-        adapter.submitList(null)
+        if (viewModel.searchBeers(getFormattedBeerName(query))) {
+            binding.beersRecyclerView.scrollToPosition(0)
+            adapter.submitList(null)
+        }
     }
 
     private fun showNetworkError(text: String?) {
@@ -251,9 +222,8 @@ class CatalogFragment : BeersFragment(), MenuProvider {
     }
 
     override fun onBeerClicked(beer: BeerEntity) {
-        viewModel.hideKeyboard(requireContext().applicationContext, searchView)
-        searchView?.clearFocus()
-        requireFragmentManager().beginTransaction()
+        viewModel.hideKeyboard(requireContext().applicationContext, null)
+        parentFragmentManager.beginTransaction()
             .replace(
                 R.id.root_container,
                 DetailsFragment.newInstance(beer.id),
@@ -264,12 +234,12 @@ class CatalogFragment : BeersFragment(), MenuProvider {
     }
 
     override fun onFavoriteBadgeClicked(beer: BeerEntity, itemView: View) {
-        beer.favorite = !beer.favorite
-        viewModel.updateBeer(beer) {
+        val updatedBeer = beer.copy(favorite = !beer.favorite)
+        viewModel.updateBeer(updatedBeer) {
             val mainHandler = Handler(requireContext().mainLooper)
             val runnable = Runnable {
                 itemView.findViewById<ImageView>(R.id.item_favorite).setImageResource(
-                    if (beer.favorite) {
+                    if (updatedBeer.favorite) {
                         R.drawable.badge_favorite_true
                     } else {
                         R.drawable.badge_favorite_false
@@ -281,9 +251,8 @@ class CatalogFragment : BeersFragment(), MenuProvider {
     }
 
     private fun onFavoritesClicked() {
-        viewModel.hideKeyboard(requireContext().applicationContext, searchView)
-        searchView?.clearFocus()
-        requireFragmentManager().beginTransaction()
+        viewModel.hideKeyboard(requireContext().applicationContext, null)
+        parentFragmentManager.beginTransaction()
             .replace(
                 R.id.root_container,
                 FavoritesFragment.newInstance(),
@@ -294,8 +263,6 @@ class CatalogFragment : BeersFragment(), MenuProvider {
     }
 
     companion object {
-        private const val SEARCH_FOCUS_KEY = "search_focus"
-
         fun newInstance(): CatalogFragment {
             return CatalogFragment()
         }

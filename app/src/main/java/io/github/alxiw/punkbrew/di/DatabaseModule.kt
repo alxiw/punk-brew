@@ -21,6 +21,7 @@ val databaseModule = module {
         Room.databaseBuilder((get() as Context), PunkDatabase::class.java, DB_NAME)
             .addMigrations(MIGRATION_1_2)
             .addMigrations(MIGRATION_2_3)
+            .fallbackToDestructiveMigration()
             .build() as PunkDatabase
     }
     factory { BeersLocalSource(get(), get()) as BeersLocalSource }

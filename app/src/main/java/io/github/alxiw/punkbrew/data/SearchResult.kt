@@ -10,5 +10,5 @@ import io.github.alxiw.punkbrew.data.db.BeerEntity
  */
 data class SearchResult(
     val data: LiveData<PagedList<BeerEntity>>,
-    val networkErrors: LiveData<String>
+    val networkErrors: LiveData<String?>
 )

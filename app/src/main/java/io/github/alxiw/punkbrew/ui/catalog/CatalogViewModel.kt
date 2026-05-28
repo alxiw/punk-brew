@@ -15,6 +15,9 @@ class CatalogViewModel(
 ) : BeersViewModel(repository) {
 
     var currentQuery: String? = null
+        private set
+
+    private var isLaunched = false
 
     private val queryLiveData = MutableLiveData<String?>()
 
@@ -25,12 +28,15 @@ class CatalogViewModel(
     override val beers: LiveData<PagedList<BeerEntity>> = beersResult.switchMap {
         it.data
     }
-    val networkErrors: LiveData<String> = beersResult.switchMap {
+    val networkErrors: LiveData<String?> = beersResult.switchMap {
         it.networkErrors
     }
 
-    fun searchBeers(queryString: String?) {
+    fun searchBeers(queryString: String?): Boolean {
+        if (isLaunched && currentQuery == queryString) return false
+        isLaunched = true
         currentQuery = queryString
         queryLiveData.postValue(queryString)
+        return true
     }
 }

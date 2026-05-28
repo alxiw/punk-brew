@@ -3,26 +3,49 @@ package io.github.alxiw.punkbrew.ui.details
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
 import io.github.alxiw.punkbrew.data.BeersRepository
 import io.github.alxiw.punkbrew.data.db.BeerEntity
 import io.github.alxiw.punkbrew.ui.base.BaseViewModel
-import io.reactivex.Single
+import io.github.alxiw.punkbrew.ui.base.UiState
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 
 class DetailsViewModel(
     private val repository: BeersRepository
 ) : BaseViewModel() {
 
-    internal var currentBeer: BeerEntity? = null
+    private val disposables = CompositeDisposable()
 
-    private val idLiveData = MutableLiveData<Int>()
+    private val _beer = MutableLiveData<BeerEntity>()
+    val beer: LiveData<BeerEntity> = _beer
 
-    val beer : LiveData<Single<BeerEntity>> = idLiveData.map {
-        repository.beer(it)
-    }
+    var beerId: Int? = null
 
-    fun findBeer(beerId: Int) {
-        idLiveData.postValue(beerId)
+    var currentBeer: BeerEntity? = null
+
+    fun findBeer() {
+        beerId?.let {
+            _uiState.value = UiState.Loading
+            disposables.add(
+                repository.beer(it)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                        { beer ->
+                            currentBeer = beer
+                            _beer.value = beer
+                            _uiState.value = UiState.Content
+                        },
+                        { e ->
+                            Log.d("HELLO", "Error finding beer: ${e.message}")
+                            _uiState.value = UiState.Empty
+                        }
+                    )
+            )
+        } ?: run {
+            _uiState.value = UiState.Error("Beer ID is null")
+        }
     }
 
     fun updateBeer(beer: BeerEntity, updateFinished: () -> Unit) {
@@ -30,5 +53,10 @@ class DetailsViewModel(
             Log.d("HELLO", "Beer #${beer.id} updated from ${javaClass.name}")
             updateFinished()
         }
+    }
+
+    override fun onCleared() {
+        disposables.clear()
+        super.onCleared()
     }
 }

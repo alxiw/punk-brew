@@ -1,44 +1,44 @@
 package io.github.alxiw.punkbrew.ui.favorites
 
-import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import io.github.alxiw.punkbrew.R
 import io.github.alxiw.punkbrew.data.db.BeerEntity
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_CATALOG_TAG
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_DETAILS_TAG
-import io.github.alxiw.punkbrew.ui.list.BeersView
 import io.github.alxiw.punkbrew.ui.details.DetailsFragment
 import io.github.alxiw.punkbrew.ui.list.BeersFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class FavoritesFragment : BeersFragment() {
+class FavoritesFragment : BeersFragment(), MenuProvider {
 
     override val viewModel: FavoritesViewModel by viewModel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_favorites, menu)
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        menuInflater.inflate(R.menu.menu_favorites, menu)
 
         val informationItem = menu.findItem(R.id.favorites_menu_information)
-        informationItem?.setOnMenuItemClickListener {
-            Toast.makeText(context, context?.getString(R.string.menu_information_title), Toast.LENGTH_SHORT).show()
-            true
-        }
         informationItem.isVisible = false
+    }
 
-        super.onCreateOptionsMenu(menu, inflater)
+    override fun onMenuItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.favorites_menu_information -> {
+                Toast.makeText(context, context?.getString(R.string.menu_information_title), Toast.LENGTH_SHORT).show()
+                true
+            }
+            else -> false
+        }
     }
 
     override fun setupToolbar() {
@@ -50,6 +50,8 @@ class FavoritesFragment : BeersFragment() {
             it.setNavigationOnClickListener { finish() }
             it.title = getString(R.string.favorites_label)
         }
+
+        requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     override fun initView(view: View) {
@@ -77,11 +79,11 @@ class FavoritesFragment : BeersFragment() {
     }
 
     override fun onFavoriteBadgeClicked(beer: BeerEntity, itemView: View) {
-        beer.favorite = !beer.favorite
-        viewModel.updateBeer(beer) {
+        val updatedBeer = beer.copy(favorite = !beer.favorite)
+        viewModel.updateBeer(updatedBeer) {
             val mainHandler = Handler(requireContext().mainLooper)
             val runnable = Runnable {
-                if (!beer.favorite) {
+                if (!updatedBeer.favorite) {
                     itemView.findViewById<ImageView>(R.id.item_favorite).setImageResource(R.drawable.badge_favorite_false)
                     onBeerUpdated()
                     updateFragment(BACK_STACK_CATALOG_TAG)
@@ -93,7 +95,7 @@ class FavoritesFragment : BeersFragment() {
 
     private fun updateFragment(tag: String) {
         requireFragmentManager().findFragmentByTag(tag)?.let {
-            if (it is BeersView<*>) {
+            if (it is BeersFragment) {
                 it.onBeerUpdated()
             }
         }

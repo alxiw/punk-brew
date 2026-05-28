@@ -18,10 +18,10 @@ class BeersBoundaryCallback(
     private var lastRequestedPage = 1
 
     // LiveData of network errors.
-    private val _networkErrors = MutableLiveData<String>()
+    private val _networkErrors = MutableLiveData<String?>()
 
     // LiveData of network errors.
-    val networkErrors: LiveData<String>
+    val networkErrors: LiveData<String?>
         get() = _networkErrors
 
     // avoid triggering multiple requests in the same time
