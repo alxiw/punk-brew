@@ -16,6 +16,7 @@
         <item name="android:alpha">0.54</item>
     </style>
     <declare-styleable name="SimpleSearchView">
+        <attr format="dimension" name="animationCenterPadding"/>
         <attr format="float" name="backIconAlpha"/>
         <attr format="float" name="iconsAlpha"/>
 

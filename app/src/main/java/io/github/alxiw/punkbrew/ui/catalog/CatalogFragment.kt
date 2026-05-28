@@ -47,14 +47,7 @@ class CatalogFragment : BeersFragment(), MenuProvider {
     }
 
     override fun onMenuItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_favourites -> {
-                Log.d("HELLO", "FAVOURITES CLICKED")
-                onFavoritesClicked()
-                true
-            }
-            else -> false
-        }
+        return false
     }
 
     override fun setupToolbar() {

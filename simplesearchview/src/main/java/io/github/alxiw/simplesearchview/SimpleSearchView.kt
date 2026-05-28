@@ -51,6 +51,11 @@ class SimpleSearchView @JvmOverloads constructor(
     var animationDuration = SimpleAnimationUtils.ANIMATION_DURATION_DEFAULT
 
     /**
+     * @param animationCenterPadding padding from the right edge of the view to the center of the reveal animation
+     */
+    var animationCenterPadding: Int = -1
+
+    /**
      * @param revealAnimationCenter center of the reveal animation, used to customize the origin of the animation
      * @return center of the reveal animation, by default it is placed where the rightmost MenuItem would be
      */
@@ -60,11 +65,20 @@ class SimpleSearchView @JvmOverloads constructor(
                 return field
             }
 
-            val centerX = width - DimensUtils.convertDpToPx(ANIMATION_CENTER_PADDING, context)
+            if (width == 0) {
+                return null
+            }
+
+            val padding = if (animationCenterPadding != -1) {
+                animationCenterPadding
+            } else {
+                DimensUtils.convertDpToPx(ANIMATION_CENTER_PADDING, context)
+            }
+
+            val centerX = width - padding
             val centerY = height / 2
 
-            field = Point(centerX, centerY)
-            return field
+            return Point(centerX, centerY)
         }
     private var query: CharSequence? = null
     private var oldQuery: CharSequence? = null
@@ -95,6 +109,9 @@ class SimpleSearchView @JvmOverloads constructor(
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.SimpleSearchView, defStyleAttr, 0)
         if (typedArray.hasValue(R.styleable.SimpleSearchView_type)) {
             cardStyle = typedArray.getInt(R.styleable.SimpleSearchView_type, style)
+        }
+        if (typedArray.hasValue(R.styleable.SimpleSearchView_animationCenterPadding)) {
+            animationCenterPadding = typedArray.getDimensionPixelSize(R.styleable.SimpleSearchView_animationCenterPadding, -1)
         }
         if (typedArray.hasValue(R.styleable.SimpleSearchView_backIconAlpha)) {
             setBackIconAlpha(typedArray.getFloat(R.styleable.SimpleSearchView_backIconAlpha, BACK_ICON_ALPHA_DEFAULT))
@@ -724,7 +741,7 @@ class SimpleSearchView @JvmOverloads constructor(
     companion object {
         const val REQUEST_VOICE_SEARCH = 735
         const val CARD_CORNER_RADIUS = 4
-        const val ANIMATION_CENTER_PADDING = 70 // 26 by default, but needed to be at the second pos
+        const val ANIMATION_CENTER_PADDING = 26 // 70 is second pos
         private const val CARD_PADDING = 4
         private const val CARD_ELEVATION = 2
         private const val BACK_ICON_ALPHA_DEFAULT = 0.87f
