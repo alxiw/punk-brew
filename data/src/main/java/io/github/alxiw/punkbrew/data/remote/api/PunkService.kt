@@ -1,5 +1,6 @@
-package io.github.alxiw.punkbrew.data.api
+package io.github.alxiw.punkbrew.data.remote.api
 
+import io.github.alxiw.punkbrew.data.remote.api.model.BeerResponse
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query

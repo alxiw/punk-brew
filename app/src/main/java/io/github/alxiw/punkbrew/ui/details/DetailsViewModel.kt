@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.github.alxiw.punkbrew.data.BeersRepository
-import io.github.alxiw.punkbrew.data.db.BeerEntity
+import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 import io.github.alxiw.punkbrew.ui.base.BaseViewModel
 import io.github.alxiw.punkbrew.ui.base.UiState
 import io.reactivex.android.schedulers.AndroidSchedulers

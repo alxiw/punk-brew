@@ -2,21 +2,26 @@ package io.github.alxiw.punkbrew.data.loader
 
 import android.util.Log
 import android.widget.ImageView
+import androidx.annotation.DrawableRes
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import io.github.alxiw.punkbrew.R
 
 internal class PicassoImageLoader(
     private val picasso: Picasso,
     private val imageUrl: String
 ): ImageLoader {
 
-    override fun loadImage(target: ImageView, imageName: String, callback: (() -> Unit)?) {
+    override fun loadImage(
+        target: ImageView,
+        imageName: String,
+        @DrawableRes placeholderRes: Int,
+        callback: (() -> Unit)?
+    ) {
         picasso.setIndicatorsEnabled(true)
         picasso
             .load("$imageUrl${imageName}")
-            .placeholder(R.drawable.bottle)
-            .error(R.drawable.bottle)
+            .placeholder(placeholderRes)
+            .error(placeholderRes)
             .fit().centerInside()
             .into(target, callback?.let {
                 object : Callback {

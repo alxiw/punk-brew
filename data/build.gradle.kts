@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.google.ksp)
 }
 
 android {
@@ -32,6 +33,36 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+
+    // di
+    implementation(libs.koin.android)
+
+    // paging
+    implementation(libs.androidx.paging.rxjava2.ktx)
+    api(libs.androidx.paging.runtime.ktx)
+
+    // db
+    implementation(libs.androidx.room.rxjava2)
+    implementation(libs.arch.rxjava)
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+
+    // net
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.adapter.rxjava2)
+    implementation(libs.picasso)
+
+    // rx
+    implementation(libs.rxjava)
+    implementation(libs.rxandroid)
+
+    // util
+    implementation(libs.threetenbp)
+
+    // log
+    implementation(libs.logging.interceptor)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

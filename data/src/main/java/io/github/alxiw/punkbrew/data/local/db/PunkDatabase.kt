@@ -1,7 +1,8 @@
-package io.github.alxiw.punkbrew.data.db
+package io.github.alxiw.punkbrew.data.local.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 
 @Database(
     entities = [BeerEntity::class],

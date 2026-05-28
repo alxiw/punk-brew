@@ -6,8 +6,8 @@ import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.paging.PagedList
 import io.github.alxiw.punkbrew.data.BeersRepository
-import io.github.alxiw.punkbrew.data.SearchResult
-import io.github.alxiw.punkbrew.data.db.BeerEntity
+import io.github.alxiw.punkbrew.data.model.SearchResult
+import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 import io.github.alxiw.punkbrew.ui.list.BeersViewModel
 
 class CatalogViewModel(

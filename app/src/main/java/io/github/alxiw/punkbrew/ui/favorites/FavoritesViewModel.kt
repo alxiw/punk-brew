@@ -3,7 +3,7 @@ package io.github.alxiw.punkbrew.ui.favorites
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
 import io.github.alxiw.punkbrew.data.BeersRepository
-import io.github.alxiw.punkbrew.data.db.BeerEntity
+import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 import io.github.alxiw.punkbrew.ui.list.BeersViewModel
 
 class FavoritesViewModel(

@@ -1,18 +1,10 @@
 package io.github.alxiw.punkbrew.di
 
-import android.content.Context
-import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.squareup.picasso.Downloader
-import com.squareup.picasso.Picasso
-import io.github.alxiw.punkbrew.BuildConfig
-import io.github.alxiw.punkbrew.data.api.PunkService
-import io.github.alxiw.punkbrew.data.loader.ImageLoader
-import io.github.alxiw.punkbrew.data.loader.PicassoImageLoader
-import io.github.alxiw.punkbrew.data.source.BeersRemoteSource
+import io.github.alxiw.punkbrew.data.remote.api.PunkService
+import io.github.alxiw.punkbrew.data.remote.BeersRemoteSource
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -20,8 +12,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-private const val BASE_URL = "https://punkapi-alxiw.amvera.io/v3/"
-private const val IMAGES_URL = "${BASE_URL}images/"
+internal const val BASE_URL = "https://punkapi-alxiw.amvera.io/v3/"
 
 val networkModule = module {
 
@@ -33,9 +24,6 @@ val networkModule = module {
             addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
-            if (BuildConfig.DEBUG) {
-                addInterceptor(StethoInterceptor())
-            }
             build()
         } as OkHttpClient
     }
@@ -49,11 +37,4 @@ val networkModule = module {
         }.create(PunkService::class.java) as PunkService
     }
     factory { BeersRemoteSource(get(), get()) as BeersRemoteSource }
-    factory {
-        val downloader = object : Downloader {
-            override fun load(request: Request) = (get() as OkHttpClient).newCall(request).execute()
-            override fun shutdown() { (get() as OkHttpClient).cache?.close() }
-        }
-        PicassoImageLoader(Picasso.Builder(get() as Context).downloader(downloader).build(), IMAGES_URL) as ImageLoader
-    }
 }

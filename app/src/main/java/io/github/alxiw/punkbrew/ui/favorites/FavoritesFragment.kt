@@ -13,7 +13,7 @@ import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import io.github.alxiw.punkbrew.R
-import io.github.alxiw.punkbrew.data.db.BeerEntity
+import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_CATALOG_TAG
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_DETAILS_TAG
 import io.github.alxiw.punkbrew.ui.details.DetailsFragment
@@ -56,14 +56,14 @@ class FavoritesFragment : BeersFragment(), MenuProvider {
 
     override fun initView(view: View) {
         super.initView(view)
-        viewModel.beers.observe(this, Observer {
-            Log.d("HELLO", "Received list of favorites with size of: ${it.size}")
-            if (it.isNotEmpty()) {
+        viewModel.beers.observe(this, Observer { list ->
+            Log.d("HELLO", "Received list of favorites with size of: ${list.size}")
+            if (list.size > 0) {
                 onContentReceived()
             } else {
                 onEmptyContent()
             }
-            adapter.submitList(it)
+            adapter.submitList(list)
         })
     }
 

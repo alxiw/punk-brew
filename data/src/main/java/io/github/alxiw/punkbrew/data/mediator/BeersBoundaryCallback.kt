@@ -1,12 +1,12 @@
-package io.github.alxiw.punkbrew.data
+package io.github.alxiw.punkbrew.data.mediator
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
-import io.github.alxiw.punkbrew.data.db.BeerEntity
-import io.github.alxiw.punkbrew.data.source.BeersLocalSource
-import io.github.alxiw.punkbrew.data.source.BeersRemoteSource
+import io.github.alxiw.punkbrew.data.local.BeersLocalSource
+import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
+import io.github.alxiw.punkbrew.data.remote.BeersRemoteSource
 
 class BeersBoundaryCallback(
     private val query: String?,

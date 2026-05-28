@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import io.github.alxiw.punkbrew.data.db.BeersDao
-import io.github.alxiw.punkbrew.data.db.PunkDatabase
-import io.github.alxiw.punkbrew.data.source.BeersLocalSource
+import io.github.alxiw.punkbrew.data.local.db.BeersDao
+import io.github.alxiw.punkbrew.data.local.db.PunkDatabase
+import io.github.alxiw.punkbrew.data.local.BeersLocalSource
 import org.koin.dsl.module
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors

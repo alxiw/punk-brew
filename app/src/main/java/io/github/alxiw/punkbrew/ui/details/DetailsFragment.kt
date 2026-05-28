@@ -12,15 +12,13 @@ import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Section
 import dev.androidbroadcast.vbpd.viewBinding
 import io.github.alxiw.punkbrew.R
-import io.github.alxiw.punkbrew.data.api.BeerResponse
-import io.github.alxiw.punkbrew.data.db.BeerEntity
+import io.github.alxiw.punkbrew.data.loader.DetailsLoader
+import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 import io.github.alxiw.punkbrew.data.loader.ImageLoader
 import io.github.alxiw.punkbrew.databinding.FragmentDetailsBinding
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_CATALOG_TAG
@@ -42,7 +40,8 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(), MenuProvider {
 
     private val imageLoader: ImageLoader by inject()
 
-    private val gson: Gson by inject()
+    private val detailsLoader: DetailsLoader by inject()
+
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
 
     override val viewModel: DetailsViewModel by viewModel()
@@ -120,7 +119,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(), MenuProvider {
         binding.detailsToolbar.title = beer.name
         updateFavoriteIcon(beer)
 
-        binding.detailsContent.beerDetailsImage.load(imageLoader, beer.image) {
+        binding.detailsContent.beerDetailsImage.load(imageLoader, beer.image, R.drawable.bottle) {
             binding.detailsContent.beerDetailsImage.alpha = 0f
             binding.detailsContent.beerDetailsImage.animate().setDuration(500).alpha(1f).start()
         }
@@ -146,21 +145,15 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(), MenuProvider {
             beerDetailsSrmValue.text = String.format("%s", beer.srm)
             beerDetailsPhValue.text = String.format("%s", beer.ph)
             beerDetailsAttenuationValue.text = String.format("%s%%", beer.attenuationLevel)
-            val volume: BeerResponse.Value = gson.fromJson(
-                beer.volumeJson,
-                BeerResponse.Value::class.java
-            )
-            val boilVolume: BeerResponse.Value = gson.fromJson(
-                beer.boilVolumeJson,
-                BeerResponse.Value::class.java
-            )
+            val volume = detailsLoader.getVolume(beer.volumeJson)
+            val boilVolume = detailsLoader.getVolume(beer.boilVolumeJson)
             beerDetailsVolumeValue.text = String.format(
-                "%s${if (volume.unit.equals("litres", ignoreCase = true)) "L" else ""}",
-                volume.value
+                "%s${if (volume.second.equals("litres", ignoreCase = true)) "L" else ""}",
+                volume.first
             )
             beerDetailsBoilVolumeValue.text = String.format(
-                "%s${if (boilVolume.unit.equals("litres", ignoreCase = true)) "L" else ""}",
-                boilVolume.value
+                "%s${if (boilVolume.second.equals("litres", ignoreCase = true)) "L" else ""}",
+                boilVolume.first
             )
         }
     }
@@ -171,16 +164,11 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(), MenuProvider {
             add(TextItem(beer.description))
         }
 
-        val foodPairing: List<String> = gson.fromJson(
-            beer.foodPairingJson,
-            object : TypeToken<List<String>>() {}.type
-        )
+        val foodPairing = detailsLoader.getFoodPairing(beer.foodPairingJson)
         val foodPairingSection = Section().apply {
             setHeader(HeaderItem(getString(R.string.header_food_pairing)))
             addAll(foodPairing.map {
-                TextItem(
-                    String.format(requireContext().getString(R.string.format_item_text_bullet), it)
-                )
+                TextItem(String.format(requireContext().getString(R.string.format_item_text_bullet), it))
             })
         }
 

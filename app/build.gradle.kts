@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.kotlin.stdlib.jdk8)
 
     implementation(project(":simplesearchview"))
+    implementation(project(":data"))
 
     // support
     implementation(libs.androidx.appcompat)
@@ -65,9 +66,6 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.recyclerview)
     implementation(libs.viewbindingdelegate)
-
-    implementation(libs.androidx.paging.rxjava2.ktx)
-    implementation(libs.androidx.paging.runtime.ktx)
 
     // ui
     implementation(libs.material)
@@ -80,25 +78,6 @@ dependencies {
     // rx
     implementation(libs.rxjava)
     implementation(libs.rxandroid)
-
-    // net
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-    implementation(libs.adapter.rxjava2)
-    implementation(libs.picasso)
-
-    // db
-    implementation(libs.androidx.room.rxjava2)
-    implementation(libs.arch.rxjava)
-    implementation(libs.androidx.room.runtime)
-    ksp(libs.androidx.room.compiler)
-
-    // util
-    implementation(libs.threetenbp)
-    implementation(libs.stetho.okhttp3)
-
-    // log
-    implementation(libs.logging.interceptor)
 
     // unit tests
     testImplementation(libs.junit)

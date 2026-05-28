@@ -4,9 +4,11 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import io.github.alxiw.punkbrew.data.db.BeerEntity
-import io.github.alxiw.punkbrew.data.source.BeersLocalSource
-import io.github.alxiw.punkbrew.data.source.BeersRemoteSource
+import io.github.alxiw.punkbrew.data.local.BeersLocalSource
+import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
+import io.github.alxiw.punkbrew.data.mediator.BeersBoundaryCallback
+import io.github.alxiw.punkbrew.data.model.SearchResult
+import io.github.alxiw.punkbrew.data.remote.BeersRemoteSource
 import io.reactivex.Single
 
 class BeersRepository(

@@ -11,7 +11,7 @@ import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import io.github.alxiw.punkbrew.R
-import io.github.alxiw.punkbrew.data.db.BeerEntity
+import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_DETAILS_TAG
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_FAVORITES_TAG
 import io.github.alxiw.punkbrew.ui.details.DetailsFragment
@@ -169,7 +169,7 @@ class CatalogFragment : BeersFragment(), MenuProvider {
 
         viewModel.beers.observe(this, Observer {
             Log.d("HELLO", "Received list of beers with size of: ${it.size}")
-            if (it.isNotEmpty()) {
+            if (it.size > 0) {
                 onContentReceived()
             } else {
                 onEmptyContent()

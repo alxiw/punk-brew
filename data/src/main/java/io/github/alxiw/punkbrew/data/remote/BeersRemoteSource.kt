@@ -1,11 +1,11 @@
-package io.github.alxiw.punkbrew.data.source
+package io.github.alxiw.punkbrew.data.remote
 
 import android.util.Log
 import com.google.gson.Gson
-import io.github.alxiw.punkbrew.data.api.BeerResponse
-import io.github.alxiw.punkbrew.data.api.PunkService
-import io.github.alxiw.punkbrew.data.db.BeerEntity
-import io.github.alxiw.punkbrew.data.map.BeerMapper.fromResponse
+import io.github.alxiw.punkbrew.data.remote.api.model.BeerResponse
+import io.github.alxiw.punkbrew.data.remote.api.PunkService
+import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
+import io.github.alxiw.punkbrew.data.mapper.BeerMapper
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -37,7 +37,7 @@ class BeersRemoteSource(
                 .subscribe(
                     { response: List<BeerResponse> ->
                         Log.d("HELLO", "Received beers from server")
-                        onSuccess(fromResponse(response, gson))
+                        onSuccess(BeerMapper.fromResponse(response, gson))
                     },
                     { e: Throwable ->
                         Log.d("HELLO", "Error occurred while requesting beers from server")

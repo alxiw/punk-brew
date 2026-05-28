@@ -1,21 +1,22 @@
-package io.github.alxiw.punkbrew.data.db
+package io.github.alxiw.punkbrew.data.local.db
 
 import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Query
+import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 import io.reactivex.Single
 
 @Dao
 interface BeersDao {
 
-    @Query("INSERT OR REPLACE INTO beers (id, name, tagline, first_brewed, description, image_url, abv, ibu, target_fg, target_og, ebc, srm, ph, attenuation_level, volume_json, boil_volume_json, method_json, ingredients_json, food_pairing_json, brewers_tips, contributed_by, favorite) VALUES ( :id, :name, :tagline, :firstBrewed, :description, :imageUrl, :abv, :ibu, :targetFg, :targetOg, :ebc, :srm, :ph, :attenuationLevel, :volumeJson, :boilVolumeJson, :methodJson, :ingredientsJson, :foodPairingJson, :brewersTips, :contributedBy, COALESCE((SELECT favorite FROM beers WHERE id = :id), 0))")
+    @Query("INSERT OR REPLACE INTO beers (id, name, tagline, first_brewed, description, image_url, abv, ibu, target_fg, target_og, ebc, srm, ph, attenuation_level, volume_json, boil_volume_json, method_json, ingredients_json, food_pairing_json, brewers_tips, contributed_by, favorite) VALUES ( :id, :name, :tagline, :firstBrewed, :description, :image, :abv, :ibu, :targetFg, :targetOg, :ebc, :srm, :ph, :attenuationLevel, :volumeJson, :boilVolumeJson, :methodJson, :ingredientsJson, :foodPairingJson, :brewersTips, :contributedBy, COALESCE((SELECT favorite FROM beers WHERE id = :id), 0))")
     fun insert(
         id: Int,
         name: String,
         tagline: String,
         firstBrewed: String?,
         description: String?,
-        imageUrl: String?,
+        image: String?,
         abv: Double,
         ibu: Double?,
         targetFg: Double?,

@@ -1,8 +1,8 @@
-package io.github.alxiw.punkbrew.data.map
+package io.github.alxiw.punkbrew.data.mapper
 
 import com.google.gson.Gson
-import io.github.alxiw.punkbrew.data.api.BeerResponse
-import io.github.alxiw.punkbrew.data.db.BeerEntity
+import io.github.alxiw.punkbrew.data.remote.api.model.BeerResponse
+import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 
 object BeerMapper {
 

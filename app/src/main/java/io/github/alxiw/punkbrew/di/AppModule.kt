@@ -2,7 +2,6 @@ package io.github.alxiw.punkbrew.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import io.github.alxiw.punkbrew.data.BeersRepository
 import io.github.alxiw.punkbrew.ui.catalog.CatalogViewModel
 import io.github.alxiw.punkbrew.ui.details.DetailsViewModel
 import io.github.alxiw.punkbrew.ui.favorites.FavoritesViewModel
@@ -19,7 +18,6 @@ val appModule = module {
             Context.MODE_PRIVATE
         ) as SharedPreferences
     }
-    factory { BeersRepository(get(), get()) }
     viewModel { CatalogViewModel(get()) }
     viewModel { FavoritesViewModel(get()) }
     viewModel { DetailsViewModel(get()) }

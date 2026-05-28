@@ -7,10 +7,10 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.github.alxiw.punkbrew.R
-import io.github.alxiw.punkbrew.data.db.BeerEntity
+import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 import io.github.alxiw.punkbrew.data.loader.ImageLoader
 import io.github.alxiw.punkbrew.databinding.ItemBeerBinding
-import io.github.alxiw.punkbrew.util.DateFormatter.formatDate
+import io.github.alxiw.punkbrew.util.DateFormatter
 import io.github.alxiw.punkbrew.util.load
 
 class BeersAdapter(
@@ -44,9 +44,9 @@ class BeersAdapter(
             binding.itemName.text = beer.name
             binding.itemTagline.text = beer.tagline
             binding.itemAbv.text = String.format("%s%%", beer.abv)
-            binding.itemDate.text = formatDate(beer.firstBrewed, true)
+            binding.itemDate.text = DateFormatter.formatDate(beer.firstBrewed, true)
 
-            binding.itemImage.load(imageLoader, beer.image)
+            binding.itemImage.load(imageLoader, beer.image, R.drawable.bottle)
 
             binding.itemFavorite.setImageResource(
                 if (beer.favorite) {

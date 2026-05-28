@@ -1,4 +1,4 @@
-package io.github.alxiw.punkbrew.data.api
+package io.github.alxiw.punkbrew.data.remote.api.model
 
 import com.google.gson.annotations.SerializedName
 
@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName
  *     "name": "Punk IPA 2007 - 2010",
  *     "tagline": "Post Modern Classic. Spiky. Tropical. Hoppy.",
  *     "first_brewed": "04/2007",
- *     "description": "Our flagship beer that kick started the craft beer revolution. This is
+ *     "description": "Our flagship beer that kick-started the craft beer revolution. This is
  *         James and Martin's original take on an American IPA, subverted with punchy New Zealand
  *         hops. Layered with new world hops to create an all-out riot of grapefruit, pineapple
  *         and lychee before a spiky, mouth-puckering bitter finish.",

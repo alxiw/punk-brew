@@ -1,9 +1,9 @@
-package io.github.alxiw.punkbrew.data.source
+package io.github.alxiw.punkbrew.data.local
 
 import android.util.Log
 import androidx.paging.DataSource
-import io.github.alxiw.punkbrew.data.db.BeerEntity
-import io.github.alxiw.punkbrew.data.db.BeersDao
+import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
+import io.github.alxiw.punkbrew.data.local.db.BeersDao
 import io.reactivex.Single
 import java.util.concurrent.Executor
 
