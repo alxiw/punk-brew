@@ -26,6 +26,8 @@ class CatalogFragment : BeersFragment(), MenuProvider {
 
     override val viewModel: CatalogViewModel by viewModel()
 
+    private var shouldScrollToTop = false
+
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
         menuInflater.inflate(R.menu.menu, menu)
         val item = menu.findItem(R.id.action_search)
@@ -107,7 +109,12 @@ class CatalogFragment : BeersFragment(), MenuProvider {
                     viewModel.beers.collect {
                         it?.let { list ->
                             Log.d("HELLO", "Received list of beers with size of: ${list.size}")
-                            adapter.submitList(list)
+                            adapter.submitList(list) {
+                                if (shouldScrollToTop) {
+                                    binding.beersRecyclerView.scrollToPosition(0)
+                                    shouldScrollToTop = false
+                                }
+                            }
                         }
                     }
                 }
@@ -140,13 +147,12 @@ class CatalogFragment : BeersFragment(), MenuProvider {
     private fun onBackAction() {
         binding.beersSearch.setQuery("", false)
         searchByName("")
-        binding.beersRecyclerView.scrollToPosition(0)
     }
 
     private fun searchByName(query: String) {
         if (viewModel.searchBeers(getFormattedBeerName(query))) {
             if (isResumed) {
-                binding.beersRecyclerView.scrollToPosition(0)
+                shouldScrollToTop = true
             }
         }
     }
