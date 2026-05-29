@@ -14,32 +14,51 @@ import io.github.alxiw.punkbrew.util.DateFormatter
 import io.github.alxiw.punkbrew.util.load
 
 class BeersAdapter(
-    private val imageLoader: ImageLoader
+    private val imageLoader: ImageLoader,
+    private val onItemClick: (BeerEntity) -> Unit,
+    private val onItemLongClick: (BeerEntity) -> Boolean,
+    private val onLikeClick: (BeerEntity, View) -> Unit
 ) : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(BEER_COMPARATOR) {
-
-    private var onItemClickListener: OnItemClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BeersViewHolder {
         val binding = ItemBeerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return BeersViewHolder(binding, imageLoader)
+        return BeersViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: BeersViewHolder, position: Int) {
-        getItem(position)?.let { beer ->
-            holder.bind(beer, onItemClickListener)
-        }
+        getItem(position)?.let { holder.bind(it) }
     }
 
-    fun setOnItemClickListener(listener: OnItemClickListener) {
-        this.onItemClickListener = listener
-    }
-
-    class BeersViewHolder(
-        private val binding: ItemBeerBinding,
-        private val imageLoader: ImageLoader
+    inner class BeersViewHolder(
+        private val binding: ItemBeerBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(beer : BeerEntity, listener: OnItemClickListener?) {
+        init {
+            binding.root.setOnClickListener {
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    getItem(position)?.let { onItemClick(it) }
+                }
+            }
+
+            binding.root.setOnLongClickListener {
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    getItem(position)?.let { onItemLongClick(it) } ?: false
+                } else {
+                    false
+                }
+            }
+
+            binding.itemFavorite.setOnClickListener {
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    getItem(position)?.let { onLikeClick(it, itemView) }
+                }
+            }
+        }
+
+        fun bind(beer: BeerEntity) {
             binding.itemId.text = String.format("#%s", beer.id)
             binding.itemName.text = beer.name
             binding.itemTagline.text = beer.tagline
@@ -55,32 +74,10 @@ class BeersAdapter(
                     R.drawable.badge_favorite_false
                 }
             )
-
-            itemView.setOnClickListener {
-                listener?.onItemClick(beer)
-            }
-
-            itemView.setOnLongClickListener {
-                listener?.onItemLongClick(beer)
-                true
-            }
-
-            binding.itemFavorite.setOnClickListener {
-                listener?.onItemFavoriteBadgeClick(beer, itemView)
-            }
         }
     }
 
-    interface OnItemClickListener {
-        fun onItemClick(beer: BeerEntity)
-
-        fun onItemLongClick(beer: BeerEntity)
-
-        fun onItemFavoriteBadgeClick(beer: BeerEntity, itemView: View)
-    }
-
     companion object {
-
         private val BEER_COMPARATOR =
             object : DiffUtil.ItemCallback<BeerEntity>() {
                 override fun areItemsTheSame(oldItem: BeerEntity, newItem: BeerEntity): Boolean {

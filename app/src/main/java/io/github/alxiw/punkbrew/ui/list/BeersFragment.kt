@@ -1,6 +1,5 @@
 package io.github.alxiw.punkbrew.ui.list
 
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,25 +21,16 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
 
     private val imageLoader: ImageLoader by inject()
 
-    protected val adapter = BeersAdapter(imageLoader)
+    protected val adapter = BeersAdapter(
+        imageLoader,
+        onItemClick = { beer -> onBeerClicked(beer) },
+        onItemLongClick = { beer -> onBeerLongClicked(beer) },
+        onLikeClick = { beer, itemView -> onFavoriteBadgeClicked(beer, itemView) }
+    )
 
     protected val binding by viewBinding(FragmentBeersBinding::bind)
 
     override fun initView(view: View) {
-        adapter.setOnItemClickListener(object : BeersAdapter.OnItemClickListener {
-            override fun onItemClick(beer: BeerEntity) {
-                onBeerClicked(beer)
-            }
-
-            override fun onItemLongClick(beer: BeerEntity) {
-                onBeerLongClicked(beer)
-            }
-
-            override fun onItemFavoriteBadgeClick(beer: BeerEntity, itemView: View) {
-                onFavoriteBadgeClicked(beer, itemView)
-            }
-        })
-
         binding.beersRecyclerView.also {
             it.layoutManager = LinearLayoutManager(context)
             it.adapter = adapter
@@ -78,7 +68,7 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
         binding.beersProgressBar.hide()
     }
 
-    protected fun onBeerLongClicked(beer: BeerEntity) {
+    protected fun onBeerLongClicked(beer: BeerEntity): Boolean {
         val fm: FragmentManager = childFragmentManager
         val beerDialog = BeerDialogFragment.newInstance(
             beer.id,
@@ -90,7 +80,6 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
             beer.image
         )
         beerDialog.show(fm, "fragment_beer")
-
-        Log.d("HELLO", "Beer ${beer.id} long clicked")
+        return true
     }
 }

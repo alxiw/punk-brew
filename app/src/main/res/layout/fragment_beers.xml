@@ -39,24 +39,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!--<com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/beers_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:theme="@style/AppTheme.ToolbarStyle"
-            app:title="@string/app_name"
-            android:layout_weight="1" />
-
-    </com.google.android.material.appbar.AppBarLayout>-->
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

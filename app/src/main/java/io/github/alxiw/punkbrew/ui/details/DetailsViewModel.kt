@@ -6,12 +6,10 @@ import io.github.alxiw.punkbrew.data.BeersRepository
 import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
 import io.github.alxiw.punkbrew.ui.base.BaseViewModel
 import io.github.alxiw.punkbrew.ui.base.UiState
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class DetailsViewModel(
     private val repository: BeersRepository
