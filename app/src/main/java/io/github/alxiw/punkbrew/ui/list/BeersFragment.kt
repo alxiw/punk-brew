@@ -26,7 +26,9 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
         onItemClick = { beer -> onBeerClicked(beer) },
         onItemLongClick = { beer -> onBeerLongClicked(beer) },
         onLikeClick = { beer, itemView -> onFavoriteBadgeClicked(beer, itemView) }
-    )
+    ).apply {
+        stateRestorationPolicy = androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+    }
 
     protected val binding by viewBinding(FragmentBeersBinding::bind)
 

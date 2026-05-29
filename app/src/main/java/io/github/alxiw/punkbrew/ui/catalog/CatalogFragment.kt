@@ -51,10 +51,12 @@ class CatalogFragment : BeersFragment(), MenuProvider {
     override fun initView(view: View) {
         super.initView(view)
 
+        viewModel.searchBeers(viewModel.currentQuery)
+
         binding.beersSearch.setOnQueryTextListener(object : SimpleSearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 val oldQuery = viewModel.currentQuery
-                Log.d("HELLO", "On query text submit, old query is <$oldQuery>, new query is <$query>")
+                Log.d("HELLO", "On query text submit, old query is <${oldQuery ?: "NULL"}>, new query is <${query}>")
                 // val oldQuery = viewModel.state.value.query
                 // viewModel.accept(UiAction.Search(query = query.trim()))
                 binding.beersSearch.clearFocus()
@@ -65,7 +67,7 @@ class CatalogFragment : BeersFragment(), MenuProvider {
 
             override fun onQueryTextChange(query: String): Boolean {
                 val oldQuery = viewModel.currentQuery
-                Log.d("HELLO", "On query text change, old query is <$oldQuery>, new query is <$query>")
+                Log.d("HELLO", "On query text change, old query is <${oldQuery ?: "NULL"}>, new query is <${query}>")
                 // val oldQuery = viewModel.state.value.query
                 // viewModel.accept(UiAction.Search(query = query.trim())) // query is empty
                 searchByName(query)
@@ -75,7 +77,7 @@ class CatalogFragment : BeersFragment(), MenuProvider {
 
             override fun onQueryTextCleared(): Boolean {
                 val oldQuery = viewModel.currentQuery
-                Log.d("HELLO", "On query text cleared, old query is <$oldQuery>")
+                Log.d("HELLO", "On query text cleared, old query is <${oldQuery ?: "NULL"}>")
                 // val oldQuery = viewModel.state.value.query
                 // viewModel.accept(UiAction.Search(query = ""))
                 binding.beersSearch.clearFocus()
@@ -133,8 +135,6 @@ class CatalogFragment : BeersFragment(), MenuProvider {
                 }
             }
         )
-
-        viewModel.searchBeers(viewModel.currentQuery)
     }
 
     private fun onBackAction() {
@@ -145,7 +145,9 @@ class CatalogFragment : BeersFragment(), MenuProvider {
 
     private fun searchByName(query: String) {
         if (viewModel.searchBeers(getFormattedBeerName(query))) {
-            binding.beersRecyclerView.scrollToPosition(0)
+            if (isResumed) {
+                binding.beersRecyclerView.scrollToPosition(0)
+            }
         }
     }
 

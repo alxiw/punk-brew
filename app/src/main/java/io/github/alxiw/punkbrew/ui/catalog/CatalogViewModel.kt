@@ -34,6 +34,7 @@ class CatalogViewModel(
     private val beersResult = queryFlow
         .debounce(300)
         .distinctUntilChanged()
+        .onEach { _uiState.value = UiState.Loading }
         .map { repository.search(it) }
         .shareIn(viewModelScope, SharingStarted.Lazily, replay = 1)
 
@@ -52,7 +53,6 @@ class CatalogViewModel(
         if (!force && isLaunched && currentQuery == queryString) return false
         isLaunched = true
         currentQuery = queryString
-        _uiState.value = UiState.Loading
         queryFlow.value = queryString
         return true
     }
