@@ -20,7 +20,7 @@ class CatalogViewModel(
 
     private var isLaunched = false
 
-    private val queryFlow = MutableStateFlow<String?>(null)
+    private val queryFlow = MutableSharedFlow<String?>(replay = 1)
 
     private val beersResult: SharedFlow<SearchResult> = queryFlow.map {
         repository.search(it)
@@ -36,11 +36,11 @@ class CatalogViewModel(
         it.networkErrors
     }.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    fun searchBeers(queryString: String?): Boolean {
-        if (isLaunched && currentQuery == queryString) return false
+    fun searchBeers(queryString: String?, force: Boolean = false): Boolean {
+        if (!force && isLaunched && currentQuery == queryString) return false
         isLaunched = true
         currentQuery = queryString
-        queryFlow.value = queryString
+        queryFlow.tryEmit(queryString)
         return true
     }
 }

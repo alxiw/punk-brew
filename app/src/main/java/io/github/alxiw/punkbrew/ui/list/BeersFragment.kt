@@ -71,9 +71,6 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>() {
     }
 
     open fun onBeerUpdated() {
-        viewModel.beers.value?.dataSource?.addInvalidatedCallback {
-            adapter.notifyDataSetChanged()
-        }
         viewModel.beers.value?.dataSource?.invalidate()
     }
 

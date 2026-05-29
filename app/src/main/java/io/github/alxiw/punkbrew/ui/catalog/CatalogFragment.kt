@@ -227,6 +227,11 @@ class CatalogFragment : BeersFragment(), MenuProvider {
         Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
     }
 
+    override fun onBeerUpdated() {
+        super.onBeerUpdated()
+        viewModel.searchBeers(viewModel.currentQuery, force = true)
+    }
+
     override fun onBeerClicked(beer: BeerEntity) {
         viewModel.hideKeyboard(requireContext().applicationContext, null)
         parentFragmentManager.beginTransaction()
