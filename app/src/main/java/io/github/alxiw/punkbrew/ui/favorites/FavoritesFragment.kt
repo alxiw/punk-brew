@@ -70,7 +70,7 @@ class FavoritesFragment : BeersFragment(), MenuProvider {
     }
 
     override fun onBeerClicked(beer: BeerEntity) {
-        requireFragmentManager().beginTransaction()
+        parentFragmentManager.beginTransaction()
             .replace(
                 R.id.root_container,
                 DetailsFragment.newInstance(beer.id),
@@ -83,6 +83,10 @@ class FavoritesFragment : BeersFragment(), MenuProvider {
     override fun onFavoriteBadgeClicked(beer: BeerEntity, itemView: View) {
         val updatedBeer = beer.copy(favorite = !beer.favorite)
         viewModel.updateBeer(updatedBeer) {
+            if (!isAdded) {
+                return@updateBeer
+            }
+
             if (!updatedBeer.favorite) {
                 itemView.findViewById<ImageView>(R.id.item_favorite).setImageResource(R.drawable.badge_favorite_false)
                 onBeerUpdated()
@@ -92,7 +96,7 @@ class FavoritesFragment : BeersFragment(), MenuProvider {
     }
 
     private fun updateFragment(tag: String) {
-        requireFragmentManager().findFragmentByTag(tag)?.let {
+        parentFragmentManager.findFragmentByTag(tag)?.let {
             if (it is BeersFragment) {
                 it.onBeerUpdated()
             }

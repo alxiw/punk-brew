@@ -66,7 +66,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(), MenuProvider {
     override fun onMenuItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.details_menu_favorite -> {
-                viewModel.currentBeer?.let { onFavoriteBadgeClicked(it, item) }
+                viewModel.currentBeer?.let { onFavoriteBadgeClicked(it) }
                 true
             }
             else -> {
@@ -116,15 +116,19 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(), MenuProvider {
         }
         favoriteItem?.let {
             it.setIcon(
-                if (beer.favorite) R.drawable.ic_menu_favorite_true
-                else R.drawable.ic_menu_favorite_false
+                if (beer.favorite) {
+                    R.drawable.ic_menu_favorite_true
+                }
+                else {
+                    R.drawable.ic_menu_favorite_false
+                }
             )
             it.isVisible = true
         }
     }
 
     private fun initViews(beer: BeerEntity) {
-        binding.detailsToolbar.title = beer.name
+        //binding.detailsToolbar.title = beer.name
         (activity as? AppCompatActivity)?.supportActionBar?.title = beer.name
         updateFavoriteIcon(beer)
 
@@ -186,6 +190,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(), MenuProvider {
             add(TextItem(beer.brewersTips))
         }
 
+        groupAdapter.clear()
         groupAdapter.apply {
             add(descriptionSection)
             add(foodPairingSection)
@@ -217,23 +222,18 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(), MenuProvider {
         }
     }
 
-    private fun onFavoriteBadgeClicked(beer: BeerEntity, menuItem: MenuItem) {
+    private fun onFavoriteBadgeClicked(beer: BeerEntity) {
         val updatedBeer = beer.copy(favorite = !beer.favorite)
         viewModel.updateBeer(updatedBeer) {
-            if (updatedBeer.favorite) {
-                menuItem.setTitle(R.string.menu_favorite_true_title)
-                menuItem.setIcon(R.drawable.ic_menu_favorite_true)
-            } else {
-                menuItem.setTitle(R.string.menu_favorite_false_title)
-                menuItem.setIcon(R.drawable.ic_menu_favorite_false)
+            if (isAdded) {
+                updateList(BACK_STACK_CATALOG_TAG)
+                updateList(BACK_STACK_FAVORITES_TAG)
             }
-            updateList(BACK_STACK_CATALOG_TAG)
-            updateList(BACK_STACK_FAVORITES_TAG)
         }
     }
 
     private fun updateList(tag: String) {
-        val listFragment = getParentFragmentManager().findFragmentByTag(tag)
+        val listFragment = parentFragmentManager.findFragmentByTag(tag)
         if (listFragment != null && listFragment is BeersFragment) {
             listFragment.onBeerUpdated()
         }

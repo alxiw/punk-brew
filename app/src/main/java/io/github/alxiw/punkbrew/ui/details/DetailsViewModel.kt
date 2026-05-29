@@ -48,6 +48,8 @@ class DetailsViewModel(
     fun updateBeer(beer: BeerEntity, updateFinished: () -> Unit) {
         viewModelScope.launch {
             repository.update(beer)
+            currentBeer = beer
+            _beer.value = beer
             Log.d("HELLO", "Beer #${beer.id} updated from ${javaClass.name}")
             updateFinished()
         }
