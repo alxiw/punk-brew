@@ -3,17 +3,23 @@ package io.github.alxiw.punkbrew.ui
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.github.alxiw.punkbrew.R
+import io.github.alxiw.punkbrew.databinding.ActivityMainBinding
 import io.github.alxiw.punkbrew.ui.catalog.CatalogFragment
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .add(R.id.root_container, CatalogFragment.newInstance(), BACK_STACK_CATALOG_TAG)
+                .replace(R.id.root_container, CatalogFragment.newInstance(), BACK_STACK_CATALOG_TAG)
                 .commit()
         }
     }

@@ -79,6 +79,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
             val activity = activity as AppCompatActivity
             activity.setSupportActionBar(it)
             it.title = ""
+            it.subtitle = ""
             it.setNavigationIcon(R.drawable.ic_back)
             it.setNavigationOnClickListener { finish() }
         }
@@ -127,8 +128,10 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
     }
 
     private fun initViews(beer: BeerEntity) {
-        //binding.detailsToolbar.title = beer.name
-        (activity as? AppCompatActivity)?.supportActionBar?.title = beer.name
+        (activity as? AppCompatActivity)?.supportActionBar?.apply {
+            title = beer.name
+            subtitle = resources.getString(R.string.app_tagline)
+        }
         updateFavoriteIcon(beer)
 
         binding.detailsContent.beerDetailsImage.load(imageLoader, beer.image, R.drawable.bottle) {
