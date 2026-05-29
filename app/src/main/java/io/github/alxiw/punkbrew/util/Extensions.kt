@@ -15,7 +15,7 @@ fun View.hide() {
 }
 
 fun getFormattedBeerName(name : String?) : String? {
-    return if (TextUtils.isEmpty(name)) null else name
+    return if (TextUtils.isEmpty(name)) null else name?.trim()
 }
 
 fun ImageView.load(

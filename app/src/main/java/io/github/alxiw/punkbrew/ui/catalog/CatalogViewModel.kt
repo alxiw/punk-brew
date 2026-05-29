@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -32,6 +33,7 @@ class CatalogViewModel(
 
     private val beersResult = queryFlow
         .debounce(300)
+        .distinctUntilChanged()
         .map { repository.search(it) }
         .shareIn(viewModelScope, SharingStarted.Lazily, replay = 1)
 

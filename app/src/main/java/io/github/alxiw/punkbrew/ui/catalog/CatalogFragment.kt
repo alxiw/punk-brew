@@ -33,6 +33,7 @@ class CatalogFragment : BeersFragment(), MenuProvider {
     }
 
     override fun onMenuItemSelected(item: MenuItem): Boolean {
+        // если будет обработка клика, то тогда сделать true
         return false
     }
 
@@ -47,114 +48,38 @@ class CatalogFragment : BeersFragment(), MenuProvider {
         menuHost.addMenuProvider(this, getViewLifecycleOwner(), Lifecycle.State.RESUMED)
     }
 
-    /*override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_catalog, menu)
-
-        val filterItem = menu.findItem(R.id.catalog_menu_filter)
-        filterItem.let {
-            if (viewModel.filterEnabled) {
-                it.setIcon(R.drawable.ic_menu_filter_true)
-            }
-        }
-        filterItem.setOnMenuItemClickListener {
-            viewModel.filterEnabled = !viewModel.filterEnabled
-            if (viewModel.filterEnabled) {
-                it.setTitle(R.string.menu_filter_true_title)
-                it.setIcon(R.drawable.ic_menu_filter_true)
-                Toast.makeText(context, context?.getString(R.string.toast_filter_enabled), Toast.LENGTH_SHORT).show()
-            } else {
-                it.setTitle(R.string.menu_filter_false_title)
-                it.setIcon(R.drawable.ic_menu_filter_false)
-                Toast.makeText(context, context?.getString(R.string.toast_filter_disabled), Toast.LENGTH_SHORT).show()
-            }
-            true
-        }
-        filterItem.isVisible = false
-
-        val searchItem = menu.findItem(R.id.catalog_menu_search)
-        searchItem.let { item ->
-            val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
-            searchView = item.actionView as SearchView
-            searchView?.let { view ->
-                view.setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
-                view.isIconified = true
-                viewModel.currentQuery?.let { query ->
-                    item.expandActionView()
-                    view.setQuery(query, false)
-                    if (!hasSearchFocus) {
-                        view.clearFocus()
-                    }
-                }
-                view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                        override fun onQueryTextSubmit(s: String): Boolean {
-                            view.clearFocus()
-                            hasSearchFocus = false
-                            searchByName(s)
-                            return true
-                        }
-
-                        override fun onQueryTextChange(s: String): Boolean {
-                            hasSearchFocus = true
-                            searchByName(s)
-                            return true
-                        }
-                    })
-            }
-        }
-        super.onCreateOptionsMenu(menu, inflater)
-    }*/
-
     override fun initView(view: View) {
         super.initView(view)
 
         binding.beersSearch.setOnQueryTextListener(object : SimpleSearchView.OnQueryTextListener {
-
             override fun onQueryTextSubmit(query: String): Boolean {
-                /*val oldQuery = uiState.value.query
+                val oldQuery = viewModel.currentQuery
                 Log.d("HELLO", "On query text submit, old query is <$oldQuery>, new query is <$query>")
-
-                if (oldQuery != query) {
-                    Log.d("HELLO", "Query changing from <$oldQuery> to <$query> submitted")
-                    binding.beersSearch.clearFocus()
-                    onQueryChanged(UiAction.Search(query = query.trim()))
-                }*/
-
-                view.clearFocus()
+                // val oldQuery = viewModel.state.value.query
+                // viewModel.accept(UiAction.Search(query = query.trim()))
+                binding.beersSearch.clearFocus()
                 searchByName(query)
 
                 return true
             }
 
             override fun onQueryTextChange(query: String): Boolean {
-                /*val oldQuery = uiState.value.query
+                val oldQuery = viewModel.currentQuery
                 Log.d("HELLO", "On query text change, old query is <$oldQuery>, new query is <$query>")
-
-                if (query.isEmpty() && oldQuery != query) {
-                    Log.d("HELLO", "Query text changing from <$oldQuery> to <$query> applied")
-                    job?.cancel()
-                    job = CoroutineScope(Dispatchers.Main).launch {
-                        delay(1000)
-                        binding.beersSearch.clearFocus()
-                        onQueryChanged(UiAction.Search(query = query.trim())) // query is empty
-                    }
-                } else {
-                    job?.cancel()
-                }*/
+                // val oldQuery = viewModel.state.value.query
+                // viewModel.accept(UiAction.Search(query = query.trim())) // query is empty
+                binding.beersSearch.clearFocus()
                 searchByName(query)
 
                 return true
             }
 
             override fun onQueryTextCleared(): Boolean {
-                /*val oldQuery = uiState.value.query
+                val oldQuery = viewModel.currentQuery
                 Log.d("HELLO", "On query text cleared, old query is <$oldQuery>")
-
-                if (oldQuery.isNotEmpty()) {
-                    Log.d("HELLO", "Query text changing from <$oldQuery> to <> applied")
-                    binding.beersSearch.clearFocus()
-                    onQueryChanged(UiAction.Search(query = ""))
-                }*/
-                view.clearFocus()
+                // val oldQuery = viewModel.state.value.query
+                // viewModel.accept(UiAction.Search(query = ""))
+                binding.beersSearch.clearFocus()
                 searchByName("")
 
                 return true
@@ -167,6 +92,13 @@ class CatalogFragment : BeersFragment(), MenuProvider {
             override fun onSearchViewShownAnimation() = Unit
             override fun onSearchViewClosedAnimation() = Unit
         })
+
+        /*viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.state
+                .map { it.query }
+                .distinctUntilChanged()
+                .collect { beersSearch.setQuery(it, true) }
+        }*/
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -207,6 +139,7 @@ class CatalogFragment : BeersFragment(), MenuProvider {
     }
 
     private fun onBackAction() {
+        binding.beersSearch.setQuery("", false)
         searchByName("")
         binding.beersRecyclerView.scrollToPosition(0)
     }
