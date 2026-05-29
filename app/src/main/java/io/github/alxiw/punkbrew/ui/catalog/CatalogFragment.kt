@@ -68,7 +68,6 @@ class CatalogFragment : BeersFragment(), MenuProvider {
                 Log.d("HELLO", "On query text change, old query is <$oldQuery>, new query is <$query>")
                 // val oldQuery = viewModel.state.value.query
                 // viewModel.accept(UiAction.Search(query = query.trim())) // query is empty
-                binding.beersSearch.clearFocus()
                 searchByName(query)
 
                 return true
