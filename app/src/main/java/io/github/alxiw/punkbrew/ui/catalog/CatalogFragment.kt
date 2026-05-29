@@ -211,25 +211,15 @@ class CatalogFragment : BeersFragment(), MenuProvider {
         binding.beersRecyclerView.scrollToPosition(0)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
-
     private fun searchByName(query: String) {
         if (viewModel.searchBeers(getFormattedBeerName(query))) {
             binding.beersRecyclerView.scrollToPosition(0)
-            adapter.submitList(null)
         }
     }
 
     private fun showNetworkError(text: String?) {
         val message = requireContext().applicationContext.getString(R.string.format_error, text)
         Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
-    }
-
-    override fun onBeerUpdated() {
-        super.onBeerUpdated()
-        viewModel.searchBeers(viewModel.currentQuery, force = true)
     }
 
     override fun onBeerClicked(beer: BeerEntity) {

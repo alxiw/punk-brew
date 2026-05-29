@@ -1,10 +1,7 @@
 package io.github.alxiw.punkbrew.ui.list
 
-import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import dev.androidbroadcast.vbpd.viewBinding
@@ -19,23 +16,17 @@ import io.github.alxiw.punkbrew.util.show
 import org.koin.android.ext.android.inject
 import kotlin.getValue
 
-abstract class BeersFragment : BaseFragment<BeersViewModel>() {
+abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_beers) {
 
     abstract override val viewModel: BeersViewModel
 
     private val imageLoader: ImageLoader by inject()
 
     protected val adapter = BeersAdapter(imageLoader)
-    override val layoutId: Int = R.layout.fragment_beers
 
     protected val binding by viewBinding(FragmentBeersBinding::bind)
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val view = super.onCreateView(inflater, container, savedInstanceState)
-
+    override fun initView(view: View) {
         adapter.setOnItemClickListener(object : BeersAdapter.OnItemClickListener {
             override fun onItemClick(beer: BeerEntity) {
                 onBeerClicked(beer)
@@ -50,10 +41,6 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>() {
             }
         })
 
-        return view
-    }
-
-    override fun initView(view: View) {
         binding.beersRecyclerView.also {
             it.layoutManager = LinearLayoutManager(context)
             it.adapter = adapter
@@ -63,11 +50,6 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>() {
     override fun onDestroyView() {
         binding.beersRecyclerView.adapter = null
         super.onDestroyView()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        onBeerUpdated()
     }
 
     open fun onBeerUpdated() {

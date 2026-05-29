@@ -29,9 +29,7 @@ class DetailsViewModel(
             _uiState.value = UiState.Loading
             viewModelScope.launch {
                 try {
-                    val beer = withContext(Dispatchers.IO) {
-                        repository.beer(id)
-                    }
+                    val beer = repository.beer(id)
                     currentBeer = beer
                     _beer.value = beer
                     _uiState.value = UiState.Content

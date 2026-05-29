@@ -9,64 +9,64 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 
 class BeersBoundaryCallback(
     private val query: String?,
     private val remoteSource: BeersRemoteSource,
     private val localSource: BeersLocalSource,
     private val scope: CoroutineScope
-): PagedList.BoundaryCallback<BeerEntity>() {
+) : PagedList.BoundaryCallback<BeerEntity>() {
 
-    // keep the last requested page. When the request is successful, increment the page number.
-    private var lastRequestedPage = 1
-
-    // StateFlow of network errors.
     private val _networkErrors = MutableStateFlow<String?>(null)
-
-    // StateFlow of network errors.
     val networkErrors: StateFlow<String?>
         get() = _networkErrors.asStateFlow()
 
-    // avoid triggering multiple requests in the same time
     private var isRequestInProgress = false
+    private var isEndReached = false
 
     override fun onZeroItemsLoaded() {
-        requestAndSaveData(query)
-    }
-
-    override fun onItemAtFrontLoaded(itemAtFront: BeerEntity) {
+        Log.d("HELLO", "[BOUNDARY CALLBACK] On zero items loaded")
         requestAndSaveData(query)
     }
 
     override fun onItemAtEndLoaded(itemAtEnd: BeerEntity) {
+        Log.d("HELLO", "[BOUNDARY CALLBACK] On item at end loaded")
         requestAndSaveData(query)
     }
 
     private fun requestAndSaveData(query: String?) {
-        if (isRequestInProgress) return
-
+        Log.d("HELLO", "[BOUNDARY CALLBACK] Request and save data: <${query ?: "NULL"}>")
+        if (isRequestInProgress || isEndReached) return
         isRequestInProgress = true
-        Log.d("HELLO", "Request new page of beers")
-        remoteSource.searchBeers(
-            query,
-            lastRequestedPage,
-            NETWORK_PAGE_SIZE,
-            { beers ->
-                scope.launch {
-                    localSource.insertAll(beers)
-                    Log.d("HELLO", "Insert ${beers.size} beers into cache")
-                    _networkErrors.value = null
-                    lastRequestedPage++
-                    isRequestInProgress = false
+        Log.d("HELLO", "[BOUNDARY CALLBACK] Request new page of beers for query: <${query ?: "NULL"}>")
+
+        flow {
+            val count = localSource.getBeersCount(query)
+            val page = (count / NETWORK_PAGE_SIZE) + 1
+            val beers = remoteSource.searchBeers(query, page, NETWORK_PAGE_SIZE)
+            emit(beers)
+        }
+            .onEach { beers ->
+                if (beers.isEmpty() || beers.size < NETWORK_PAGE_SIZE) {
+                    isEndReached = true
                 }
-            },
-            { error ->
-                Log.d("HELLO", "No beers inserted into cache")
-                _networkErrors.value = error
+                localSource.insertAll(beers)
+                Log.d("HELLO", "[BOUNDARY CALLBACK] Insert ${beers.size} beers into cache")
+                _networkErrors.value = null
+            }
+            .catch { e ->
+                Log.d("HELLO", "[BOUNDARY CALLBACK] Error during request: ${e.message}")
+                _networkErrors.value = e.message
+            }
+            .onCompletion {
                 isRequestInProgress = false
             }
-        )
+            .launchIn(scope)
     }
 
     companion object {

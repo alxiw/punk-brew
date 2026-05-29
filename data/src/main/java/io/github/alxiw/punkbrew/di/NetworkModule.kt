@@ -1,5 +1,6 @@
 package io.github.alxiw.punkbrew.di
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.github.alxiw.punkbrew.data.remote.api.PunkService
@@ -22,12 +23,12 @@ val networkModule = module {
 
     factory { GsonBuilder().setLenient().create() as Gson }
     factory {
+        val interceptor = HttpLoggingInterceptor { message -> Log.d("HELLO", message) }
+            .apply { level = HttpLoggingInterceptor.Level.BASIC }
         with(OkHttpClient.Builder()) {
-            readTimeout(1, TimeUnit.SECONDS)
-            connectTimeout(1, TimeUnit.SECONDS)
-            addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
+            readTimeout(15, TimeUnit.SECONDS)
+            connectTimeout(15, TimeUnit.SECONDS)
+            addInterceptor(interceptor)
             build()
         } as OkHttpClient
     }
@@ -39,5 +40,5 @@ val networkModule = module {
             build()
         }.create(PunkService::class.java) as PunkService
     }
-    factory { BeersRemoteSource(get(), get(), get()) as BeersRemoteSource }
+    factory { BeersRemoteSource(get(), get()) as BeersRemoteSource }
 }

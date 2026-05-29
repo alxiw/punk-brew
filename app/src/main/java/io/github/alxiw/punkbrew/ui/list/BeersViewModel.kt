@@ -1,7 +1,6 @@
 package io.github.alxiw.punkbrew.ui.list
 
 import android.content.Context
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.viewModelScope
@@ -22,7 +21,6 @@ abstract class BeersViewModel(
     fun updateBeer(beer: BeerEntity, updateFinished: () -> Unit) {
         viewModelScope.launch {
             repository.update(beer)
-            Log.d("HELLO", "Beer #${beer.id} has updated from ${javaClass.name}")
             updateFinished()
         }
     }

@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class DetailsFragment : BaseFragment<DetailsViewModel>(), MenuProvider {
+class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details), MenuProvider {
 
     private val binding by viewBinding(FragmentDetailsBinding::bind)
 
@@ -46,7 +46,6 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(), MenuProvider {
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
 
     override val viewModel: DetailsViewModel by viewModel()
-    override val layoutId: Int = R.layout.fragment_details
 
     private var favoriteItem: MenuItem? = null
 
@@ -133,8 +132,12 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(), MenuProvider {
         updateFavoriteIcon(beer)
 
         binding.detailsContent.beerDetailsImage.load(imageLoader, beer.image, R.drawable.bottle) {
-            binding.detailsContent.beerDetailsImage.alpha = 0f
-            binding.detailsContent.beerDetailsImage.animate().setDuration(500).alpha(1f).start()
+            view?.let {
+                with(binding) {
+                    detailsContent.beerDetailsImage.alpha = 0f
+                    detailsContent.beerDetailsImage.animate().setDuration(500).alpha(1f).start()
+                }
+            }
         }
 
         binding.detailsContent.beerDetailsId.text = String.format("#%s", beer.id)

@@ -23,7 +23,7 @@ class BeersRepository(
         .build()
 
     fun search(query: String?): SearchResult {
-        Log.d("HELLO", "Search beers by query: $query")
+        Log.d("HELLO", "[REPOSITORY] Search beers by query: <${query ?: "NULL"}>")
         val dataSourceFactory = localSource.getBeers(query)
         val boundaryCallback = BeersBoundaryCallback(query, remoteSource, localSource, scope)
         val networkErrors = boundaryCallback.networkErrors
@@ -35,6 +35,7 @@ class BeersRepository(
     }
 
     fun favorites(): Flow<PagedList<BeerEntity>> {
+        Log.d("HELLO", "[REPOSITORY] Get favourite beers")
         val dataSourceFactory = localSource.getFavorites()
         return LivePagedListBuilder(dataSourceFactory, pageConfig)
             .build()
@@ -42,10 +43,12 @@ class BeersRepository(
     }
 
     suspend fun beer(id: Int): BeerEntity {
+        Log.d("HELLO", "[REPOSITORY] Get beer #$id")
         return localSource.getBeer(id)
     }
 
     suspend fun update(beer: BeerEntity) {
+        Log.d("HELLO", "[REPOSITORY] Update beer #${beer.id}")
         localSource.update(beer)
     }
 

@@ -4,7 +4,6 @@ import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Query
 import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
-import kotlin.jvm.JvmSuppressWildcards
 
 @Dao
 @JvmSuppressWildcards
@@ -47,18 +46,24 @@ interface BeersDao {
     @Query("SELECT * FROM beers WHERE id=:id LIMIT 1")
     suspend fun beer(id: Int): BeerEntity
 
-    @Query("SELECT * FROM beers")
+    @Query("SELECT * FROM beers ORDER BY id ASC")
     fun beers(): DataSource.Factory<Int, BeerEntity>
 
-    @Query("SELECT * FROM beers WHERE (id IS :id)")
+    @Query("SELECT * FROM beers WHERE (id IS :id) ORDER BY id ASC")
     fun beersById(id: Int): DataSource.Factory<Int, BeerEntity>
 
-    @Query("SELECT * FROM beers WHERE (name LIKE :name)")
+    @Query("SELECT * FROM beers WHERE (name LIKE :name) ORDER BY id ASC")
     fun beersByName(name: String): DataSource.Factory<Int, BeerEntity>
 
-    @Query("SELECT * FROM beers WHERE (favorite = 1)")
+    @Query("SELECT * FROM beers WHERE (favorite = 1) ORDER BY id ASC")
     fun favorites(): DataSource.Factory<Int, BeerEntity>
 
-    @Query("SELECT * FROM beers WHERE (favorite = 1 AND name LIKE :name)")
+    @Query("SELECT * FROM beers WHERE (favorite = 1 AND name LIKE :name) ORDER BY id ASC")
     fun favoritesByName(name: String): DataSource.Factory<Int, BeerEntity>
+
+    @Query("SELECT COUNT(*) FROM beers")
+    suspend fun getBeersCount(): Int
+
+    @Query("SELECT COUNT(*) FROM beers WHERE (name LIKE :name)")
+    suspend fun getBeersCountByName(name: String): Int
 }
