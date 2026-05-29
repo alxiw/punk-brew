@@ -77,7 +77,8 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(), MenuProvider {
 
     override fun setupToolbar() {
         binding.detailsToolbar.also {
-            (activity as AppCompatActivity).setSupportActionBar(it)
+            val activity = activity as AppCompatActivity
+            activity.setSupportActionBar(it)
             it.title = ""
             it.setNavigationIcon(R.drawable.ic_back)
             it.setNavigationOnClickListener { finish() }
@@ -124,6 +125,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(), MenuProvider {
 
     private fun initViews(beer: BeerEntity) {
         binding.detailsToolbar.title = beer.name
+        (activity as? AppCompatActivity)?.supportActionBar?.title = beer.name
         updateFavoriteIcon(beer)
 
         binding.detailsContent.beerDetailsImage.load(imageLoader, beer.image, R.drawable.bottle) {

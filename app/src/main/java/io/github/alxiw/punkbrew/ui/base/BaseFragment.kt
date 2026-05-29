@@ -26,8 +26,8 @@ abstract class BaseFragment<VM : BaseViewModel> : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initView(view)
         setupToolbar()
+        initView(view)
         observeUiState()
     }
 
