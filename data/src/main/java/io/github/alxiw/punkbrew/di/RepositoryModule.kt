@@ -23,5 +23,5 @@ val repositoryModule = module {
         PicassoImageLoader(Picasso.Builder(get() as Context).downloader(downloader).build(), IMAGES_URL) as ImageLoader
     }
     factory { BeersRepository(get(), get(), get()) }
-    factory { DetailsLoader(get()) }
+    factory { DetailsLoader(get(), get() as Context) }
 }

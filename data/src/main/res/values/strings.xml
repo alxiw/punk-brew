@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bullet">"•"</string>
+    <string name="hollow_bullet">"◦"</string>
+    <string name="celsius">"°C"</string>
+    <string name="degree">"%"</string>
+    <string name="kilograms">"kg</string>
+    <string name="grams">"g"</string>
+    <string name="litres">"L"</string>
+</resources>

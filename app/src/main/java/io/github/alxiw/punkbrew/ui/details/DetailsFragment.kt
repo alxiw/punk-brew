@@ -28,6 +28,8 @@ import io.github.alxiw.punkbrew.ui.details.items.HeaderItem
 import io.github.alxiw.punkbrew.ui.details.items.TextItem
 import io.github.alxiw.punkbrew.ui.list.BeersFragment
 import io.github.alxiw.punkbrew.util.DateFormatter
+import io.github.alxiw.punkbrew.util.formatNullableDegreeBeerValue
+import io.github.alxiw.punkbrew.util.formatNullableSimpleBeerValue
 import io.github.alxiw.punkbrew.util.hide
 import io.github.alxiw.punkbrew.util.load
 import io.github.alxiw.punkbrew.util.show
@@ -37,6 +39,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details), MenuProvider {
 
+    override val viewModel: DetailsViewModel by viewModel()
+
     private val binding by viewBinding(FragmentDetailsBinding::bind)
 
     private val imageLoader: ImageLoader by inject()
@@ -45,15 +49,11 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
 
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
 
-    override val viewModel: DetailsViewModel by viewModel()
-
     private var favoriteItem: MenuItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            viewModel.beerId = it.getInt(BEER_ID_KEY)
-        }
+        arguments?.let { viewModel.beerId = it.getInt(BEER_ID_KEY) }
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -133,47 +133,37 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
             subtitle = resources.getString(R.string.app_tagline)
         }
         updateFavoriteIcon(beer)
-
-        binding.detailsContent.beerDetailsImage.load(imageLoader, beer.image, R.drawable.bottle) {
-            view?.let {
-                with(binding) {
-                    detailsContent.beerDetailsImage.alpha = 0f
-                    detailsContent.beerDetailsImage.animate().setDuration(500).alpha(1f).start()
-                }
-            }
-        }
-
-        binding.detailsContent.beerDetailsId.text = String.format("#%s", beer.id)
-        binding.detailsContent.beerDetailsDate.text = DateFormatter.formatDate(beer.firstBrewed, false)
-
         updateBasicsView(beer)
-        binding.detailsContent.beerDetailsName.text = beer.name
-        binding.detailsContent.beerDetailsTagline.text = beer.tagline
-
         updateRecyclerView(beer)
         binding.detailsContent.beerDetailsCopyright.text = String.format("Contributed by %s", beer.contributedBy)
     }
 
     private fun updateBasicsView(beer: BeerEntity) {
         with(binding.detailsContent) {
-            beerDetailsAbvValue.text = String.format("%s%%", beer.abv)
-            beerDetailsIbuValue.text = String.format("%s", beer.ibu)
-            beerDetailsTargetOgValue.text = String.format("%s", beer.targetOg)
-            beerDetailsTargetFgValue.text = String.format("%s", beer.targetFg)
-            beerDetailsEbcValue.text = String.format("%s", beer.ebc)
-            beerDetailsSrmValue.text = String.format("%s", beer.srm)
-            beerDetailsPhValue.text = String.format("%s", beer.ph)
-            beerDetailsAttenuationValue.text = String.format("%s%%", beer.attenuationLevel)
-            val volume = detailsLoader.getVolume(beer.volumeJson)
-            val boilVolume = detailsLoader.getVolume(beer.boilVolumeJson)
-            beerDetailsVolumeValue.text = String.format(
-                "%s${if (volume.second.equals("litres", ignoreCase = true)) "L" else ""}",
-                volume.first
-            )
-            beerDetailsBoilVolumeValue.text = String.format(
-                "%s${if (boilVolume.second.equals("litres", ignoreCase = true)) "L" else ""}",
-                boilVolume.first
-            )
+            beerDetailsId.text = String.format("#%s", beer.id)
+            beerDetailsDate.text = DateFormatter.formatDate(beer.firstBrewed, false)
+
+            beerDetailsImage.load(imageLoader, beer.image, R.drawable.bottle) {
+                view?.let {
+                    beerDetailsImage.alpha = 0f
+                    beerDetailsImage.animate().setDuration(500).alpha(1f).start()
+                }
+            }
+
+            beerDetailsAbvValue.text = formatNullableDegreeBeerValue(beer.abv) // av is non-nullable
+            beerDetailsIbuValue.text = formatNullableSimpleBeerValue(beer.ibu)
+            beerDetailsTargetOgValue.text = formatNullableSimpleBeerValue(beer.targetOg)
+            beerDetailsTargetFgValue.text = formatNullableSimpleBeerValue(beer.targetFg)
+            beerDetailsEbcValue.text = formatNullableSimpleBeerValue(beer.ebc)
+            beerDetailsSrmValue.text = formatNullableSimpleBeerValue(beer.srm)
+            beerDetailsPhValue.text = formatNullableSimpleBeerValue(beer.ph)
+            beerDetailsAttenuationValue.text = formatNullableDegreeBeerValue(beer.attenuationLevel)
+
+            beerDetailsVolumeValue.text = detailsLoader.getVolume(beer.volumeJson)
+            beerDetailsBoilVolumeValue.text = detailsLoader.getVolume(beer.boilVolumeJson)
+
+            beerDetailsName.text = beer.name
+            beerDetailsTagline.text = beer.tagline
         }
     }
 
@@ -191,6 +181,18 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
             })
         }
 
+        val method = detailsLoader.getMethod(beer.methodJson)
+        val methodSection = Section().apply {
+            setHeader(HeaderItem(getString(R.string.header_method)))
+            addAll(method.map { TextItem(it) })
+        }
+
+        val ingredients = detailsLoader.getIngredients(beer.ingredientsJson)
+        val ingredientsSection = Section().apply {
+            setHeader(HeaderItem(getString(R.string.header_ingredients)))
+            addAll(ingredients.map { TextItem(it) })
+        }
+
         val brewersTipsSection = Section().apply {
             setHeader(HeaderItem(getString(R.string.header_brewers_tips)))
             add(TextItem(beer.brewersTips))
@@ -199,7 +201,9 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
         groupAdapter.clear()
         groupAdapter.apply {
             add(descriptionSection)
-            add(foodPairingSection)
+            if (foodPairing.isNotEmpty()) add(foodPairingSection)
+            if (method.isNotEmpty()) add(methodSection)
+            if (ingredients.isNotEmpty()) add(ingredientsSection)
             add(brewersTipsSection)
         }
     }

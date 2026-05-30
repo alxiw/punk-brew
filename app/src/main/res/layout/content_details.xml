@@ -380,7 +380,7 @@
                         android:ellipsize="middle"
                         android:singleLine="true"
                         android:layout_weight="1"
-                        android:text="@string/title_attenuation"
+                        android:text="@string/title_attn_level"
                         app:layout_constraintHorizontal_bias="0.5" />
 
                     <TextView

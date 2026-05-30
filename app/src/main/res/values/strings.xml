@@ -25,19 +25,18 @@
     <string name="title_ebc">EBC</string>
     <string name="title_srm">SRM</string>
     <string name="title_ph">PH</string>
-    <string name="title_attenuation">Attenuation</string>
+    <string name="title_attn_level">Attn. Level</string>
     <string name="title_volume">Volume</string>
     <string name="title_boil_volume">Boil Volume</string>
 
     <string name="header_description">This Beer Is</string>
     <string name="header_food_pairing">Food Pairing</string>
+    <string name="header_method">Method</string>
+    <string name="header_ingredients">Ingredients</string>
     <string name="header_brewers_tips">Brewer\'s Tips</string>
 
     <string name="format_item_text_bullet">"• %s"</string>
     <string name="format_error">"⚠️ %s"</string>
 
     <string name="no_results">No results 😓</string>
-
-    <string name="toast_filter_enabled">Filter enabled</string>
-    <string name="toast_filter_disabled">Filter disabled</string>
 </resources>

@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import io.github.alxiw.punkbrew.data.loader.ImageLoader
+import io.github.alxiw.punkbrew.util.Extensions.format
 
 fun View.show() {
     visibility = View.VISIBLE
@@ -27,7 +28,11 @@ fun ImageView.load(
     loader.loadImage(this, image, placeholderRes, callback)
 }
 
-fun Double.toCleanString(): String {
-    return if (this % 1.0 == 0.0) toLong().toString() else toString()
+fun formatNullableSimpleBeerValue(value: Double?): String {
+    return value?.format() ?: DateFormatter.EMPTY_PLACEHOLDER
+}
+
+fun formatNullableDegreeBeerValue(value: Double?): String {
+    return value?.let { "${it.format()}%" } ?: DateFormatter.EMPTY_PLACEHOLDER
 }
 
