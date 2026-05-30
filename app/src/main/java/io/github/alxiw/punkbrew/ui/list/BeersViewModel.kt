@@ -5,22 +5,22 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
-import io.github.alxiw.punkbrew.data.BeersRepository
-import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
+import io.github.alxiw.punkbrew.domain.Interactor
+import io.github.alxiw.punkbrew.domain.model.Beer
 import io.github.alxiw.punkbrew.ui.base.BaseViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 
 abstract class BeersViewModel(
-    private val repository: BeersRepository
+    private val interactor: Interactor
 ) : BaseViewModel()  {
 
-    abstract val beers: StateFlow<PagedList<BeerEntity>?>
+    abstract val beers: StateFlow<PagedList<Beer>?>
 
-    fun updateBeer(beer: BeerEntity, updateFinished: () -> Unit) {
+    fun toggleFavorite(beer: Beer, updateFinished: () -> Unit) {
         viewModelScope.launch {
-            repository.update(beer)
+            interactor.toggleFavorite(beer.id)
             updateFinished()
         }
     }

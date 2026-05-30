@@ -1,10 +1,10 @@
 package io.github.alxiw.punkbrew.data.remote.api
 
-import io.github.alxiw.punkbrew.data.remote.api.model.BeerResponse
+import io.github.alxiw.punkbrew.data.remote.model.BeerResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface PunkService {
+internal interface PunkService {
 
     @GET("beers")
     suspend fun getBeers(

@@ -1,10 +1,10 @@
 package io.github.alxiw.punkbrew.data.mapper
 
 import com.google.gson.Gson
-import io.github.alxiw.punkbrew.data.remote.api.model.BeerResponse
-import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
+import io.github.alxiw.punkbrew.data.remote.model.BeerResponse
+import io.github.alxiw.punkbrew.data.local.model.BeerEntity
 
-object BeerMapper {
+internal object BeerMapper {
 
     fun fromResponse(response: List<BeerResponse>, gson: Gson): List<BeerEntity> {
         return response.map {

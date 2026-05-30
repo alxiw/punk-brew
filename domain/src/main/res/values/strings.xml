@@ -7,4 +7,6 @@
     <string name="kilograms">"kg</string>
     <string name="grams">"g"</string>
     <string name="litres">"L"</string>
+    <string name="number">#</string>
+    <string name="contributed_by">Contributed by %s</string>
 </resources>

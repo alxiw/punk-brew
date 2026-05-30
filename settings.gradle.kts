@@ -9,4 +9,5 @@ pluginManagement {
 rootProject.name = "Punk Brew"
 include(":app")
 include(":simplesearchview")
+include(":domain")
 include(":data")

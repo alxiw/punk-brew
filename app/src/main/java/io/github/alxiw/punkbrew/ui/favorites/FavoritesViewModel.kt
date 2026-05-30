@@ -2,17 +2,20 @@ package io.github.alxiw.punkbrew.ui.favorites
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
-import io.github.alxiw.punkbrew.data.BeersRepository
-import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
+import io.github.alxiw.punkbrew.domain.Interactor
+import io.github.alxiw.punkbrew.domain.model.Beer
 import io.github.alxiw.punkbrew.ui.base.UiState
 import io.github.alxiw.punkbrew.ui.list.BeersViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 
 class FavoritesViewModel(
-    repository: BeersRepository
-) : BeersViewModel(repository) {
+    interactor: Interactor
+) : BeersViewModel(interactor) {
 
-    override val beers: StateFlow<PagedList<BeerEntity>?> = repository.favorites()
+    override val beers: StateFlow<PagedList<Beer>?> = interactor.favorites()
         .onEach {
             _uiState.value = if (it.isEmpty()) UiState.Empty else UiState.Content
         }

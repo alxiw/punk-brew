@@ -13,7 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import io.github.alxiw.punkbrew.R
-import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
+import io.github.alxiw.punkbrew.domain.model.Beer
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_CATALOG_TAG
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_DETAILS_TAG
 import io.github.alxiw.punkbrew.ui.details.DetailsFragment
@@ -69,7 +69,7 @@ class FavoritesFragment : BeersFragment(), MenuProvider {
         }
     }
 
-    override fun onBeerClicked(beer: BeerEntity) {
+    override fun onBeerClicked(beer: Beer) {
         parentFragmentManager.beginTransaction()
             .replace(
                 R.id.root_container,
@@ -80,14 +80,13 @@ class FavoritesFragment : BeersFragment(), MenuProvider {
             .commit()
     }
 
-    override fun onFavoriteBadgeClicked(beer: BeerEntity, itemView: View) {
-        val updatedBeer = beer.copy(favorite = !beer.favorite)
-        viewModel.updateBeer(updatedBeer) {
+    override fun onFavoriteBadgeClicked(beer: Beer, itemView: View) {
+        viewModel.toggleFavorite(beer) {
             if (!isAdded) {
-                return@updateBeer
+                return@toggleFavorite
             }
 
-            if (!updatedBeer.favorite) {
+            if (beer.favorite) { // beer.favorite is the OLD value
                 itemView.findViewById<ImageView>(R.id.item_favorite).setImageResource(R.drawable.badge_favorite_false)
                 onBeerUpdated()
                 updateFragment(BACK_STACK_CATALOG_TAG)

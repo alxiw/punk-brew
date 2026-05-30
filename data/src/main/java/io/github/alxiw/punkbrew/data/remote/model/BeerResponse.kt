@@ -1,4 +1,4 @@
-package io.github.alxiw.punkbrew.data.remote.api.model
+package io.github.alxiw.punkbrew.data.remote.model
 
 import com.google.gson.annotations.SerializedName
 

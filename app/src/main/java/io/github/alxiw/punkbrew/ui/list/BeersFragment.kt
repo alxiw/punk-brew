@@ -1,13 +1,13 @@
 package io.github.alxiw.punkbrew.ui.list
 
 import android.view.View
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import dev.androidbroadcast.vbpd.viewBinding
 import io.github.alxiw.punkbrew.R
-import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
-import io.github.alxiw.punkbrew.data.loader.ImageLoader
+import io.github.alxiw.punkbrew.domain.model.Beer
 import io.github.alxiw.punkbrew.databinding.FragmentBeersBinding
+import io.github.alxiw.punkbrew.domain.loader.ImageLoader
 import io.github.alxiw.punkbrew.ui.base.BaseFragment
 import io.github.alxiw.punkbrew.ui.dialog.BeerDialogFragment
 import io.github.alxiw.punkbrew.util.hide
@@ -27,7 +27,7 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
         onItemLongClick = { beer -> onBeerLongClicked(beer) },
         onLikeClick = { beer, itemView -> onFavoriteBadgeClicked(beer, itemView) }
     ).apply {
-        stateRestorationPolicy = androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+        stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
     }
 
     protected val binding by viewBinding(FragmentBeersBinding::bind)
@@ -45,12 +45,12 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
     }
 
     open fun onBeerUpdated() {
-        viewModel.beers.value?.dataSource?.invalidate()
+        adapter.currentList?.dataSource?.invalidate()
     }
 
-    abstract fun onBeerClicked(beer: BeerEntity)
+    abstract fun onBeerClicked(beer: Beer)
 
-    abstract fun onFavoriteBadgeClicked(beer: BeerEntity, itemView: View)
+    abstract fun onFavoriteBadgeClicked(beer: Beer, itemView: View)
 
     override fun onLoading() {
         binding.beersProgressBar.show()
@@ -70,18 +70,17 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
         binding.beersProgressBar.hide()
     }
 
-    protected fun onBeerLongClicked(beer: BeerEntity): Boolean {
-        val fm: FragmentManager = childFragmentManager
+    protected fun onBeerLongClicked(beer: Beer): Boolean {
         val beerDialog = BeerDialogFragment.newInstance(
             beer.id,
             beer.name,
             beer.tagline,
             beer.description,
             beer.abv,
-            beer.firstBrewed,
+            beer.date,
             beer.image
         )
-        beerDialog.show(fm, "fragment_beer")
+        beerDialog.show(childFragmentManager, "fragment_beer")
         return true
     }
 }

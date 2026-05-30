@@ -2,8 +2,8 @@ package io.github.alxiw.punkbrew.ui.catalog
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
-import io.github.alxiw.punkbrew.data.BeersRepository
-import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
+import io.github.alxiw.punkbrew.domain.Interactor
+import io.github.alxiw.punkbrew.domain.model.Beer
 import io.github.alxiw.punkbrew.ui.base.UiState
 import io.github.alxiw.punkbrew.ui.list.BeersViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,8 +21,8 @@ import kotlinx.coroutines.flow.stateIn
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class CatalogViewModel(
-    private val repository: BeersRepository
-) : BeersViewModel(repository) {
+    private val interactor: Interactor
+) : BeersViewModel(interactor) {
 
     var currentQuery: String? = null
         private set
@@ -35,10 +35,10 @@ class CatalogViewModel(
         .debounce(300)
         .distinctUntilChanged()
         .onEach { _uiState.value = UiState.Loading }
-        .map { repository.search(it) }
+        .map { interactor.search(it) }
         .shareIn(viewModelScope, SharingStarted.Lazily, replay = 1)
 
-    override val beers: StateFlow<PagedList<BeerEntity>?> = beersResult
+    override val beers: StateFlow<PagedList<Beer>?> = beersResult
         .flatMapLatest { it.data }
         .onEach { list ->
             _uiState.value = if (list.isEmpty()) UiState.Empty else UiState.Content

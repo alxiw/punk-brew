@@ -1,13 +1,12 @@
-package io.github.alxiw.punkbrew.util
+package io.github.alxiw.punkbrew.domain.utils
 
 import org.threeten.bp.Year
 import org.threeten.bp.YearMonth
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.DateTimeParseException
 import org.threeten.bp.format.TextStyle
-import java.util.Locale
 
-object DateFormatter {
+internal object DateFormatter {
 
     const val EMPTY_PLACEHOLDER = "∅"
 
@@ -21,7 +20,7 @@ object DateFormatter {
         return try {
             YearMonth.parse(string, MONTH_YEAR_FORMATTER).run {
                 val style = if (short) TextStyle.SHORT else TextStyle.FULL
-                "${month.getDisplayName(style, Locale.US).uppercase(Locale.US)} $year"
+                "${month.getDisplayName(style, java.util.Locale.US).uppercase(java.util.Locale.US)} $year"
             }
         } catch (e: DateTimeParseException) {
             try {

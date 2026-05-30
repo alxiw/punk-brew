@@ -17,19 +17,15 @@ import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Section
 import dev.androidbroadcast.vbpd.viewBinding
 import io.github.alxiw.punkbrew.R
-import io.github.alxiw.punkbrew.data.loader.DetailsLoader
-import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
-import io.github.alxiw.punkbrew.data.loader.ImageLoader
 import io.github.alxiw.punkbrew.databinding.FragmentDetailsBinding
+import io.github.alxiw.punkbrew.domain.loader.ImageLoader
+import io.github.alxiw.punkbrew.domain.model.BeerDetails
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_CATALOG_TAG
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_FAVORITES_TAG
 import io.github.alxiw.punkbrew.ui.base.BaseFragment
 import io.github.alxiw.punkbrew.ui.details.items.HeaderItem
 import io.github.alxiw.punkbrew.ui.details.items.TextItem
 import io.github.alxiw.punkbrew.ui.list.BeersFragment
-import io.github.alxiw.punkbrew.util.DateFormatter
-import io.github.alxiw.punkbrew.util.formatNullableDegreeBeerValue
-import io.github.alxiw.punkbrew.util.formatNullableSimpleBeerValue
 import io.github.alxiw.punkbrew.util.hide
 import io.github.alxiw.punkbrew.util.load
 import io.github.alxiw.punkbrew.util.show
@@ -44,8 +40,6 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
     private val binding by viewBinding(FragmentDetailsBinding::bind)
 
     private val imageLoader: ImageLoader by inject()
-
-    private val detailsLoader: DetailsLoader by inject()
 
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
 
@@ -65,7 +59,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
     override fun onMenuItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.details_menu_favorite -> {
-                viewModel.currentBeer?.let { onFavoriteBadgeClicked(it) }
+                onFavoriteBadgeClicked()
                 true
             }
             else -> {
@@ -109,7 +103,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
         }
     }
 
-    private fun updateFavoriteIcon(beer: BeerEntity?) {
+    private fun updateFavoriteIcon(beer: BeerDetails?) {
         if (beer == null) {
             favoriteItem?.isVisible = false
             return
@@ -118,8 +112,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
             it.setIcon(
                 if (beer.favorite) {
                     R.drawable.ic_menu_favorite_true
-                }
-                else {
+                } else {
                     R.drawable.ic_menu_favorite_false
                 }
             )
@@ -127,7 +120,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
         }
     }
 
-    private fun initViews(beer: BeerEntity) {
+    private fun initViews(beer: BeerDetails) {
         (activity as? AppCompatActivity)?.supportActionBar?.apply {
             title = beer.name
             subtitle = resources.getString(R.string.app_tagline)
@@ -135,13 +128,13 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
         updateFavoriteIcon(beer)
         updateBasicsView(beer)
         updateRecyclerView(beer)
-        binding.detailsContent.beerDetailsCopyright.text = String.format("Contributed by %s", beer.contributedBy)
+        binding.detailsContent.beerDetailsCopyright.text = beer.contributedBy
     }
 
-    private fun updateBasicsView(beer: BeerEntity) {
+    private fun updateBasicsView(beer: BeerDetails) {
         with(binding.detailsContent) {
-            beerDetailsId.text = String.format("#%s", beer.id)
-            beerDetailsDate.text = DateFormatter.formatDate(beer.firstBrewed, false)
+            beerDetailsNumber.text = beer.number
+            beerDetailsDate.text = beer.firstBrewed
 
             beerDetailsImage.load(imageLoader, beer.image, R.drawable.bottle) {
                 view?.let {
@@ -150,47 +143,42 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
                 }
             }
 
-            beerDetailsAbvValue.text = formatNullableDegreeBeerValue(beer.abv) // av is non-nullable
-            beerDetailsIbuValue.text = formatNullableSimpleBeerValue(beer.ibu)
-            beerDetailsTargetOgValue.text = formatNullableSimpleBeerValue(beer.targetOg)
-            beerDetailsTargetFgValue.text = formatNullableSimpleBeerValue(beer.targetFg)
-            beerDetailsEbcValue.text = formatNullableSimpleBeerValue(beer.ebc)
-            beerDetailsSrmValue.text = formatNullableSimpleBeerValue(beer.srm)
-            beerDetailsPhValue.text = formatNullableSimpleBeerValue(beer.ph)
-            beerDetailsAttenuationValue.text = formatNullableDegreeBeerValue(beer.attenuationLevel)
+            beerDetailsAbvValue.text = beer.abv
+            beerDetailsIbuValue.text = beer.ibu
+            beerDetailsTargetOgValue.text = beer.targetOg
+            beerDetailsTargetFgValue.text = beer.targetFg
+            beerDetailsEbcValue.text = beer.ebc
+            beerDetailsSrmValue.text = beer.srm
+            beerDetailsPhValue.text = beer.ph
+            beerDetailsAttenuationValue.text = beer.attenuationLevel
 
-            beerDetailsVolumeValue.text = detailsLoader.getVolume(beer.volumeJson)
-            beerDetailsBoilVolumeValue.text = detailsLoader.getVolume(beer.boilVolumeJson)
+            beerDetailsVolumeValue.text = beer.volume
+            beerDetailsBoilVolumeValue.text = beer.boilVolume
 
             beerDetailsName.text = beer.name
             beerDetailsTagline.text = beer.tagline
         }
     }
 
-    private fun updateRecyclerView(beer: BeerEntity) {
+    private fun updateRecyclerView(beer: BeerDetails) {
         val descriptionSection = Section().apply {
             setHeader(HeaderItem(getString(R.string.header_description)))
             add(TextItem(beer.description))
         }
 
-        val foodPairing = detailsLoader.getFoodPairing(beer.foodPairingJson)
         val foodPairingSection = Section().apply {
             setHeader(HeaderItem(getString(R.string.header_food_pairing)))
-            addAll(foodPairing.map {
-                TextItem(String.format(requireContext().getString(R.string.format_item_text_bullet), it))
-            })
+            addAll(beer.foodPairing.map { TextItem(it) })
         }
 
-        val method = detailsLoader.getMethod(beer.methodJson)
         val methodSection = Section().apply {
             setHeader(HeaderItem(getString(R.string.header_method)))
-            addAll(method.map { TextItem(it) })
+            addAll(beer.method.map { TextItem(it) })
         }
 
-        val ingredients = detailsLoader.getIngredients(beer.ingredientsJson)
         val ingredientsSection = Section().apply {
             setHeader(HeaderItem(getString(R.string.header_ingredients)))
-            addAll(ingredients.map { TextItem(it) })
+            addAll(beer.ingredients.map { TextItem(it) })
         }
 
         val brewersTipsSection = Section().apply {
@@ -201,9 +189,9 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
         groupAdapter.clear()
         groupAdapter.apply {
             add(descriptionSection)
-            if (foodPairing.isNotEmpty()) add(foodPairingSection)
-            if (method.isNotEmpty()) add(methodSection)
-            if (ingredients.isNotEmpty()) add(ingredientsSection)
+            if (beer.foodPairing.isNotEmpty()) add(foodPairingSection)
+            if (beer.method.isNotEmpty()) add(methodSection)
+            if (beer.ingredients.isNotEmpty()) add(ingredientsSection)
             add(brewersTipsSection)
         }
     }
@@ -232,9 +220,8 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
         }
     }
 
-    private fun onFavoriteBadgeClicked(beer: BeerEntity) {
-        val updatedBeer = beer.copy(favorite = !beer.favorite)
-        viewModel.updateBeer(updatedBeer) {
+    private fun onFavoriteBadgeClicked() {
+        viewModel.toggleFavorite {
             if (isAdded) {
                 updateList(BACK_STACK_CATALOG_TAG)
                 updateList(BACK_STACK_FAVORITES_TAG)

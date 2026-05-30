@@ -1,18 +1,19 @@
-package io.github.alxiw.punkbrew.data.loader
+package io.github.alxiw.punkbrew.domain.mapper
 
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import io.github.alxiw.punkbrew.data.R
-import io.github.alxiw.punkbrew.data.remote.api.model.BeerResponse
-import io.github.alxiw.punkbrew.util.DateFormatter
-import io.github.alxiw.punkbrew.util.Extensions.format
+import io.github.alxiw.punkbrew.data.remote.model.BeerResponse
+import io.github.alxiw.punkbrew.domain.R
+import io.github.alxiw.punkbrew.domain.utils.DateFormatter
+import io.github.alxiw.punkbrew.domain.utils.Extensions.format
 
-class DetailsLoader(
+internal class DetailsFormatter(
     private val gson: Gson,
     private val context: Context
 ) {
 
+    private val number = context.getString(R.string.number)
     private val bullet = context.getString(R.string.bullet)
     private val hollowBullet = context.getString(R.string.hollow_bullet)
     private val celsius = context.getString(R.string.celsius)
@@ -41,7 +42,7 @@ class DetailsLoader(
             emptyList()
         }
 
-        return result
+        return result.map { "$bullet $it" }
     }
 
     fun getMethod(methodJson: String): List<String> {
@@ -104,6 +105,18 @@ class DetailsLoader(
         return result
     }
 
+    fun formatNumber(id: Int): String {
+        return "$number$id"
+    }
+
+    fun formatNullableSimpleBeerValue(value: Double?): String {
+        return value?.format() ?: DateFormatter.EMPTY_PLACEHOLDER
+    }
+
+    fun formatNullableDegreeBeerValue(value: Double?): String {
+        return value?.let { "${it.format()}$degree" } ?: DateFormatter.EMPTY_PLACEHOLDER
+    }
+
     private fun formatTemperature(unit: String): String {
         return when (unit) {
             "celsius" -> celsius
@@ -124,5 +137,9 @@ class DetailsLoader(
             "litres" -> litres
             else -> " $unit"
         }
+    }
+
+    fun formatContributedBy(contributedBy: String): String {
+        return context.getString(R.string.contributed_by, contributedBy)
     }
 }

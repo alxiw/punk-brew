@@ -1,7 +1,10 @@
 package io.github.alxiw.punkbrew.ui.catalog
 
 import android.util.Log
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -11,13 +14,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import io.github.alxiw.punkbrew.R
-import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
+import io.github.alxiw.punkbrew.domain.model.Beer
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_DETAILS_TAG
 import io.github.alxiw.punkbrew.ui.MainActivity.Companion.BACK_STACK_FAVORITES_TAG
 import io.github.alxiw.punkbrew.ui.details.DetailsFragment
 import io.github.alxiw.punkbrew.ui.favorites.FavoritesFragment
 import io.github.alxiw.punkbrew.ui.list.BeersFragment
-import io.github.alxiw.punkbrew.util.getFormattedBeerName
 import io.github.alxiw.simplesearchview.SimpleSearchView
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -128,7 +130,8 @@ class CatalogFragment : BeersFragment(), MenuProvider {
             }
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     if (binding.beersSearch.onBackPressed()) {
@@ -150,7 +153,7 @@ class CatalogFragment : BeersFragment(), MenuProvider {
     }
 
     private fun searchByName(query: String) {
-        if (viewModel.searchBeers(getFormattedBeerName(query))) {
+        if (viewModel.searchBeers(query.trim())) {
             if (isResumed) {
                 shouldScrollToTop = true
             }
@@ -162,7 +165,7 @@ class CatalogFragment : BeersFragment(), MenuProvider {
         Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
     }
 
-    override fun onBeerClicked(beer: BeerEntity) {
+    override fun onBeerClicked(beer: Beer) {
         viewModel.hideKeyboard(requireContext().applicationContext, null)
         parentFragmentManager.beginTransaction()
             .replace(
@@ -174,11 +177,10 @@ class CatalogFragment : BeersFragment(), MenuProvider {
             .commit()
     }
 
-    override fun onFavoriteBadgeClicked(beer: BeerEntity, itemView: View) {
-        val updatedBeer = beer.copy(favorite = !beer.favorite)
-        viewModel.updateBeer(updatedBeer) {
+    override fun onFavoriteBadgeClicked(beer: Beer, itemView: View) {
+        viewModel.toggleFavorite(beer) {
             itemView.findViewById<ImageView>(R.id.item_favorite).setImageResource(
-                if (updatedBeer.favorite) {
+                if (!beer.favorite) {
                     R.drawable.badge_favorite_true
                 } else {
                     R.drawable.badge_favorite_false

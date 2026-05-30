@@ -13,7 +13,7 @@ class BeerDialogFragment : AppCompatDialogFragment() {
     private var beerTitle: String? = null
     private var beerTagline: String? = null
     private var beerDescription: String? = null
-    private var beerAbv: Double? = null
+    private var beerAbv: String? = null
     private var beerDate: String? = null
     private var beerImageUrl: String? = null
 
@@ -25,7 +25,7 @@ class BeerDialogFragment : AppCompatDialogFragment() {
             beerTitle = it.getString(BEER_TITLE_KEY)
             beerTagline = it.getString(BEER_TAGLINE_KEY)
             beerDescription = it.getString(BEER_DESCRIPTION_KEY)
-            beerAbv = it.getDouble(BEER_ABV_KEY)
+            beerAbv = it.getString(BEER_ABV_KEY)
             beerDate = it.getString(BEER_DATE_KEY)
             beerImageUrl = it.getString(BEER_IMAGE_KEY)
         }
@@ -64,7 +64,7 @@ class BeerDialogFragment : AppCompatDialogFragment() {
             title: String,
             tagline: String,
             description: String,
-            abv: Double,
+            abv: String,
             firstBrewed: String?,
             imageUrl: String?
         ): BeerDialogFragment {
@@ -74,7 +74,7 @@ class BeerDialogFragment : AppCompatDialogFragment() {
                     putString(BEER_TITLE_KEY, title)
                     putString(BEER_TAGLINE_KEY, tagline)
                     putString(BEER_DESCRIPTION_KEY, description)
-                    putDouble(BEER_ABV_KEY, abv)
+                    putString(BEER_ABV_KEY, abv)
                     putString(BEER_DATE_KEY, firstBrewed)
                     putString(BEER_IMAGE_KEY, imageUrl)
                 }

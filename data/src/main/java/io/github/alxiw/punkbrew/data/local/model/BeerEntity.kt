@@ -1,4 +1,4 @@
-package io.github.alxiw.punkbrew.data.local.db.model
+package io.github.alxiw.punkbrew.data.local.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

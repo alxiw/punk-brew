@@ -1,4 +1,4 @@
-package io.github.alxiw.punkbrew.di
+package io.github.alxiw.punkbrew.data.di
 
 import android.content.Context
 import androidx.room.Room
@@ -7,6 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import io.github.alxiw.punkbrew.data.local.db.BeersDao
 import io.github.alxiw.punkbrew.data.local.db.PunkDatabase
 import io.github.alxiw.punkbrew.data.local.BeersLocalSource
+import io.github.alxiw.punkbrew.data.local.LocalDataSource
 import org.koin.dsl.module
 
 private const val DB_NAME = "punkbrew.db"
@@ -21,7 +22,7 @@ val databaseModule = module {
             .fallbackToDestructiveMigration()
             .build() as PunkDatabase
     }
-    factory { BeersLocalSource(get()) as BeersLocalSource }
+    factory { BeersLocalSource(get()) as LocalDataSource }
 }
 
 val MIGRATION_1_2: Migration = object : Migration(1, 2) {

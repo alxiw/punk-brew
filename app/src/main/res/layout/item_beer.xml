@@ -112,7 +112,7 @@
             tools:text="MAY 2019" />
 
         <TextView
-            android:id="@+id/item_id"
+            android:id="@+id/item_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

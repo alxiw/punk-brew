@@ -7,18 +7,17 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.github.alxiw.punkbrew.R
-import io.github.alxiw.punkbrew.data.local.db.model.BeerEntity
-import io.github.alxiw.punkbrew.data.loader.ImageLoader
+import io.github.alxiw.punkbrew.domain.model.Beer
 import io.github.alxiw.punkbrew.databinding.ItemBeerBinding
-import io.github.alxiw.punkbrew.util.DateFormatter
+import io.github.alxiw.punkbrew.domain.loader.ImageLoader
 import io.github.alxiw.punkbrew.util.load
 
 class BeersAdapter(
     private val imageLoader: ImageLoader,
-    private val onItemClick: (BeerEntity) -> Unit,
-    private val onItemLongClick: (BeerEntity) -> Boolean,
-    private val onLikeClick: (BeerEntity, View) -> Unit
-) : PagedListAdapter<BeerEntity, BeersAdapter.BeersViewHolder>(BEER_COMPARATOR) {
+    private val onItemClick: (Beer) -> Unit,
+    private val onItemLongClick: (Beer) -> Boolean,
+    private val onLikeClick: (Beer, View) -> Unit
+) : PagedListAdapter<Beer, BeersAdapter.BeersViewHolder>(BEER_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BeersViewHolder {
         val binding = ItemBeerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -58,12 +57,12 @@ class BeersAdapter(
             }
         }
 
-        fun bind(beer: BeerEntity) {
-            binding.itemId.text = String.format("#%s", beer.id)
+        fun bind(beer: Beer) {
+            binding.itemNumber.text = beer.number
             binding.itemName.text = beer.name
             binding.itemTagline.text = beer.tagline
-            binding.itemAbv.text = String.format("%s%%", beer.abv)
-            binding.itemDate.text = DateFormatter.formatDate(beer.firstBrewed, true)
+            binding.itemAbv.text = beer.abv
+            binding.itemDate.text = beer.date
 
             binding.itemImage.load(imageLoader, beer.image, R.drawable.bottle)
 
@@ -79,12 +78,12 @@ class BeersAdapter(
 
     companion object {
         private val BEER_COMPARATOR =
-            object : DiffUtil.ItemCallback<BeerEntity>() {
-                override fun areItemsTheSame(oldItem: BeerEntity, newItem: BeerEntity): Boolean {
+            object : DiffUtil.ItemCallback<Beer>() {
+                override fun areItemsTheSame(oldItem: Beer, newItem: Beer): Boolean {
                     return oldItem.id == newItem.id
                 }
 
-                override fun areContentsTheSame(oldItem: BeerEntity, newItem: BeerEntity): Boolean {
+                override fun areContentsTheSame(oldItem: Beer, newItem: Beer): Boolean {
                     return oldItem == newItem
                 }
             }
