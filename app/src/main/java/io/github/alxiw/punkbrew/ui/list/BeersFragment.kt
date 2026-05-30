@@ -45,7 +45,8 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
     }
 
     open fun onBeerUpdated() {
-        adapter.currentList?.dataSource?.invalidate()
+        //adapter.currentList?.dataSource?.invalidate()
+        viewModel.beers.value?.dataSource?.invalidate()
     }
 
     abstract fun onBeerClicked(beer: Beer)
