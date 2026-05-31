@@ -53,7 +53,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
         menuInflater.inflate(R.menu.menu_details, menu)
         favoriteItem = menu.findItem(R.id.details_menu_favorite)
-        updateFavoriteIcon(viewModel.currentBeer)
+        updateFavoriteIcon(viewModel.beerId)
     }
 
     override fun onMenuItemSelected(item: MenuItem): Boolean {
@@ -98,25 +98,27 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
             }
         }
 
-        if (viewModel.currentBeer == null) {
+        if (!viewModel.isLoaded) {
             viewModel.findBeer()
         }
     }
 
-    private fun updateFavoriteIcon(beer: BeerDetails?) {
-        if (beer == null) {
+    private fun updateFavoriteIcon(beerId: Int?) {
+        if (beerId == null) {
             favoriteItem?.isVisible = false
             return
         }
         favoriteItem?.let {
-            it.setIcon(
-                if (beer.favorite) {
-                    R.drawable.ic_menu_favorite_true
-                } else {
-                    R.drawable.ic_menu_favorite_false
-                }
-            )
-            it.isVisible = true
+            viewModel.beer.value?.favorite?.let { favorite ->
+                it.setIcon(
+                    if (favorite) {
+                        R.drawable.ic_menu_favorite_true
+                    } else {
+                        R.drawable.ic_menu_favorite_false
+                    }
+                )
+                it.isVisible = true
+            }
         }
     }
 
@@ -125,7 +127,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
             title = beer.name
             subtitle = resources.getString(R.string.app_tagline)
         }
-        updateFavoriteIcon(beer)
+        updateFavoriteIcon(viewModel.beerId)
         updateBasicsView(beer)
         updateRecyclerView(beer)
         binding.detailsContent.beerDetailsCopyright.text = beer.contributedBy

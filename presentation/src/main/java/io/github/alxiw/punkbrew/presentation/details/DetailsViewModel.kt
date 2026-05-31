@@ -20,7 +20,7 @@ class DetailsViewModel(
 
     var beerId: Int? = null
 
-    var currentBeer: BeerDetails? = null
+    var isLoaded = false
 
     fun findBeer() {
         beerId?.let { id ->
@@ -28,7 +28,7 @@ class DetailsViewModel(
             viewModelScope.launch {
                 try {
                     val beer = interactor.getBeer(id)
-                    currentBeer = beer
+                    isLoaded = true
                     _beer.value = beer
                     _uiState.value = UiState.Content
                 } catch (e: Exception) {
@@ -42,14 +42,14 @@ class DetailsViewModel(
     }
 
     fun toggleFavorite(updateFinished: () -> Unit) {
-        val beer = currentBeer ?: return
+        val beerId = beerId ?: return
         viewModelScope.launch {
             try {
-                interactor.toggleFavorite(beer.id)
-                val updatedBeer = interactor.getBeer(beer.id)
-                currentBeer = updatedBeer
+                interactor.toggleFavorite(beerId)
+                val updatedBeer = interactor.getBeer(beerId)
+                isLoaded = true
                 _beer.value = updatedBeer
-                Log.d("HELLO", "Beer #${beer.id} favorite toggled from ${javaClass.name}")
+                Log.d("HELLO", "Beer #${beerId} favorite toggled from ${javaClass.name}")
                 updateFinished()
             } catch (e: Exception) {
                 Log.e("HELLO", "Error toggling favorite: ${e.message}")
