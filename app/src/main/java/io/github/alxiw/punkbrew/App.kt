@@ -2,8 +2,7 @@ package io.github.alxiw.punkbrew
 
 import android.app.Application
 import android.content.Context
-import io.github.alxiw.punkbrew.di.appModule
-import io.github.alxiw.punkbrew.domain.di.allModules
+import io.github.alxiw.punkbrew.di.allModules
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -15,7 +14,7 @@ class App : Application() {
         startKoin {
             androidLogger()
             androidContext(this@App)
-            modules(appModule + allModules)
+            modules(allModules)
         }
     }
 

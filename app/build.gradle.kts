@@ -56,29 +56,17 @@ kotlin {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
-    implementation(project(":simplesearchview"))
-    implementation(project(":domain"))
+    implementation(project(":presentation"))
 
     // di
     implementation(libs.koin.android)
 
     // support
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.viewbindingdelegate)
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.recyclerview)
 
     // ui
     implementation(libs.material)
-    implementation(libs.groupie)
-    implementation(libs.groupie.viewbinding)
-
-    // coroutines
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.coroutines.android)
 
     // unit tests
     testImplementation(libs.junit)

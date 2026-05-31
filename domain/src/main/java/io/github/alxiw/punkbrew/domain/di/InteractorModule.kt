@@ -25,7 +25,7 @@ val interactorModule = module {
     factory { BeersInteractor(get(), get(), get(), get()) as Interactor }
 }
 
-val allModules = listOf(
+val interactorModules = listOf(
     databaseModule,
     networkModule,
     repositoryModule,

@@ -8,7 +8,7 @@ import org.threeten.bp.format.TextStyle
 
 internal object DateFormatter {
 
-    const val EMPTY_PLACEHOLDER = "∅"
+    internal const val EMPTY_PLACEHOLDER = "∅"
 
     private val MONTH_YEAR_FORMATTER = DateTimeFormatter.ofPattern("MM/yyyy")
     private val YEAR_FORMATTER = DateTimeFormatter.ofPattern("yyyy")

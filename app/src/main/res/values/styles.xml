@@ -15,16 +15,4 @@
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
     </style>
-
-    <style name="item_separator" parent="@style/group_separator">
-        <item name="android:background">@color/colorSeparator</item>
-    </style>
-
-    <style name="group_separator">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/separator_thickness</item>
-        <item name="android:background">?colorAccent</item>
-    </style>
-
-    <dimen name="separator_thickness">1dp</dimen>
 </resources>
