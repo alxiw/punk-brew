@@ -15,7 +15,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import io.github.alxiw.punkbrew.presentation.R
 import io.github.alxiw.punkbrew.domain.model.Beer
 import io.github.alxiw.punkbrew.presentation.catalog.CatalogFragment
-import io.github.alxiw.punkbrew.presentation.details.DetailsFragment
 import io.github.alxiw.punkbrew.presentation.list.BeersFragment
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
