@@ -5,7 +5,7 @@ import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
 import io.github.alxiw.punkbrew.presentation.R
 
-class HeaderItem(private val text: String) : Item<GroupieViewHolder>() {
+internal class HeaderItem(private val text: String) : Item<GroupieViewHolder>() {
 
     override fun getLayout() = R.layout.item_details_header
 

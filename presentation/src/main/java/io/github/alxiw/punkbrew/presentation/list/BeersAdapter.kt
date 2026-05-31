@@ -1,7 +1,6 @@
 package io.github.alxiw.punkbrew.presentation.list
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -16,7 +15,7 @@ class BeersAdapter(
     private val imageLoader: ImageLoader,
     private val onItemClick: (Beer) -> Unit,
     private val onItemLongClick: (Beer) -> Boolean,
-    private val onLikeClick: (Beer, View) -> Unit
+    private val onLikeClick: (Beer) -> Unit
 ) : PagedListAdapter<Beer, BeersAdapter.BeersViewHolder>(BEER_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BeersViewHolder {
@@ -52,7 +51,7 @@ class BeersAdapter(
             binding.itemFavorite.setOnClickListener {
                 val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    getItem(position)?.let { onLikeClick(it, itemView) }
+                    getItem(position)?.let { onLikeClick(it) }
                 }
             }
         }

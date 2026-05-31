@@ -5,7 +5,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
@@ -13,7 +12,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import io.github.alxiw.punkbrew.presentation.R
-import io.github.alxiw.punkbrew.domain.model.Beer
 import io.github.alxiw.punkbrew.presentation.catalog.CatalogFragment
 import io.github.alxiw.punkbrew.presentation.list.BeersFragment
 import kotlinx.coroutines.launch
@@ -67,17 +65,10 @@ class FavoritesFragment : BeersFragment(), MenuProvider {
         }
     }
 
-    override fun onFavoriteBadgeClicked(beer: Beer, itemView: View) {
-        viewModel.toggleFavorite(beer) {
-            if (!isAdded) {
-                return@toggleFavorite
-            }
-
-            if (beer.favorite) { // beer.favorite is the OLD value
-                itemView.findViewById<ImageView>(R.id.item_favorite).setImageResource(R.drawable.badge_favorite_false)
-                onBeerUpdated()
-                updateFragment(CatalogFragment.BACK_STACK_CATALOG_TAG)
-            }
+    override fun onFavoriteToggled(id: Int, favorite: Boolean) {
+        if (!favorite) { // новое значение
+            onBeerUpdated()
+            updateFragment(CatalogFragment.BACK_STACK_CATALOG_TAG)
         }
     }
 

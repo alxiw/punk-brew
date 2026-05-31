@@ -21,6 +21,7 @@ import io.github.alxiw.punkbrew.presentation.databinding.FragmentDetailsBinding
 import io.github.alxiw.punkbrew.domain.loader.ImageLoader
 import io.github.alxiw.punkbrew.domain.model.BeerDetails
 import io.github.alxiw.punkbrew.presentation.base.BaseFragment
+import io.github.alxiw.punkbrew.presentation.base.UiEvent
 import io.github.alxiw.punkbrew.presentation.catalog.CatalogFragment
 import io.github.alxiw.punkbrew.presentation.details.items.HeaderItem
 import io.github.alxiw.punkbrew.presentation.details.items.TextItem
@@ -96,7 +97,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
                 }
                 launch {
                     viewModel.events.collect { event ->
-                        if (event is DetailsViewModel.Event.FavoriteToggled && isAdded) {
+                        if (event is UiEvent.FavoriteToggled) {
                             listOf(CatalogFragment.BACK_STACK_CATALOG_TAG, FavoritesFragment.BACK_STACK_FAVORITES_TAG)
                                 .forEach { updateList(it) }
                         }

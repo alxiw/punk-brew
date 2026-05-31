@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.github.alxiw.punkbrew.presentation.R
 
-class BeerDialogFragment : AppCompatDialogFragment() {
+internal class BeerDialogFragment : AppCompatDialogFragment() {
 
     private var beerId: Int? = null
     private var beerTitle: String? = null

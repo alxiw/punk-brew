@@ -5,7 +5,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -94,13 +93,6 @@ class CatalogFragment : BeersFragment(), MenuProvider {
             override fun onSearchViewClosedAnimation() = Unit
         })
 
-        /*viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.state
-                .map { it.query }
-                .distinctUntilChanged()
-                .collect { beersSearch.setQuery(it, true) }
-        }*/
-
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
@@ -166,21 +158,9 @@ class CatalogFragment : BeersFragment(), MenuProvider {
         Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
     }
 
-    override fun onBeerClicked(beer: Beer) {
+    override fun onBeerClick(beer: Beer) {
         viewModel.hideKeyboard(requireContext().applicationContext, null)
-        super.onBeerClicked(beer)
-    }
-
-    override fun onFavoriteBadgeClicked(beer: Beer, itemView: View) {
-        viewModel.toggleFavorite(beer) {
-            itemView.findViewById<ImageView>(R.id.item_favorite).setImageResource(
-                if (!beer.favorite) {
-                    R.drawable.badge_favorite_true
-                } else {
-                    R.drawable.badge_favorite_false
-                }
-            )
-        }
+        super.onBeerClick(beer)
     }
 
     private fun onFavoritesClicked() {

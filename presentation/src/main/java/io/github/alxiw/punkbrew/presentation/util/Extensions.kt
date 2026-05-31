@@ -5,15 +5,15 @@ import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import io.github.alxiw.punkbrew.domain.loader.ImageLoader
 
-fun View.show() {
+internal fun View.show() {
     visibility = View.VISIBLE
 }
 
-fun View.hide() {
+internal fun View.hide() {
     visibility = View.GONE
 }
 
-fun ImageView.load(
+internal fun ImageView.load(
     loader: ImageLoader,
     image: String,
     @DrawableRes placeholderRes: Int,
