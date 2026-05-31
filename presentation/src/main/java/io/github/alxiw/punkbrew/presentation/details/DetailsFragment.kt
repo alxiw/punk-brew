@@ -38,46 +38,36 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
     override val viewModel: DetailsViewModel by viewModel()
 
     private val binding by viewBinding(FragmentDetailsBinding::bind)
-
     private val imageLoader: ImageLoader by inject()
 
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
-
     private var favoriteItem: MenuItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let { viewModel.beerId = it.getInt(BEER_ID_KEY) }
+        viewModel.beerId = arguments?.getInt(BEER_ID_KEY)
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
         menuInflater.inflate(R.menu.menu_details, menu)
         favoriteItem = menu.findItem(R.id.details_menu_favorite)
-        updateFavoriteIcon(viewModel.beerId)
+        updateFavoriteIcon()
     }
 
     override fun onMenuItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.details_menu_favorite -> {
-                onFavoriteBadgeClicked()
-                true
-            }
-            else -> {
-                false
-            }
-        }
+        if (item.itemId != R.id.details_menu_favorite) return false
+        viewModel.toggleFavorite()
+        return true
     }
 
     override fun setupToolbar() {
-        binding.detailsToolbar.also {
-            val activity = activity as AppCompatActivity
-            activity.setSupportActionBar(it)
-            it.title = ""
-            it.subtitle = ""
-            it.setNavigationIcon(R.drawable.ic_back)
-            it.setNavigationOnClickListener { finish() }
+        (activity as AppCompatActivity).setSupportActionBar(binding.detailsToolbar)
+        binding.detailsToolbar.apply {
+            title = ""
+            subtitle = ""
+            setNavigationIcon(R.drawable.ic_back)
+            setNavigationOnClickListener { finish() }
         }
-
         requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
@@ -89,62 +79,53 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
         }
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.beer.collect { beer ->
-                    beer?.let {
-                        Log.d("HELLO", "Received beer ${it.id} to show details")
-                        initViews(it)
+                launch {
+                    viewModel.beer.collect { beer ->
+                        beer?.let {
+                            Log.d("HELLO", "Received beer ${it.id} to show details")
+                            (activity as? AppCompatActivity)?.supportActionBar?.apply {
+                                title = beer.name
+                                subtitle = resources.getString(R.string.app_tagline)
+                            }
+                            updateFavoriteIcon()
+                            updateBasicsView(beer)
+                            updateRecyclerView(beer)
+                            binding.detailsContent.beerDetailsCopyright.text = beer.contributedBy
+                        }
+                    }
+                }
+                launch {
+                    viewModel.events.collect { event ->
+                        if (event is DetailsViewModel.Event.FavoriteToggled && isAdded) {
+                            listOf(CatalogFragment.BACK_STACK_CATALOG_TAG, FavoritesFragment.BACK_STACK_FAVORITES_TAG)
+                                .forEach { updateList(it) }
+                        }
                     }
                 }
             }
         }
-
-        if (!viewModel.isLoaded) {
-            viewModel.findBeer()
-        }
+        viewModel.findBeer()
     }
 
-    private fun updateFavoriteIcon(beerId: Int?) {
-        if (beerId == null) {
-            favoriteItem?.isVisible = false
-            return
-        }
-        favoriteItem?.let {
-            viewModel.beer.value?.favorite?.let { favorite ->
-                it.setIcon(
-                    if (favorite) {
-                        R.drawable.ic_menu_favorite_true
-                    } else {
-                        R.drawable.ic_menu_favorite_false
-                    }
-                )
-                it.isVisible = true
-            }
-        }
-    }
-
-    private fun initViews(beer: BeerDetails) {
-        (activity as? AppCompatActivity)?.supportActionBar?.apply {
-            title = beer.name
-            subtitle = resources.getString(R.string.app_tagline)
-        }
-        updateFavoriteIcon(viewModel.beerId)
-        updateBasicsView(beer)
-        updateRecyclerView(beer)
-        binding.detailsContent.beerDetailsCopyright.text = beer.contributedBy
+    private fun updateFavoriteIcon() {
+        val favorite = viewModel.beer.value?.favorite
+        favoriteItem?.isVisible = viewModel.beerId != null && favorite != null
+        favoriteItem?.setIcon(
+            if (favorite == true) R.drawable.ic_menu_favorite_true
+            else R.drawable.ic_menu_favorite_false
+        )
     }
 
     private fun updateBasicsView(beer: BeerDetails) {
         with(binding.detailsContent) {
             beerDetailsNumber.text = beer.number
             beerDetailsDate.text = beer.firstBrewed
-
             beerDetailsImage.load(imageLoader, beer.image, R.drawable.bottle) {
                 view?.let {
                     beerDetailsImage.alpha = 0f
                     beerDetailsImage.animate().setDuration(500).alpha(1f).start()
                 }
             }
-
             beerDetailsAbvValue.text = beer.abv
             beerDetailsIbuValue.text = beer.ibu
             beerDetailsTargetOgValue.text = beer.targetOg
@@ -153,89 +134,59 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
             beerDetailsSrmValue.text = beer.srm
             beerDetailsPhValue.text = beer.ph
             beerDetailsAttenuationValue.text = beer.attenuationLevel
-
             beerDetailsVolumeValue.text = beer.volume
             beerDetailsBoilVolumeValue.text = beer.boilVolume
-
             beerDetailsName.text = beer.name
             beerDetailsTagline.text = beer.tagline
         }
     }
 
     private fun updateRecyclerView(beer: BeerDetails) {
-        val descriptionSection = Section().apply {
-            setHeader(HeaderItem(getString(R.string.header_description)))
-            add(TextItem(beer.description))
-        }
-
-        val foodPairingSection = Section().apply {
-            setHeader(HeaderItem(getString(R.string.header_food_pairing)))
-            addAll(beer.foodPairing.map { TextItem(it) })
-        }
-
-        val methodSection = Section().apply {
-            setHeader(HeaderItem(getString(R.string.header_method)))
-            addAll(beer.method.map { TextItem(it) })
-        }
-
-        val ingredientsSection = Section().apply {
-            setHeader(HeaderItem(getString(R.string.header_ingredients)))
-            addAll(beer.ingredients.map { TextItem(it) })
-        }
-
-        val brewersTipsSection = Section().apply {
-            setHeader(HeaderItem(getString(R.string.header_brewers_tips)))
-            add(TextItem(beer.brewersTips))
-        }
-
         groupAdapter.clear()
         groupAdapter.apply {
-            add(descriptionSection)
-            if (beer.foodPairing.isNotEmpty()) add(foodPairingSection)
-            if (beer.method.isNotEmpty()) add(methodSection)
-            if (beer.ingredients.isNotEmpty()) add(ingredientsSection)
-            add(brewersTipsSection)
+            add(Section().apply {
+                setHeader(HeaderItem(getString(R.string.header_description)))
+                add(TextItem(beer.description))
+            })
+            if (beer.foodPairing.isNotEmpty()) add(Section().apply {
+                setHeader(HeaderItem(getString(R.string.header_food_pairing)))
+                addAll(beer.foodPairing.map { TextItem(it) })
+            })
+            if (beer.method.isNotEmpty()) add(Section().apply {
+                setHeader(HeaderItem(getString(R.string.header_method)))
+                addAll(beer.method.map { TextItem(it) })
+            })
+            if (beer.ingredients.isNotEmpty()) add(Section().apply {
+                setHeader(HeaderItem(getString(R.string.header_ingredients)))
+                addAll(beer.ingredients.map { TextItem(it) })
+            })
+            add(Section().apply {
+                setHeader(HeaderItem(getString(R.string.header_brewers_tips)))
+                add(TextItem(beer.brewersTips))
+            })
         }
     }
 
-    override fun onLoading() {
-        with(binding) {
-            detailsProgressBar.show()
-            detailsContent.root.hide()
-            detailsError.hide()
-        }
+    override fun onLoading() = with(binding) {
+        detailsProgressBar.show()
+        detailsContent.root.hide()
+        detailsError.hide()
     }
 
-    override fun onContentReceived() {
-        with(binding) {
-            detailsContent.root.show()
-            detailsError.hide()
-            detailsProgressBar.hide()
-        }
+    override fun onContentReceived() = with(binding) {
+        detailsContent.root.show()
+        detailsError.hide()
+        detailsProgressBar.hide()
     }
 
-    override fun onEmptyContent() {
-        with(binding) {
-            detailsError.show()
-            detailsContent.root.hide()
-            detailsProgressBar.hide()
-        }
-    }
-
-    private fun onFavoriteBadgeClicked() {
-        viewModel.toggleFavorite {
-            if (isAdded) {
-                updateList(CatalogFragment.BACK_STACK_CATALOG_TAG)
-                updateList(FavoritesFragment.BACK_STACK_FAVORITES_TAG)
-            }
-        }
+    override fun onEmptyContent() = with(binding) {
+        detailsError.show()
+        detailsContent.root.hide()
+        detailsProgressBar.hide()
     }
 
     private fun updateList(tag: String) {
-        val listFragment = parentFragmentManager.findFragmentByTag(tag)
-        if (listFragment != null && listFragment is BeersFragment) {
-            listFragment.onBeerUpdated()
-        }
+        (parentFragmentManager.findFragmentByTag(tag) as? BeersFragment)?.onBeerUpdated()
     }
 
     private fun finish() {

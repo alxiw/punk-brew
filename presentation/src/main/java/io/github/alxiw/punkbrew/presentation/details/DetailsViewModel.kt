@@ -6,8 +6,11 @@ import io.github.alxiw.punkbrew.domain.Interactor
 import io.github.alxiw.punkbrew.domain.model.BeerDetails
 import io.github.alxiw.punkbrew.presentation.base.BaseViewModel
 import io.github.alxiw.punkbrew.presentation.base.UiState
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -15,43 +18,49 @@ class DetailsViewModel(
     private val interactor: Interactor
 ) : BaseViewModel() {
 
+    sealed interface Event {
+        data object FavoriteToggled : Event
+    }
+
     private val _beer = MutableStateFlow<BeerDetails?>(null)
     val beer: StateFlow<BeerDetails?> = _beer.asStateFlow()
 
+    private val _events = MutableSharedFlow<Event>()
+    val events: SharedFlow<Event> = _events.asSharedFlow()
+
     var beerId: Int? = null
 
-    var isLoaded = false
-
     fun findBeer() {
-        beerId?.let { id ->
-            _uiState.value = UiState.Loading
-            viewModelScope.launch {
-                try {
-                    val beer = interactor.getBeer(id)
-                    isLoaded = true
+        val id = beerId ?: run {
+            _uiState.value = UiState.Error("Beer ID is null")
+            return
+        }
+
+        _uiState.value = UiState.Loading
+        viewModelScope.launch {
+            runCatching { interactor.getBeer(id) }
+                .onSuccess { beer ->
                     _beer.value = beer
                     _uiState.value = UiState.Content
-                } catch (e: Exception) {
+                }
+                .onFailure { e ->
                     Log.d("HELLO", "Error finding beer: ${e.message}")
                     _uiState.value = UiState.Empty
                 }
-            }
-        } ?: run {
-            _uiState.value = UiState.Error("Beer ID is null")
         }
     }
 
-    fun toggleFavorite(updateFinished: () -> Unit) {
-        val beerId = beerId ?: return
+    fun toggleFavorite() {
+        val id = beerId ?: return
         viewModelScope.launch {
-            try {
-                interactor.toggleFavorite(beerId)
-                val updatedBeer = interactor.getBeer(beerId)
-                isLoaded = true
+            runCatching {
+                interactor.toggleFavorite(id)
+                interactor.getBeer(id)
+            }.onSuccess { updatedBeer ->
                 _beer.value = updatedBeer
-                Log.d("HELLO", "Beer #${beerId} favorite toggled from ${javaClass.name}")
-                updateFinished()
-            } catch (e: Exception) {
+                Log.d("HELLO", "Beer #$id favorite toggled")
+                _events.emit(Event.FavoriteToggled)
+            }.onFailure { e ->
                 Log.e("HELLO", "Error toggling favorite: ${e.message}")
             }
         }
