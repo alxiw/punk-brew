@@ -143,6 +143,11 @@ class CatalogFragment : BeersFragment(), MenuProvider {
         )
     }
 
+    override fun onBeerUpdated() {
+        Log.d("HELLO", "onBeerUpdated: dataSource=${viewModel.beers.value?.dataSource}, isInvalid=${viewModel.beers.value?.dataSource?.isInvalid}")
+        viewModel.searchBeers(viewModel.currentQuery, force = true)
+    }
+
     private fun onBackAction() {
         binding.beersSearch.setQuery("", false)
         searchByName("")

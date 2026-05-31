@@ -98,7 +98,8 @@ internal class DetailsFormatter(
             }
         }
 
-        if (ingredients.yeast.isNotBlank()) {
+        if (!ingredients.yeast.isNullOrEmpty()) {
+            // yeast might be null, e.g. { "hops" : [ ], "malt" : [ ] }
             result.add("Yeast: ${ingredients.yeast}")
         }
 
