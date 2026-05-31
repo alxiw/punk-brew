@@ -46,7 +46,9 @@ class DetailsViewModel(
         viewModelScope.launch {
             try {
                 interactor.toggleFavorite(beer.id)
-                findBeer() // Refresh data
+                val updatedBeer = interactor.getBeer(beer.id)
+                currentBeer = updatedBeer
+                _beer.value = updatedBeer
                 Log.d("HELLO", "Beer #${beer.id} favorite toggled from ${javaClass.name}")
                 updateFinished()
             } catch (e: Exception) {
