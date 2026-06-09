@@ -44,7 +44,7 @@ class FavoritesFragment : BeersFragment(), MenuProvider {
         binding.toolbar.also {
             (activity as AppCompatActivity).setSupportActionBar(it)
             it.setNavigationIcon(R.drawable.ic_back)
-            it.setNavigationOnClickListener { finish() }
+            it.setNavigationOnClickListener { navigator.close() }
             it.title = getString(R.string.favorites_label)
         }
 
@@ -78,10 +78,6 @@ class FavoritesFragment : BeersFragment(), MenuProvider {
                 it.onBeerUpdated()
             }
         }
-    }
-
-    private fun finish() {
-        activity?.supportFragmentManager?.popBackStack()
     }
 
     companion object {

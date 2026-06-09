@@ -4,4 +4,5 @@ interface Navigator {
     fun openCatalog()
     fun openFavorites()
     fun openDetails(id: Int)
+    fun close()
 }

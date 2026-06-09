@@ -55,4 +55,8 @@ class MainActivity : ScopeActivity(), Navigator {
             .addToBackStack(null)
             .commit()
     }
+
+    override fun close() {
+        supportFragmentManager.popBackStack()
+    }
 }

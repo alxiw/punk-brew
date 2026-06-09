@@ -27,11 +27,13 @@ import io.github.alxiw.punkbrew.presentation.details.items.HeaderItem
 import io.github.alxiw.punkbrew.presentation.details.items.TextItem
 import io.github.alxiw.punkbrew.presentation.favorites.FavoritesFragment
 import io.github.alxiw.punkbrew.presentation.list.BeersFragment
+import io.github.alxiw.punkbrew.presentation.navigation.Navigator
 import io.github.alxiw.punkbrew.presentation.util.hide
 import io.github.alxiw.punkbrew.presentation.util.load
 import io.github.alxiw.punkbrew.presentation.util.show
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import org.koin.androidx.scope.ScopeActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details), MenuProvider {
@@ -40,6 +42,12 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
 
     private val binding by viewBinding(FragmentDetailsBinding::bind)
     private val imageLoader: ImageLoader by inject()
+
+    private val navigator: Navigator by lazy {
+        (requireActivity() as ScopeActivity)
+            .scope
+            .get<Navigator>()
+    }
 
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
     private var favoriteItem: MenuItem? = null
@@ -67,7 +75,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
             title = ""
             subtitle = ""
             setNavigationIcon(R.drawable.ic_back)
-            setNavigationOnClickListener { finish() }
+            setNavigationOnClickListener { navigator.close() }
         }
         requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
@@ -188,10 +196,6 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
 
     private fun updateList(tag: String) {
         (parentFragmentManager.findFragmentByTag(tag) as? BeersFragment)?.onBeerUpdated()
-    }
-
-    private fun finish() {
-        activity?.supportFragmentManager?.popBackStack()
     }
 
     companion object {
