@@ -1,16 +1,17 @@
 package io.github.alxiw.punkbrew.presentation.details.items
 
-import android.widget.TextView
-import com.xwray.groupie.GroupieViewHolder
-import com.xwray.groupie.Item
+import android.view.View
+import com.xwray.groupie.viewbinding.BindableItem
 import io.github.alxiw.punkbrew.presentation.R
+import io.github.alxiw.punkbrew.presentation.databinding.ItemDetailsTextBinding
 
-internal class TextItem(private val text: String) : Item<GroupieViewHolder>() {
+internal class TextItem(private val text: String) : BindableItem<ItemDetailsTextBinding>() {
 
     override fun getLayout() = R.layout.item_details_text
 
-    override fun bind(holder: GroupieViewHolder, position: Int) {
-        val title: TextView = holder.itemView.findViewById(R.id.item_details_text_title)
-        title.text = text
+    override fun bind(binding: ItemDetailsTextBinding, position: Int) {
+        binding.itemDetailsTextTitle.text = text
     }
+
+    override fun initializeViewBinding(view: View) = ItemDetailsTextBinding.bind(view)
 }
