@@ -1,6 +1,7 @@
 package io.github.alxiw.punkbrew
 
 import android.os.Bundle
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import io.github.alxiw.punkbrew.presentation.catalog.CatalogFragment
 import io.github.alxiw.punkbrew.databinding.ActivityMainBinding
 import io.github.alxiw.punkbrew.presentation.details.DetailsFragment
@@ -13,7 +14,7 @@ class MainActivity : ScopeActivity(), Navigator {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.AppTheme)
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         
         binding = ActivityMainBinding.inflate(layoutInflater)
