@@ -1,7 +1,7 @@
 [versions]
 agp = "9.2.1"
-kotlin = "2.3.21"
-ksp = "2.3.8"
+kotlin = "2.4.0"
+ksp = "2.3.9"
 viewbindingdelegate = "2.0.4"
 koin = "4.2.1"
 coreKtx = "1.19.0"
