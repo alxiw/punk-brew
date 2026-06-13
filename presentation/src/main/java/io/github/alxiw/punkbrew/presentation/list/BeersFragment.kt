@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.AppBarLayout
 import dev.androidbroadcast.vbpd.viewBinding
 import io.github.alxiw.punkbrew.presentation.R
 import io.github.alxiw.punkbrew.domain.model.Beer
@@ -30,6 +31,8 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
 
     abstract override val viewModel: BeersViewModel
 
+    protected val binding by viewBinding(FragmentBeersBinding::bind)
+
     private val imageLoader: ImageLoader by inject()
 
     protected val navigator: Navigator by lazy {
@@ -47,7 +50,10 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
         stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
     }
 
-    protected val binding by viewBinding(FragmentBeersBinding::bind)
+    private val appBarOffsetListener = AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+        val percentage = abs(verticalOffset).toFloat() / appBarLayout.totalScrollRange
+        binding.toolbar.subtitle = if (percentage > 0.1f) "" else getString(R.string.app_tagline)
+    }
 
     override fun initView(view: View) {
         ViewCompat.setOnApplyWindowInsetsListener(binding.beersAppBarLayout) { v, insets ->
@@ -67,10 +73,7 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
             it.adapter = adapter
         }
 
-        binding.beersAppBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
-            val percentage = abs(verticalOffset).toFloat() / appBarLayout.totalScrollRange
-            binding.toolbar.subtitle = if (percentage > 0.1f) "" else getString(R.string.app_tagline)
-        }
+        binding.beersAppBarLayout.addOnOffsetChangedListener(appBarOffsetListener)
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -133,7 +136,10 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
     }
 
     override fun onDestroyView() {
-        binding.beersRecyclerView.adapter = null
+        with(binding) {
+            beersRecyclerView.adapter = null
+            beersAppBarLayout.removeOnOffsetChangedListener(appBarOffsetListener)
+        }
         super.onDestroyView()
     }
 }

@@ -15,6 +15,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.appbar.AppBarLayout
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Section
@@ -51,6 +52,25 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
         (requireActivity() as ScopeActivity)
             .scope
             .get<Navigator>()
+    }
+
+    private val appBarOffsetListener = AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+        val totalScrollRange = appBarLayout.totalScrollRange
+        if (totalScrollRange == 0) return@OnOffsetChangedListener
+
+        val offset = abs(verticalOffset).toFloat()
+        val percentage = offset / totalScrollRange
+
+        // Сабтайтл исчезает первым на 10% скролла
+        binding.detailsToolbar.subtitle = if (percentage > 0.1f) "" else getString(R.string.app_tagline)
+
+        // Начинаем плавно скрывать тайтл, кнопка назад и сердечко после того, как сабтайтл ушел
+        val contentAlpha = when {
+            percentage < 0.2f -> 1f
+            percentage > 0.8f -> 0f
+            else -> 1f - (percentage - 0.2f) / 0.6f
+        }
+        binding.detailsToolbar.alpha = contentAlpha
     }
 
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
@@ -103,24 +123,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
             adapter = groupAdapter
         }
 
-        binding.detailsAppBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
-            val totalScrollRange = appBarLayout.totalScrollRange
-            if (totalScrollRange == 0) return@addOnOffsetChangedListener
-            
-            val offset = abs(verticalOffset).toFloat()
-            val percentage = offset / totalScrollRange
-
-            // Сабтайтл исчезает первым на 10% скролла
-            binding.detailsToolbar.subtitle = if (percentage > 0.1f) "" else getString(R.string.app_tagline)
-
-            // Начинаем плавно скрывать тайтл, кнопка назад и сердечко после того, как сабтайтл ушел
-            val contentAlpha = when {
-                percentage < 0.2f -> 1f
-                percentage > 0.8f -> 0f
-                else -> 1f - (percentage - 0.2f) / 0.6f
-            }
-            binding.detailsToolbar.alpha = contentAlpha
-        }
+        binding.detailsAppBarLayout.addOnOffsetChangedListener(appBarOffsetListener)
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -227,6 +230,14 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
         detailsError.show()
         detailsContent.root.hide()
         detailsProgressBar.hide()
+    }
+
+    override fun onDestroyView() {
+        with(binding) {
+            detailsContent.beerDetailsRecyclerView.adapter = null
+            detailsAppBarLayout.removeOnOffsetChangedListener(appBarOffsetListener)
+        }
+        super.onDestroyView()
     }
 
     private fun updateList(tag: String) {
