@@ -93,12 +93,12 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
     }
 
     override fun setupToolbar() {
-        (activity as AppCompatActivity).setSupportActionBar(binding.detailsToolbar)
         binding.detailsToolbar.apply {
-            title = ""
-            subtitle = ""
+            (activity as AppCompatActivity).setSupportActionBar(this)
             setNavigationIcon(R.drawable.ic_back)
             setNavigationOnClickListener { navigator.close() }
+            title = ""
+            subtitle = ""
         }
         requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
@@ -129,10 +129,7 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
                 launch {
                     viewModel.beer.collect { beer ->
                         beer?.let {
-                            Log.d("HELLO", "Received beer ${it.id} to show details")
-                            (activity as? AppCompatActivity)?.supportActionBar?.apply {
-                                title = beer.name
-                            }
+                            binding.detailsToolbar.title = beer.name
                             binding.detailsAppBarLayout.post {
                                 binding.detailsAppBarLayout.invalidate()
                             }

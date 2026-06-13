@@ -39,19 +39,16 @@ class CatalogViewModel(
         .debounce(DEBOUNCE_MS.milliseconds)
         .distinctUntilChanged()
         .onEach {
-            Log.d("HELLO", "beersResult: query=$it")
+            Log.d("HELLO", "[CVM] Try to search beers by query <$it>")
             _uiState.value = UiState.Loading
         }
         .map { interactor.search(it) }
         .shareIn(viewModelScope, SharingStarted.Lazily, replay = 1)
 
     override val beers: StateFlow<PagedList<Beer>?> = beersResult
-        .flatMapLatest {
-            Log.d("HELLO", "flatMapLatest: new Listing received")
-            it.data
-        }
+        .flatMapLatest { it.data }
         .onEach { list ->
-            Log.d("HELLO", "beers emitted: size=${list.size}")
+            Log.d("HELLO", "[CVM] Received and emitted new paged list of beers with size ${list.size}")
             _uiState.value = if (list.isEmpty()) UiState.Empty else UiState.Content
         }
         .stateIn(viewModelScope, SharingStarted.Lazily, null)
@@ -62,25 +59,30 @@ class CatalogViewModel(
 
     init {
         viewModelScope.launch {
-            networkErrors.collect { e -> e?.let { _events.emit(UiEvent.Error(it)) } }
+            networkErrors.collect { error ->
+                error?.let {
+                    Log.d("HELLO", "[CVM] Received and emitted error: $error")
+                    _events.emit(UiEvent.Error(it))
+                }
+            }
         }
     }
 
     fun searchBeers(queryString: String?, force: Boolean = false): Boolean {
         val query = queryString.normalize()
-        Log.d("HELLO", "searchBeers: query=$queryString force=$force isLaunched=$isLaunched currentQuery=$currentQuery")
+        Log.d("HELLO", "[CVM] SearchBeers: query=<$queryString>, force=$force, isLaunched=$isLaunched, currentQuery=<$currentQuery>")
         if (!force && isLaunched && currentQuery == queryString) return false
         isLaunched = true
         currentQuery = query
         if (force) {
-            Log.d("HELLO", "force invalidate: dataSource=${beers.value?.dataSource}, isInvalid=${beers.value?.dataSource?.isInvalid}")
-            // инвалидируем текущий DataSource — Paging сам перезапросит данные
-            // через тот же Listing, PagedList остаётся тем же объектом
+            Log.d("HELLO", "[CVM] Force invalidate: dataSource=${beers.value?.dataSource}, isInvalid=${beers.value?.dataSource?.isInvalid}")
+            // invalidate current DS — Paging will re-fetch data through the same Listing
+            // PagedList remains the same object
             beers.value?.dataSource?.invalidate()
             return true
         }
         queryFlow.value = query
-        Log.d("HELLO", "searchBeers: queryFlow updated to $queryString")
+        Log.d("HELLO", "[CVM] SearchBeers: query flow updated to <$queryString>")
         return true
     }
 

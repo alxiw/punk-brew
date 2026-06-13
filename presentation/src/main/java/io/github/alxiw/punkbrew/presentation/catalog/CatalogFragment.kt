@@ -37,14 +37,13 @@ class CatalogFragment : BeersFragment(), MenuProvider {
     }
 
     override fun setupToolbar() {
-        binding.toolbar.also {
-            (activity as AppCompatActivity).setSupportActionBar(it)
-            it.setNavigationIcon(R.drawable.ic_favorites)
-            it.setNavigationOnClickListener { onFavoritesClicked() }
+        binding.toolbar.apply {
+            (activity as AppCompatActivity).setSupportActionBar(this)
+            setNavigationIcon(R.drawable.ic_favorites)
+            setNavigationOnClickListener { onFavoritesClicked() }
         }
 
-        val menuHost = requireActivity()
-        menuHost.addMenuProvider(this, getViewLifecycleOwner(), Lifecycle.State.RESUMED)
+        requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     override fun initView(view: View) {
@@ -55,9 +54,7 @@ class CatalogFragment : BeersFragment(), MenuProvider {
         binding.beersSearch.setOnQueryTextListener(object : SimpleSearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 val oldQuery = viewModel.currentQuery
-                Log.d("HELLO", "On query text submit, old query is <${oldQuery ?: "NULL"}>, new query is <${query}>")
-                // val oldQuery = viewModel.state.value.query
-                // viewModel.accept(UiAction.Search(query = query.trim()))
+                Log.d("HELLO", "[CF] On query text submit, old query is <${oldQuery ?: "NULL"}>, new query is <${query}>")
                 binding.beersSearch.clearFocus()
                 searchByName(query)
 
@@ -66,9 +63,7 @@ class CatalogFragment : BeersFragment(), MenuProvider {
 
             override fun onQueryTextChange(query: String): Boolean {
                 val oldQuery = viewModel.currentQuery
-                Log.d("HELLO", "On query text change, old query is <${oldQuery ?: "NULL"}>, new query is <${query}>")
-                // val oldQuery = viewModel.state.value.query
-                // viewModel.accept(UiAction.Search(query = query.trim())) // query is empty
+                Log.d("HELLO", "[CF] On query text change, old query is <${oldQuery ?: "NULL"}>, new query is <${query}>")
                 searchByName(query)
 
                 return true
@@ -76,9 +71,7 @@ class CatalogFragment : BeersFragment(), MenuProvider {
 
             override fun onQueryTextCleared(): Boolean {
                 val oldQuery = viewModel.currentQuery
-                Log.d("HELLO", "On query text cleared, old query is <${oldQuery ?: "NULL"}>")
-                // val oldQuery = viewModel.state.value.query
-                // viewModel.accept(UiAction.Search(query = ""))
+                Log.d("HELLO", "[CF] On query text cleared, old query is <${oldQuery ?: "NULL"}>")
                 binding.beersSearch.clearFocus()
                 searchByName("")
 
@@ -114,10 +107,9 @@ class CatalogFragment : BeersFragment(), MenuProvider {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.beers.collect {
-                        it?.let { list ->
-                            Log.d("HELLO", "Received list of beers with size of: ${list.size}")
-                            adapter.submitList(list) {
+                    viewModel.beers.collect { list ->
+                        list?.let {
+                            adapter.submitList(it) {
                                 if (shouldScrollToTop) {
                                     binding.beersRecyclerView.scrollToPosition(0)
                                     shouldScrollToTop = false
@@ -136,7 +128,8 @@ class CatalogFragment : BeersFragment(), MenuProvider {
                     if (binding.beersSearch.onBackPressed()) {
                         onBackAction()
                     } else {
-                        // Если поиск не открыт, отключаем callback и пробрасываем событие дальше (в Activity)
+                        // if search is not open, disable the callback
+                        // and pass the event up to Activity
                         isEnabled = false
                         requireActivity().onBackPressedDispatcher.onBackPressed()
                         isEnabled = true
@@ -147,7 +140,7 @@ class CatalogFragment : BeersFragment(), MenuProvider {
     }
 
     override fun onBeerUpdated() {
-        Log.d("HELLO", "onBeerUpdated: dataSource=${viewModel.beers.value?.dataSource}, isInvalid=${viewModel.beers.value?.dataSource?.isInvalid}")
+        Log.d("HELLO", "[CF] OnBeerUpdated: dataSource=${viewModel.beers.value?.dataSource}, isInvalid=${viewModel.beers.value?.dataSource?.isInvalid}")
         viewModel.searchBeers(viewModel.currentQuery, force = true)
     }
 

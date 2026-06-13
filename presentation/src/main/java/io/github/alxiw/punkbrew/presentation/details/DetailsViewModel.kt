@@ -35,7 +35,7 @@ class DetailsViewModel(
                     _uiState.value = UiState.Content
                 }
                 .onFailure { e ->
-                    Log.d("HELLO", "Error finding beer: ${e.message}")
+                    Log.d("HELLO", "[DVM] Error finding beer #$id: ${e.message}")
                     _uiState.value = UiState.Empty
                 }
         }
@@ -49,10 +49,10 @@ class DetailsViewModel(
                 interactor.getBeer(id)
             }.onSuccess { updatedBeer ->
                 _beer.value = updatedBeer
-                Log.d("HELLO", "Beer #$id favorite toggled")
+                Log.d("HELLO", "[DVM] Beer #$id favorite toggled")
                 _events.emit(UiEvent.FavoriteToggled(updatedBeer.id, updatedBeer.favorite))
             }.onFailure { e ->
-                Log.e("HELLO", "Error toggling favorite: ${e.message}")
+                Log.e("HELLO", "[DVM] Error toggling favorite #$id: ${e.message}")
             }
         }
     }

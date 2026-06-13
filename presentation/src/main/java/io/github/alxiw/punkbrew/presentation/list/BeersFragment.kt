@@ -101,8 +101,11 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
     }
 
     open fun onBeerUpdated() {
-        //adapter.currentList?.dataSource?.invalidate()
         viewModel.beers.value?.dataSource?.invalidate()
+        // data source can be obtained via adapter.currentList
+        // but the VM approach is preferable
+        // since currentList may be null
+        // if the adapter has not received the list yet
     }
 
     open fun onFavoriteToggled(id: Int, favorite: Boolean) {
@@ -145,7 +148,7 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
             beer.date,
             beer.image
         )
-        beerDialog.show(childFragmentManager, "fragment_beer")
+        beerDialog.show(childFragmentManager, DIALOG_TAG)
         return true
     }
 
@@ -160,5 +163,9 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
             beersAppBarLayout.removeOnOffsetChangedListener(appBarOffsetListener)
         }
         super.onDestroyView()
+    }
+
+    companion object {
+        private const val DIALOG_TAG = "dialog_beer"
     }
 }

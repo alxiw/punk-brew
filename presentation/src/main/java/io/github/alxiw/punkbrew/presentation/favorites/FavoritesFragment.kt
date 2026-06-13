@@ -1,6 +1,5 @@
 package io.github.alxiw.punkbrew.presentation.favorites
 
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -39,13 +38,11 @@ class FavoritesFragment : BeersFragment(), MenuProvider {
     }
 
     override fun setupToolbar() {
-        (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
-
-        binding.toolbar.also {
-            (activity as AppCompatActivity).setSupportActionBar(it)
-            it.setNavigationIcon(R.drawable.ic_back)
-            it.setNavigationOnClickListener { navigator.close() }
-            it.title = getString(R.string.favorites_label)
+        binding.toolbar.apply {
+            (activity as AppCompatActivity).setSupportActionBar(this)
+            setNavigationIcon(R.drawable.ic_back)
+            setNavigationOnClickListener { navigator.close() }
+            title = getString(R.string.favorites_label)
         }
 
         requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
@@ -57,7 +54,6 @@ class FavoritesFragment : BeersFragment(), MenuProvider {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.beers.collect { list ->
                     list?.let {
-                        Log.d("HELLO", "Received list of favorites with size of: ${it.size}")
                         adapter.submitList(it)
                     }
                 }
@@ -66,7 +62,7 @@ class FavoritesFragment : BeersFragment(), MenuProvider {
     }
 
     override fun onFavoriteToggled(id: Int, favorite: Boolean) {
-        if (!favorite) { // новое значение
+        if (!favorite) { // new value
             onBeerUpdated()
             updateFragment(CatalogFragment.BACK_STACK_CATALOG_TAG)
         }

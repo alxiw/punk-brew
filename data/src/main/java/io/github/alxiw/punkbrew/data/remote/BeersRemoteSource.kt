@@ -16,7 +16,7 @@ internal class BeersRemoteSource(
         page: Int,
         perPage: Int
     ): List<BeerEntity> {
-        Log.d("HELLO", "[REMOTE SOURCE] Request page of beers from server for query: <${query ?: "NULL"}>, page: $page, per page: $perPage")
+        Log.d("HELLO", "[BRS] Request page of beers from server for query: <${query ?: "NULL"}>, page: $page, per page: $perPage")
         val number = query?.toIntOrNull()
 
         val response = if (number != null && number > 0) {
@@ -25,7 +25,7 @@ internal class BeersRemoteSource(
             service.getBeers(page, perPage, query)
         }
 
-        Log.d("HELLO", "[REMOTE SOURCE] Received beers from server")
+        Log.d("HELLO", "[BRS] Received ${response.size} beers from server")
         return BeerMapper.fromResponse(response, gson)
     }
 }

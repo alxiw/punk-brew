@@ -111,7 +111,7 @@ class SimpleSearchView @JvmOverloads constructor(
     private val binding = SearchViewBinding.inflate(LayoutInflater.from(context), this, true)
 
     init {
-        Log.d("HELLO", "init simple search view")
+        Log.d("HELLO", "Init simple search view")
         initStyle(attrs, defStyleAttr)
         initSearchEditText()
         initClickListeners()

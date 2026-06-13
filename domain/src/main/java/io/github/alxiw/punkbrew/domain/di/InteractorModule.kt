@@ -13,13 +13,14 @@ import io.github.alxiw.punkbrew.domain.mapper.BeerMapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 val interactorModule = module {
 
     single { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
 
-    factory { DetailsFormatter(get(), get() as Context) }
+    factory { DetailsFormatter(get(), androidContext()) }
     factory { BeerMapper(get()) }
     factory { BeerImageLoader(get()) as ImageLoader }
     factory { BeersInteractor(get(), get(), get(), get()) as Interactor }

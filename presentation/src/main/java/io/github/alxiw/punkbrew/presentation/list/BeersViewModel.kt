@@ -26,10 +26,10 @@ abstract class BeersViewModel(
                 interactor.toggleFavorite(id)
                 interactor.getBeer(id)
             }.onSuccess { updatedBeer ->
-                Log.d("HELLO", "Beer #${updatedBeer.id} favorite toggled")
+                Log.d("HELLO", "[BVM] Beer #${updatedBeer.id} favorite toggled")
                 _events.emit(UiEvent.FavoriteToggled(updatedBeer.id, updatedBeer.favorite))
             }.onFailure { e ->
-                Log.e("HELLO", "Error toggling favorite: ${e.message}")
+                Log.e("HELLO", "[BVM] Error toggling favorite: ${e.message}")
             }
         }
     }

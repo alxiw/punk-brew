@@ -12,7 +12,7 @@ internal class BeersLocalSource(
 
     @WorkerThread
     override fun insertAll(beers: List<BeerEntity>) {
-        Log.d("HELLO", "[LOCAL SOURCE] Insert beers into cache")
+        Log.d("HELLO", "[BLS] Insert ${beers.size} beers into cache")
         for (beer in beers) {
             beersDao.insert(
                 beer.id,
@@ -42,17 +42,17 @@ internal class BeersLocalSource(
 
     @WorkerThread
     override fun update(beer: BeerEntity) {
-        Log.d("HELLO", "[LOCAL SOURCE] Update beer in cache")
+        Log.d("HELLO", "[BLS] Update beer #${beer.id} in cache")
         beersDao.update(beer.id, beer.favorite)
     }
 
     override suspend fun getBeer(id: Int): BeerEntity {
-        Log.d("HELLO", "[LOCAL SOURCE] Request beer from cache")
+        Log.d("HELLO", "[BLS] Request beer #${id} from cache")
         return beersDao.beer(id)
     }
 
     override fun getBeers(query: String?): DataSource.Factory<Int, BeerEntity> {
-        Log.d("HELLO", "[LOCAL SOURCE] Request data source of all beers from cache, query: <${query ?: "NULL"}>")
+        Log.d("HELLO", "[BLS] Request data source of all beers from cache, query: <${query ?: "NULL"}>")
         if (query.isNullOrEmpty()) {
             return beersDao.beers()
         }
@@ -65,12 +65,12 @@ internal class BeersLocalSource(
     }
 
     override fun getFavorites(): DataSource.Factory<Int, BeerEntity> {
-        Log.d("HELLO", "[LOCAL SOURCE] Request data source of favorite beers from cache")
+        Log.d("HELLO", "[BLS] Request data source of favorite beers from cache")
         return beersDao.favorites()
     }
 
     override suspend fun getBeersCount(query: String?): Int {
-        Log.d("HELLO", "[LOCAL SOURCE] Request beers count from cache for query: <${query ?: "NULL"}>")
+        Log.d("HELLO", "[BLS] Request beers count from cache for query: <${query ?: "NULL"}>")
         return if (query.isNullOrEmpty()) {
             beersDao.getBeersCount()
         } else {

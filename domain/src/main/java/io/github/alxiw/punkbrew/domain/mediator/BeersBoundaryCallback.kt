@@ -27,23 +27,23 @@ internal class BeersBoundaryCallback(
     private var isEndReached = false
 
     override fun onZeroItemsLoaded() {
-        Log.d("HELLO", "[BOUNDARY CALLBACK] On zero items loaded")
+        Log.d("HELLO", "[BC] On zero items loaded")
         requestAndSaveData(query)
     }
 
     override fun onItemAtEndLoaded(itemAtEnd: Beer) {
-        Log.d("HELLO", "[BOUNDARY CALLBACK] On item at end loaded")
+        Log.d("HELLO", "[BC] On item at end loaded")
         requestAndSaveData(query)
     }
 
     private fun requestAndSaveData(query: String?) {
-        Log.d("HELLO", "[BOUNDARY CALLBACK] Request and save data: <${query ?: "NULL"}>")
+        Log.d("HELLO", "[BC] Request and save data: <${query ?: "NULL"}>")
         if (isRequestInProgress || isEndReached) return
 
         scope.launch(Dispatchers.IO) {
             try {
                 isRequestInProgress = true
-                Log.d("HELLO", "[BOUNDARY CALLBACK] Request new page of beers for query: <${query ?: "NULL"}>")
+                Log.d("HELLO", "[BC] Request new page of beers for query: <${query ?: "NULL"}>")
 
                 val count = localSource.getBeersCount(query)
                 val page = (count / NETWORK_PAGE_SIZE) + 1
@@ -53,10 +53,10 @@ internal class BeersBoundaryCallback(
                     isEndReached = true
                 }
                 localSource.insertAll(beers)
-                Log.d("HELLO", "[BOUNDARY CALLBACK] Insert ${beers.size} beers into cache")
+                Log.d("HELLO", "[BC] Insert ${beers.size} beers into cache")
                 _networkErrors.value = null
             } catch (e: Exception) {
-                Log.d("HELLO", "[BOUNDARY CALLBACK] Error during request: ${e.message}")
+                Log.d("HELLO", "[BC] Error during request: ${e.message}")
                 _networkErrors.value = e.message
             } finally {
                 isRequestInProgress = false
