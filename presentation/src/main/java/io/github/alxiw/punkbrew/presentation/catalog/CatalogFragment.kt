@@ -13,7 +13,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import io.github.alxiw.punkbrew.presentation.R
-import io.github.alxiw.punkbrew.domain.model.Beer
 import io.github.alxiw.punkbrew.presentation.list.BeersFragment
 import io.github.alxiw.simplesearchview.SimpleSearchView
 import kotlinx.coroutines.launch
@@ -72,7 +71,6 @@ class CatalogFragment : BeersFragment(), MenuProvider {
             override fun onQueryTextCleared(): Boolean {
                 val oldQuery = viewModel.currentQuery
                 Log.d("HELLO", "[CF] On query text cleared, old query is <${oldQuery ?: "NULL"}>")
-                binding.beersSearch.clearFocus()
                 searchByName("")
 
                 return true
@@ -157,13 +155,7 @@ class CatalogFragment : BeersFragment(), MenuProvider {
         }
     }
 
-    override fun onBeerClick(beer: Beer) {
-        viewModel.hideKeyboard(requireContext().applicationContext, null)
-        super.onBeerClick(beer)
-    }
-
     private fun onFavoritesClicked() {
-        viewModel.hideKeyboard(requireContext().applicationContext, null)
         navigator.openFavorites()
     }
 
