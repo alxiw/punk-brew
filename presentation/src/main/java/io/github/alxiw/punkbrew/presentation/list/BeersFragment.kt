@@ -64,7 +64,7 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
             percentage > 0.8f -> 0f
             else -> 1f - (percentage - 0.2f) / 0.6f
         }
-        binding.toolbar.alpha = contentAlpha
+        binding.toolbarContainer.alpha = contentAlpha
     }
 
     override fun initView(view: View) {

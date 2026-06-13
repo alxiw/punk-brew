@@ -61,11 +61,9 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
         val offset = abs(verticalOffset).toFloat()
         val percentage = offset / totalScrollRange
 
-        // Сабтайтл исчезает первым на 10% скролла
         val showSubtitle = percentage <= 0.1f && viewModel.beer.value != null
         binding.detailsToolbar.subtitle = if (showSubtitle) getString(R.string.app_tagline) else ""
 
-        // Начинаем плавно скрывать тайтл, кнопка назад и сердечко после того, как сабтайтл ушел
         val contentAlpha = when {
             percentage < 0.2f -> 1f
             percentage > 0.8f -> 0f

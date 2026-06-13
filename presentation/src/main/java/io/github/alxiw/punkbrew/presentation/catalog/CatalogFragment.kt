@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
+import com.google.android.material.appbar.AppBarLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -87,8 +88,26 @@ class CatalogFragment : BeersFragment(), MenuProvider {
         })
 
         binding.beersSearch.setOnSearchViewListener(object : SimpleSearchView.SearchViewListener {
-            override fun onSearchViewClosed() = onBackAction()
-            override fun onSearchViewShown() = Unit
+            override fun onSearchViewClosed() {
+                with(binding.toolbarContainer) {
+                    val params = layoutParams as AppBarLayout.LayoutParams
+                    params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or
+                            AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS or
+                            AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
+                    layoutParams = params
+                }
+                onBackAction()
+            }
+
+            override fun onSearchViewShown() {
+                with(binding) {
+                    val params = toolbarContainer.layoutParams as AppBarLayout.LayoutParams
+                    params.scrollFlags = 0 // disable scroll
+                    toolbarContainer.layoutParams = params
+                    beersAppBarLayout.setExpanded(true, true)
+                }
+            }
+
             override fun onSearchViewShownAnimation() = Unit
             override fun onSearchViewClosedAnimation() = Unit
         })
