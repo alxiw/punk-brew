@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.ScopeActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.math.abs
 
 class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details), MenuProvider {
 
@@ -84,6 +85,12 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
     }
 
     override fun initView(view: View) {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.detailsAppBarLayout) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(top = systemBars.top)
+            insets
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.detailsContent.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(bottom = systemBars.bottom)
@@ -95,6 +102,12 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
             isNestedScrollingEnabled = false
             adapter = groupAdapter
         }
+
+        binding.detailsAppBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
+            val percentage = abs(verticalOffset).toFloat() / appBarLayout.totalScrollRange
+            binding.detailsToolbar.subtitle = if (percentage > 0.1f) "" else getString(R.string.app_tagline)
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
@@ -103,7 +116,6 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
                             Log.d("HELLO", "Received beer ${it.id} to show details")
                             (activity as? AppCompatActivity)?.supportActionBar?.apply {
                                 title = beer.name
-                                subtitle = resources.getString(R.string.app_tagline)
                             }
                             updateFavoriteIcon()
                             updateBasicsView(beer)

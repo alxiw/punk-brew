@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.ScopeActivity
 import kotlin.getValue
+import kotlin.math.abs
 
 abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_beers) {
 
@@ -49,6 +50,12 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
     protected val binding by viewBinding(FragmentBeersBinding::bind)
 
     override fun initView(view: View) {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.beersAppBarLayout) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(top = systemBars.top)
+            insets
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.beersRecyclerView) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(bottom = systemBars.bottom)
@@ -59,6 +66,12 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
             it.layoutManager = LinearLayoutManager(context)
             it.adapter = adapter
         }
+
+        binding.beersAppBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
+            val percentage = abs(verticalOffset).toFloat() / appBarLayout.totalScrollRange
+            binding.toolbar.subtitle = if (percentage > 0.1f) "" else getString(R.string.app_tagline)
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.events.collect { event ->
