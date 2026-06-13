@@ -62,7 +62,8 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
         val percentage = offset / totalScrollRange
 
         // Сабтайтл исчезает первым на 10% скролла
-        binding.detailsToolbar.subtitle = if (percentage > 0.1f) "" else getString(R.string.app_tagline)
+        val showSubtitle = percentage <= 0.1f && viewModel.beer.value != null
+        binding.detailsToolbar.subtitle = if (showSubtitle) getString(R.string.app_tagline) else ""
 
         // Начинаем плавно скрывать тайтл, кнопка назад и сердечко после того, как сабтайтл ушел
         val contentAlpha = when {
@@ -133,6 +134,9 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
                             Log.d("HELLO", "Received beer ${it.id} to show details")
                             (activity as? AppCompatActivity)?.supportActionBar?.apply {
                                 title = beer.name
+                            }
+                            binding.detailsAppBarLayout.post {
+                                binding.detailsAppBarLayout.invalidate()
                             }
                             updateFavoriteIcon()
                             updateBasicsView(beer)
