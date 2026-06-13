@@ -5,11 +5,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
 import io.github.alxiw.punkbrew.domain.Interactor
 import io.github.alxiw.punkbrew.domain.model.Beer
+import io.github.alxiw.punkbrew.presentation.base.UiEvent
 import io.github.alxiw.punkbrew.presentation.base.UiState
 import io.github.alxiw.punkbrew.presentation.list.BeersViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class CatalogViewModel(
@@ -33,7 +36,7 @@ class CatalogViewModel(
     private val queryFlow = MutableStateFlow<String?>(null)
 
     private val beersResult = queryFlow
-        .debounce(300)
+        .debounce(DEBOUNCE_MS.milliseconds)
         .distinctUntilChanged()
         .onEach {
             Log.d("HELLO", "beersResult: query=$it")
@@ -48,7 +51,7 @@ class CatalogViewModel(
             it.data
         }
         .onEach { list ->
-            Log.d("HELLO", "beers emitted: size=${list?.size}")
+            Log.d("HELLO", "beers emitted: size=${list.size}")
             _uiState.value = if (list.isEmpty()) UiState.Empty else UiState.Content
         }
         .stateIn(viewModelScope, SharingStarted.Lazily, null)
@@ -56,6 +59,12 @@ class CatalogViewModel(
     val networkErrors: StateFlow<String?> = beersResult
         .flatMapLatest { it.networkErrors }
         .stateIn(viewModelScope, SharingStarted.Lazily, null)
+
+    init {
+        viewModelScope.launch {
+            networkErrors.collect { e -> e?.let { _events.emit(UiEvent.Error(it)) } }
+        }
+    }
 
     fun searchBeers(queryString: String?, force: Boolean = false): Boolean {
         val query = queryString.normalize()
@@ -76,4 +85,8 @@ class CatalogViewModel(
     }
 
     private fun String?.normalize() = if (isNullOrBlank()) null else trim()
+
+    companion object {
+        private const val DEBOUNCE_MS = 300
+    }
 }

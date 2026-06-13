@@ -1,6 +1,7 @@
 package io.github.alxiw.punkbrew.presentation.list
 
 import android.view.View
+import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -90,8 +91,9 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.events.collect { event ->
-                    if (event is UiEvent.FavoriteToggled) {
-                        onFavoriteToggled(event.id, event.favorite)
+                    when (event) {
+                        is UiEvent.FavoriteToggled -> onFavoriteToggled(event.id, event.favorite)
+                        is UiEvent.Error -> showNetworkError(event.message)
                     }
                 }
             }
@@ -145,6 +147,11 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
         )
         beerDialog.show(childFragmentManager, "fragment_beer")
         return true
+    }
+
+    private fun showNetworkError(text: String?) {
+        val message = getString(R.string.format_error, text)
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
     override fun onDestroyView() {

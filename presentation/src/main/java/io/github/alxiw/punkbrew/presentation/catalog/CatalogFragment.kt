@@ -5,7 +5,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
@@ -127,13 +126,6 @@ class CatalogFragment : BeersFragment(), MenuProvider {
                         }
                     }
                 }
-
-                launch {
-                    viewModel.networkErrors.collect { error ->
-                        Log.d("HELLO", "Network error: ${error ?: "..."}")
-                        error?.let { text -> showNetworkError(text) }
-                    }
-                }
             }
         }
 
@@ -170,11 +162,6 @@ class CatalogFragment : BeersFragment(), MenuProvider {
                 shouldScrollToTop = true
             }
         }
-    }
-
-    private fun showNetworkError(text: String?) {
-        val message = requireContext().applicationContext.getString(R.string.format_error, text)
-        Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
     }
 
     override fun onBeerClick(beer: Beer) {
