@@ -104,8 +104,22 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
         }
 
         binding.detailsAppBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
-            val percentage = abs(verticalOffset).toFloat() / appBarLayout.totalScrollRange
+            val totalScrollRange = appBarLayout.totalScrollRange
+            if (totalScrollRange == 0) return@addOnOffsetChangedListener
+            
+            val offset = abs(verticalOffset).toFloat()
+            val percentage = offset / totalScrollRange
+
+            // Сабтайтл исчезает первым на 10% скролла
             binding.detailsToolbar.subtitle = if (percentage > 0.1f) "" else getString(R.string.app_tagline)
+
+            // Начинаем плавно скрывать тайтл, кнопка назад и сердечко после того, как сабтайтл ушел
+            val contentAlpha = when {
+                percentage < 0.2f -> 1f
+                percentage > 0.8f -> 0f
+                else -> 1f - (percentage - 0.2f) / 0.6f
+            }
+            binding.detailsToolbar.alpha = contentAlpha
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
