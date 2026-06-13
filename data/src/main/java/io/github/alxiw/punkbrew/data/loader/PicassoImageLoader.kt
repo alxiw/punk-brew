@@ -17,7 +17,7 @@ internal class PicassoImageLoader(
         @DrawableRes placeholderRes: Int,
         callback: (() -> Unit)?
     ) {
-        picasso.setIndicatorsEnabled(true)
+        picasso.setIndicatorsEnabled(false)
         picasso
             .load("$imageUrl${imageName}")
             .placeholder(placeholderRes)
