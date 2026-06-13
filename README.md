@@ -2,7 +2,7 @@
 
 <img align="right" width="120" src="img/sample-icon.png">
 
-An Android application built around the [PunkAPI](https://punkapi.com) — a mobile catalog of BrewDog beers.
+An Android application built around the [PunkAPI](https://github.com/alxiw/punkapi) — a mobile catalog of BrewDog beers.
 
 ## Features
 
