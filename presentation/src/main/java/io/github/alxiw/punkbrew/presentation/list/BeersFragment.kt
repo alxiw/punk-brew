@@ -1,6 +1,9 @@
 package io.github.alxiw.punkbrew.presentation.list
 
 import android.view.View
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -46,6 +49,12 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
     protected val binding by viewBinding(FragmentBeersBinding::bind)
 
     override fun initView(view: View) {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.beersRecyclerView) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(bottom = systemBars.bottom)
+            insets
+        }
+
         binding.beersRecyclerView.also {
             it.layoutManager = LinearLayoutManager(context)
             it.adapter = adapter

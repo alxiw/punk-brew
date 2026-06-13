@@ -1,6 +1,7 @@
 package io.github.alxiw.punkbrew
 
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import io.github.alxiw.punkbrew.presentation.catalog.CatalogFragment
 import io.github.alxiw.punkbrew.databinding.ActivityMainBinding
@@ -15,6 +16,7 @@ class MainActivity : ScopeActivity(), Navigator {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         
         binding = ActivityMainBinding.inflate(layoutInflater)

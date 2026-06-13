@@ -8,6 +8,9 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -81,6 +84,12 @@ class DetailsFragment : BaseFragment<DetailsViewModel>(R.layout.fragment_details
     }
 
     override fun initView(view: View) {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.detailsContent.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(bottom = systemBars.bottom)
+            insets
+        }
+
         binding.detailsContent.beerDetailsRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             isNestedScrollingEnabled = false
