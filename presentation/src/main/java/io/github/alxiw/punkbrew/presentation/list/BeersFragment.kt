@@ -51,8 +51,20 @@ abstract class BeersFragment : BaseFragment<BeersViewModel>(R.layout.fragment_be
     }
 
     private val appBarOffsetListener = AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
-        val percentage = abs(verticalOffset).toFloat() / appBarLayout.totalScrollRange
-        binding.toolbar.subtitle = if (percentage > 0.1f) "" else getString(R.string.app_tagline)
+        val totalScrollRange = appBarLayout.totalScrollRange
+        if (totalScrollRange == 0) return@OnOffsetChangedListener
+        val offset = abs(verticalOffset).toFloat()
+        val percentage = offset / totalScrollRange
+
+        val showSubtitle = percentage <= 0.1f
+        binding.toolbar.subtitle = if (showSubtitle) getString(R.string.app_tagline) else ""
+
+        val contentAlpha = when {
+            percentage < 0.2f -> 1f
+            percentage > 0.8f -> 0f
+            else -> 1f - (percentage - 0.2f) / 0.6f
+        }
+        binding.toolbar.alpha = contentAlpha
     }
 
     override fun initView(view: View) {
