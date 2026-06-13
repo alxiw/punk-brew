@@ -32,7 +32,7 @@ class CatalogFragment : BeersFragment(), MenuProvider {
     }
 
     override fun onMenuItemSelected(item: MenuItem): Boolean {
-        // если будет обработка клика, то тогда сделать true
+        // set to true if click handling is needed
         return false
     }
 

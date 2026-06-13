@@ -8,7 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
 
-object EditTextReflectionUtils {
+internal object EditTextReflectionUtils {
 
     private val TAG = EditTextReflectionUtils::class.java.simpleName
     private const val EDIT_TEXT_FIELD_CURSOR_DRAWABLE_RES = "mCursorDrawableRes"

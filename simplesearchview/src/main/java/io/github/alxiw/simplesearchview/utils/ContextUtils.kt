@@ -9,7 +9,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.annotation.ColorInt
 import io.github.alxiw.simplesearchview.R
 
-object ContextUtils {
+internal object ContextUtils {
 
     @JvmStatic
     fun scanForActivity(context: Context): Activity? {

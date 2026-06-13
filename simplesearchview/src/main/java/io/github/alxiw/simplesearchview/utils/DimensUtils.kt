@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.TypedValue
 import kotlin.math.roundToInt
 
-object DimensUtils {
+internal object DimensUtils {
 
     @JvmStatic
     fun convertDpToPx(dp: Int, context: Context): Int {

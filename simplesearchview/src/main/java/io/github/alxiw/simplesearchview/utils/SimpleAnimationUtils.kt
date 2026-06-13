@@ -14,7 +14,7 @@ import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-object SimpleAnimationUtils {
+internal object SimpleAnimationUtils {
 
     const val ANIMATION_DURATION_DEFAULT = 250
 
@@ -315,16 +315,10 @@ object SimpleAnimationUtils {
             }
         }
 
-        open fun defaultOnAnimationStart(view: View) {
-            // No default action
-        }
+        open fun defaultOnAnimationStart(view: View) = Unit
 
-        open fun defaultOnAnimationEnd(view: View) {
-            // No default action
-        }
+        open fun defaultOnAnimationEnd(view: View) = Unit
 
-        fun defaultOnAnimationCancel(view: View) {
-            // No default action
-        }
+        fun defaultOnAnimationCancel(view: View) = Unit
     }
 }
